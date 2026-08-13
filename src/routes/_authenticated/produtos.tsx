@@ -105,6 +105,10 @@ function ProdutosPage() {
     }
     if (editingId === id) cancelEdit();
     toast.success("Produto excluído");
+    queryClient.invalidateQueries({ queryKey: ["products"] });
+  }
+
+
 
 
   return (
