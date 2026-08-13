@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
 import { Route as AuthenticatedHorariosRouteImport } from './routes/_authenticated/horarios'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as AuthenticatedPreviewIaRouteImport } from './routes/_authenticated/preview-ia'
 import { Route as AuthenticatedProdutosRouteImport } from './routes/_authenticated/produtos'
 
 const IndexRoute = IndexRouteImport.update({
@@ -46,6 +47,11 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPreviewIaRoute = AuthenticatedPreviewIaRouteImport.update({
+  id: '/preview-ia',
+  path: '/preview-ia',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProdutosRoute = AuthenticatedProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/painel': typeof AuthenticatedPainelRoute
+  '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
 }
 export interface FileRoutesByTo {
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/painel': typeof AuthenticatedPainelRoute
+  '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
 }
 export interface FileRoutesById {
@@ -76,13 +84,28 @@ export interface FileRoutesById {
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
   '/_authenticated/horarios': typeof AuthenticatedHorariosRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
+  '/_authenticated/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/grupos' | '/horarios' | '/painel' | '/produtos'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/grupos'
+    | '/horarios'
+    | '/painel'
+    | '/preview-ia'
+    | '/produtos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/grupos' | '/horarios' | '/painel' | '/produtos'
+  to:
+    | '/'
+    | '/auth'
+    | '/grupos'
+    | '/horarios'
+    | '/painel'
+    | '/preview-ia'
+    | '/produtos'
   id:
     | '__root__'
     | '/'
@@ -91,6 +114,7 @@ export interface FileRouteTypes {
     | '/_authenticated/grupos'
     | '/_authenticated/horarios'
     | '/_authenticated/painel'
+    | '/_authenticated/preview-ia'
     | '/_authenticated/produtos'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +168,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/preview-ia': {
+      id: '/_authenticated/preview-ia'
+      path: '/preview-ia'
+      fullPath: '/preview-ia'
+      preLoaderRoute: typeof AuthenticatedPreviewIaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/produtos': {
       id: '/_authenticated/produtos'
       path: '/produtos'
@@ -158,6 +189,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGruposRoute: typeof AuthenticatedGruposRoute
   AuthenticatedHorariosRoute: typeof AuthenticatedHorariosRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
+  AuthenticatedPreviewIaRoute: typeof AuthenticatedPreviewIaRoute
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
 }
 
@@ -165,6 +197,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGruposRoute: AuthenticatedGruposRoute,
   AuthenticatedHorariosRoute: AuthenticatedHorariosRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
+  AuthenticatedPreviewIaRoute: AuthenticatedPreviewIaRoute,
   AuthenticatedProdutosRoute: AuthenticatedProdutosRoute,
 }
 
