@@ -99,11 +99,13 @@ function ProdutosPage() {
 
   async function handleDelete(id: string) {
     const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     if (editingId === id) cancelEdit();
     toast.success("Produto excluído");
-    queryClient.invalidateQueries({ queryKey: ["products"] });
-  }
+
 
   return (
     <div className="space-y-8">
