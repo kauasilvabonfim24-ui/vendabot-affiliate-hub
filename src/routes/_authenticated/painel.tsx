@@ -44,10 +44,11 @@ function PainelPage() {
   const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
   const upcoming = [...(schedules.data ?? [])].sort((a, b) => {
     const toM = (t: string) => {
-      const [h, m] = t.split(":").map(Number);
+      const [h = 0, m = 0] = t.split(":").map(Number);
       const v = h * 60 + m;
       return v < nowMinutes ? v + 1440 : v;
     };
+
     return toM(a.time) - toM(b.time);
   });
 
