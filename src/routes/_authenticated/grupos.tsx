@@ -5,6 +5,8 @@ import { Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useGroups } from "@/hooks/use-vendabot";
+import { useAvailableGroups } from "@/hooks/use-available-groups";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,11 +25,13 @@ export const Route = createFileRoute("/_authenticated/grupos")({
 
 function GruposPage() {
   const { data: groups, isLoading } = useGroups();
+  const { data: available, isLoading: loadingAvailable } = useAvailableGroups();
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [gid, setGid] = useState("");
   const [role, setRole] = useState("member");
   const [saving, setSaving] = useState(false);
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -86,17 +90,36 @@ function GruposPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="gid">ID do grupo</Label>
-            <Input
-              id="gid"
-              required
-              pattern=".*@g\.us"
-              title="Formato esperado: 120363...@g.us"
-              value={gid}
-              onChange={(e) => setGid(e.target.value)}
-              placeholder="120363...@g.us"
-            />
+            <Label htmlFor="gid">Grupo do WhatsApp</Label>
+            {loadingAvailable ? (
+              <p className="pt-2 text-sm text-muted-foreground">Carregando grupos...</p>
+            ) : (available?.length ?? 0) === 0 ? (
+              <p className="pt-2 text-sm text-muted-foreground">
+                Nenhum grupo encontrado ainda — conecte o WhatsApp na aba Conexão primeiro
+              </p>
+            ) : (
+              <select
+                id="gid"
+                required
+                value={gid}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setGid(value);
+                  const found = available!.find((g) => g.gid === value);
+                  if (found && !name.trim()) setName(found.name);
+                }}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">Selecione um grupo</option>
+                {available!.map((g) => (
+                  <option key={g.gid} value={g.gid}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="role">Papel do bot</Label>
             <select
@@ -111,7 +134,7 @@ function GruposPage() {
           </div>
         </div>
         <div className="mt-5 flex justify-end">
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving || !gid}>
             {saving ? "Salvando..." : "Adicionar grupo"}
           </Button>
         </div>
