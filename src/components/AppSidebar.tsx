@@ -1,19 +1,31 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BarChart3, Package, Clock, Users, Sparkles, LogOut, Bot } from "lucide-react";
+import { BarChart3, Package, Clock, Users, Sparkles, LogOut, Bot, QrCode } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useBotStatus } from "@/hooks/use-bot-status";
 
 const nav = [
   { to: "/painel", label: "Painel", icon: BarChart3 },
   { to: "/produtos", label: "Produtos", icon: Package },
   { to: "/horarios", label: "Horários", icon: Clock },
   { to: "/grupos", label: "Grupos", icon: Users },
+  { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
 ] as const;
 
 export function AppSidebar() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { data: botStatus } = useBotStatus();
+  const status = botStatus?.status ?? "disconnected";
+  const connected = status === "connected";
+  const waitingQr = status === "qr";
+  const dotClass = connected ? "bg-primary" : waitingQr ? "bg-ai" : "bg-destructive";
+  const statusLabel = connected
+    ? "Bot conectado"
+    : waitingQr
+      ? "Aguardando leitura do QR"
+      : "Bot desconectado";
 
   async function handleSignOut() {
     await queryClient.cancelQueries();

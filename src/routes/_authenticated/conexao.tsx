@@ -41,7 +41,7 @@ function ConexaoPage() {
             <img
               src={data.qr_code}
               alt="QR Code para conectar o WhatsApp"
-              className="h-64 w-64 rounded-2xl border-4 border-accent bg-white p-2"
+              className="h-64 w-64 rounded-2xl border-4 border-ai bg-card p-2 shadow-[0_0_40px_-12px_var(--ai)]"
             />
             <p className="max-w-sm text-center text-sm text-muted-foreground">
               Escaneie com o WhatsApp: Aparelhos conectados → Conectar um aparelho
