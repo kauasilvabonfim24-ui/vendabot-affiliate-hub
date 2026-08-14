@@ -27,7 +27,7 @@ export function useBotStatus() {
 
   useEffect(() => {
     const channel = supabase
-      .channel("bot_status_default")
+      .channel(`bot_status_default_${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "bot_status" },
