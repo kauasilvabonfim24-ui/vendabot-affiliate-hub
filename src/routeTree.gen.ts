@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedConexaoRouteImport } from './routes/_authenticated/conexao'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
 import { Route as AuthenticatedHorariosRouteImport } from './routes/_authenticated/horarios'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
@@ -31,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedConexaoRoute = AuthenticatedConexaoRouteImport.update({
+  id: '/conexao',
+  path: '/conexao',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedGruposRoute = AuthenticatedGruposRouteImport.update({
   id: '/grupos',
@@ -61,6 +67,7 @@ const AuthenticatedProdutosRoute = AuthenticatedProdutosRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/conexao': typeof AuthenticatedConexaoRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/painel': typeof AuthenticatedPainelRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/conexao': typeof AuthenticatedConexaoRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/painel': typeof AuthenticatedPainelRoute
@@ -81,6 +89,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/conexao': typeof AuthenticatedConexaoRoute
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
   '/_authenticated/horarios': typeof AuthenticatedHorariosRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/conexao'
     | '/grupos'
     | '/horarios'
     | '/painel'
@@ -101,6 +111,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/conexao'
     | '/grupos'
     | '/horarios'
     | '/painel'
@@ -111,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/conexao'
     | '/_authenticated/grupos'
     | '/_authenticated/horarios'
     | '/_authenticated/painel'
@@ -146,6 +158,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/conexao': {
+      id: '/_authenticated/conexao'
+      path: '/conexao'
+      fullPath: '/conexao'
+      preLoaderRoute: typeof AuthenticatedConexaoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/grupos': {
       id: '/_authenticated/grupos'
@@ -186,6 +205,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedConexaoRoute: typeof AuthenticatedConexaoRoute
   AuthenticatedGruposRoute: typeof AuthenticatedGruposRoute
   AuthenticatedHorariosRoute: typeof AuthenticatedHorariosRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
@@ -194,6 +214,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedConexaoRoute: AuthenticatedConexaoRoute,
   AuthenticatedGruposRoute: AuthenticatedGruposRoute,
   AuthenticatedHorariosRoute: AuthenticatedHorariosRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,

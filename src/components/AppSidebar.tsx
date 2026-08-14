@@ -1,19 +1,31 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BarChart3, Package, Clock, Users, Sparkles, LogOut, Bot } from "lucide-react";
+import { BarChart3, Package, Clock, Users, Sparkles, LogOut, Bot, QrCode } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useBotStatus } from "@/hooks/use-bot-status";
 
 const nav = [
   { to: "/painel", label: "Painel", icon: BarChart3 },
   { to: "/produtos", label: "Produtos", icon: Package },
   { to: "/horarios", label: "Horários", icon: Clock },
   { to: "/grupos", label: "Grupos", icon: Users },
+  { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
 ] as const;
 
 export function AppSidebar() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { data: botStatus } = useBotStatus();
+  const status = botStatus?.status ?? "disconnected";
+  const connected = status === "connected";
+  const waitingQr = status === "qr";
+  const dotClass = connected ? "bg-primary" : waitingQr ? "bg-ai" : "bg-destructive";
+  const statusLabel = connected
+    ? "Bot conectado"
+    : waitingQr
+      ? "Aguardando leitura do QR"
+      : "Bot desconectado";
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
@@ -34,13 +46,16 @@ export function AppSidebar() {
         </div>
       </div>
 
-      <div className="mx-5 mt-5 flex items-center gap-2 rounded-lg border border-sidebar-border bg-background/60 px-3 py-2">
+      <Link
+        to="/conexao"
+        className="mx-5 mt-5 flex items-center gap-2 rounded-lg border border-sidebar-border bg-background/60 px-3 py-2 transition-colors hover:border-primary/40"
+      >
         <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive/60" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
+          <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
+          <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${dotClass}`} />
         </span>
-        <span className="text-xs font-medium text-muted-foreground">Bot desconectado</span>
-      </div>
+        <span className="text-xs font-medium text-muted-foreground">{statusLabel}</span>
+      </Link>
 
       <nav className="mt-6 flex flex-1 flex-col gap-1 px-3">
         {nav.map(({ to, label, icon: Icon }) => (
