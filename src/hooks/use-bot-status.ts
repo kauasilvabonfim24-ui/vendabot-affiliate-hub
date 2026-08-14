@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type BotStatusRow = {
-  session_id: string;
-  status: "qr" | "connected" | "disconnected" | string;
+  user_id: string;
+  status: "requested" | "qr" | "connected" | "disconnected" | string;
   qr_code: string | null;
   updated_at: string;
 };
@@ -13,12 +13,16 @@ export function useBotStatus() {
   const queryClient = useQueryClient();
 
   const query = useQuery({
-    queryKey: ["bot_status", "default"],
+    queryKey: ["bot_status"],
     queryFn: async (): Promise<BotStatusRow | null> => {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      if (!userId) return null;
+
       const { data, error } = await supabase
         .from("bot_status" as never)
         .select("*")
-        .eq("session_id", "default")
+        .eq("user_id", userId)
         .maybeSingle();
       if (error) throw error;
       return (data ?? null) as BotStatusRow | null;
@@ -26,23 +30,63 @@ export function useBotStatus() {
   });
 
   useEffect(() => {
-    const channel = supabase
-      .channel(`bot_status_default_${Math.random().toString(36).slice(2)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "bot_status" },
-        (payload) => {
-          const row = (payload.new ?? null) as BotStatusRow | null;
-          if (row && row.session_id !== "default") return;
-          queryClient.setQueryData(["bot_status", "default"], row);
-        },
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
+    supabase.auth.getUser().then(({ data: userData }) => {
+      if (cancelled) return;
+      const userId = userData.user?.id;
+      if (!userId) return;
+
+      channel = supabase
+        .channel(`bot_status_${userId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "bot_status",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            const row = (payload.new ?? null) as BotStatusRow | null;
+            queryClient.setQueryData(["bot_status"], row);
+          },
+        )
+        .subscribe();
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
     };
   }, [queryClient]);
 
   return query;
+}
+
+// Dispara o pedido de conexão: cria/atualiza a linha do usuário com status "requested".
+// O bot (rodando no Render) está escutando essa tabela e inicia a conexão do WhatsApp
+// assim que detectar essa mudança.
+export function useConnectWhatsApp() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      if (!userId) throw new Error("Usuário não autenticado");
+
+      const { error } = await supabase.from("bot_status" as never).upsert({
+        user_id: userId,
+        status: "requested",
+        qr_code: null,
+        updated_at: new Date().toISOString(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bot_status"] });
+    },
+  });
 }
