@@ -46,13 +46,16 @@ export function AppSidebar() {
         </div>
       </div>
 
-      <div className="mx-5 mt-5 flex items-center gap-2 rounded-lg border border-sidebar-border bg-background/60 px-3 py-2">
+      <Link
+        to="/conexao"
+        className="mx-5 mt-5 flex items-center gap-2 rounded-lg border border-sidebar-border bg-background/60 px-3 py-2 transition-colors hover:border-primary/40"
+      >
         <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive/60" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
+          <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
+          <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${dotClass}`} />
         </span>
-        <span className="text-xs font-medium text-muted-foreground">Bot desconectado</span>
-      </div>
+        <span className="text-xs font-medium text-muted-foreground">{statusLabel}</span>
+      </Link>
 
       <nav className="mt-6 flex flex-1 flex-col gap-1 px-3">
         {nav.map(({ to, label, icon: Icon }) => (
