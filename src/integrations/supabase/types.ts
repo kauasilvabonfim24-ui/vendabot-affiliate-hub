@@ -158,6 +158,27 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_groups_available: {
+        Row: {
+          gid: string
+          name: string
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          gid: string
+          name: string
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          gid?: string
+          name?: string
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
