@@ -134,7 +134,7 @@ function GruposPage() {
           </div>
         </div>
         <div className="mt-5 flex justify-end">
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving || !gid}>
             {saving ? "Salvando..." : "Adicionar grupo"}
           </Button>
         </div>
