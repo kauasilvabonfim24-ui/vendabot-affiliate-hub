@@ -90,17 +90,36 @@ function GruposPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="gid">ID do grupo</Label>
-            <Input
-              id="gid"
-              required
-              pattern=".*@g\.us"
-              title="Formato esperado: 120363...@g.us"
-              value={gid}
-              onChange={(e) => setGid(e.target.value)}
-              placeholder="120363...@g.us"
-            />
+            <Label htmlFor="gid">Grupo do WhatsApp</Label>
+            {loadingAvailable ? (
+              <p className="pt-2 text-sm text-muted-foreground">Carregando grupos...</p>
+            ) : (available?.length ?? 0) === 0 ? (
+              <p className="pt-2 text-sm text-muted-foreground">
+                Nenhum grupo encontrado ainda — conecte o WhatsApp na aba Conexão primeiro
+              </p>
+            ) : (
+              <select
+                id="gid"
+                required
+                value={gid}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setGid(value);
+                  const found = available!.find((g) => g.gid === value);
+                  if (found && !name.trim()) setName(found.name);
+                }}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">Selecione um grupo</option>
+                {available!.map((g) => (
+                  <option key={g.gid} value={g.gid}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="role">Papel do bot</Label>
             <select
