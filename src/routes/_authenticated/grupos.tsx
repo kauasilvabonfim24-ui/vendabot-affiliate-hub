@@ -25,11 +25,13 @@ export const Route = createFileRoute("/_authenticated/grupos")({
 
 function GruposPage() {
   const { data: groups, isLoading } = useGroups();
+  const { data: available, isLoading: loadingAvailable } = useAvailableGroups();
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [gid, setGid] = useState("");
   const [role, setRole] = useState("member");
   const [saving, setSaving] = useState(false);
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
