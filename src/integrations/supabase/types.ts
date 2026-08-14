@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      bot_auth_state: {
+        Row: {
+          data: Json
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          data: Json
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          data?: Json
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bot_status: {
+        Row: {
+          qr_code: string | null
+          session_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          qr_code?: string | null
+          session_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          qr_code?: string | null
+          session_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       groups: {
         Row: {
           created_at: string
