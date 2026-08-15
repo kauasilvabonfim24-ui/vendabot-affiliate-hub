@@ -4,9 +4,28 @@ import { AppSidebar } from "@/components/AppSidebar";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
+
+    // A tela de planos precisa ficar acessível mesmo sem assinatura ativa,
+    // senão o usuário nunca conseguiria chegar até ela pra assinar.
+    if (location.pathname !== "/planos") {
+      const { data: sub } = await supabase
+        .from("subscriptions" as never)
+        .select("status,current_period_end")
+        .eq("user_id", data.user.id)
+        .maybeSingle();
+
+      const row = sub as unknown as { status: string; current_period_end: string | null } | null;
+      const ativo =
+        !!row &&
+        row.status === "active" &&
+        (!row.current_period_end || new Date(row.current_period_end) > new Date());
+
+      if (!ativo) throw redirect({ to: "/planos" });
+    }
+
     return { user: data.user };
   },
   component: AuthenticatedLayout,
