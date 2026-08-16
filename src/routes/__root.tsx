@@ -140,6 +140,47 @@ function RootComponent() {
     }
   }, []);
 
+  // Carrega o SDK do OneSignal e inicializa uma única vez.
+  useEffect(() => {
+    if (document.getElementById("onesignal-sdk")) return;
+    const script = document.createElement("script");
+    script.id = "onesignal-sdk";
+    script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+    script.defer = true;
+    document.head.appendChild(script);
+
+    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+    (window as any).OneSignalDeferred.push(async (OneSignal: any) => {
+      await OneSignal.init({
+        appId: "7a125ccf-788b-4548-b436-0c7151c84b4a",
+        safari_web_id: "web.onesignal.auto.2d34c372-40ef-4eb5-956b-2d525ea9497b",
+        notifyButton: { enable: true },
+      });
+    });
+  }, []);
+
+  // Vincula (ou desvincula) o usuário logado ao OneSignal via External ID,
+  // pra podermos mandar notificação pra ele pelo user_id direto do banco.
+  useEffect(() => {
+    function syncIdentity(userId: string | null) {
+      (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+      (window as any).OneSignalDeferred.push(async (OneSignal: any) => {
+        if (userId) await OneSignal.login(userId);
+        else await OneSignal.logout();
+      });
+    }
+
+    supabase.auth.getUser().then(({ data }) => {
+      syncIdentity(data.user?.id ?? null);
+    });
+
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") syncIdentity(session?.user.id ?? null);
+      if (event === "SIGNED_OUT") syncIdentity(null);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
