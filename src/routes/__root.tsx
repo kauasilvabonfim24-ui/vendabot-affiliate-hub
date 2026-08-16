@@ -154,7 +154,7 @@ function RootComponent() {
       await OneSignal.init({
         appId: "7a125ccf-788b-4548-b436-0c7151c84b4a",
         safari_web_id: "web.onesignal.auto.2d34c372-40ef-4eb5-956b-2d525ea9497b",
-        notifyButton: { enable: true },
+        notifyButton: { enable: false },
       });
     });
   }, []);
