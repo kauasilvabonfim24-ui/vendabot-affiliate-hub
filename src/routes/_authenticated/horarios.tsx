@@ -165,27 +165,31 @@ function HorariosPage() {
         ) : (
           <ul className="divide-y divide-border">
             {schedules!.map((s) => (
-              <li key={s.id} className="flex items-center gap-4 py-4">
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                  <Clock className="h-4 w-4" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-display text-lg font-semibold">
-                    {s.time}{" "}
-                    <span className="text-sm font-normal text-muted-foreground">
-                      · {repeatLabel(s.repeat)}
-                    </span>
-                  </p>
-                  <p className="mt-1 truncate text-xs text-muted-foreground">
-                    {(s.group_ids ?? []).map(groupName).join(", ") || "Sem grupos"}
-                  </p>
+              <li key={s.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex min-w-0 flex-1 items-center gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                    <Clock className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display text-lg font-semibold">
+                      {s.time}{" "}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        · {repeatLabel(s.repeat)}
+                      </span>
+                    </p>
+                    <p className="mt-1 truncate text-xs text-muted-foreground">
+                      {(s.group_ids ?? []).map(groupName).join(", ") || "Sem grupos"}
+                    </p>
+                  </div>
                 </div>
-                <span className="rounded-full bg-ai/15 px-2 py-1 text-xs text-ai">
-                  {s.category ?? "IA decide"}
-                </span>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                <div className="flex shrink-0 items-center justify-between gap-2 sm:justify-end">
+                  <span className="rounded-full bg-ai/15 px-2 py-1 text-xs whitespace-nowrap text-ai">
+                    {s.category ?? "IA decide"}
+                  </span>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(s.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
