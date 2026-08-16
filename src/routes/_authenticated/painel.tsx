@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Package, Clock, Users } from "lucide-react";
+import { Package, Clock, Users, Bell, BellOff, Loader2 } from "lucide-react";
 import { useGroups, useProducts, useSchedules } from "@/hooks/use-vendabot";
+import { usePushPermission } from "@/hooks/use-push-permission";
 import { repeatLabel } from "@/lib/vendabot";
 
 export const Route = createFileRoute("/_authenticated/painel")({
@@ -19,6 +20,7 @@ function PainelPage() {
   const products = useProducts();
   const groups = useGroups();
   const schedules = useSchedules();
+  const push = usePushPermission();
 
   const cards = [
     {
@@ -54,11 +56,34 @@ function PainelPage() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold">Painel</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Acompanhe a operação do seu bot de ofertas.
-        </p>
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">Painel</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Acompanhe a operação do seu bot de ofertas.
+          </p>
+        </div>
+
+        <button
+          onClick={push.permission !== "granted" ? push.requestPermission : undefined}
+          disabled={push.permission === "granted" || push.loading}
+          className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-colors ${
+            push.permission === "granted"
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-secondary text-muted-foreground hover:border-primary/40 hover:text-primary"
+          }`}
+        >
+          {push.loading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : push.permission === "granted" ? (
+            <Bell className="h-3.5 w-3.5" />
+          ) : (
+            <BellOff className="h-3.5 w-3.5" />
+          )}
+          <span className="hidden sm:inline">
+            {push.permission === "granted" ? "Notificações ativas" : "Ativar notificações"}
+          </span>
+        </button>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
