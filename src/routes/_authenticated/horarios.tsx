@@ -136,13 +136,14 @@ function HorariosPage() {
               {groups!.map((g) => (
                 <label
                   key={g.id}
-                  className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background/60 px-3 py-2 text-sm"
+                  className="flex min-w-0 cursor-pointer items-center gap-3 rounded-lg border border-border bg-background/60 px-3 py-2 text-sm"
                 >
                   <Checkbox
                     checked={groupIds.includes(g.id)}
                     onCheckedChange={() => toggleGroup(g.id)}
+                    className="shrink-0"
                   />
-                  <span className="truncate">{g.name}</span>
+                  <span className="min-w-0 flex-1 truncate">{g.name}</span>
                 </label>
               ))}
             </div>
