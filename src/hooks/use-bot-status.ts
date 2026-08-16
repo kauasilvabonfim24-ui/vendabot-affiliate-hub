@@ -82,7 +82,7 @@ export function useConnectWhatsApp() {
         status: "requested",
         qr_code: null,
         updated_at: new Date().toISOString(),
-      });
+      } as never);
       if (error) throw error;
     },
     onSuccess: () => {
