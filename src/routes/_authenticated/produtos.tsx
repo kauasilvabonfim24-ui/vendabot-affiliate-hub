@@ -236,10 +236,10 @@ function ProdutosPage() {
                     src={p.image_url}
                     alt={p.name}
                     loading="lazy"
-                    className="h-14 w-14 rounded-lg border border-border object-cover"
+                    className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
                   />
                 ) : (
-                  <div className="h-14 w-14 rounded-lg border border-border bg-secondary" />
+                  <div className="h-14 w-14 shrink-0 rounded-lg border border-border bg-secondary" />
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{p.name}</p>
@@ -257,7 +257,7 @@ function ProdutosPage() {
                     </span>
                   </p>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex shrink-0 gap-1">
                   <Button variant="ghost" size="icon" onClick={() => startEdit(p)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
