@@ -16,40 +16,43 @@ export type Database = {
     Tables: {
       bot_auth_state: {
         Row: {
-          data: Json
-          id: string
+          data: string
+          key: string
           updated_at: string
+          user_id: string
         }
         Insert: {
-          data: Json
-          id: string
+          data: string
+          key: string
           updated_at?: string
+          user_id: string
         }
         Update: {
-          data?: Json
-          id?: string
+          data?: string
+          key?: string
           updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
       bot_status: {
         Row: {
           qr_code: string | null
-          session_id: string
           status: string
           updated_at: string
+          user_id: string
         }
         Insert: {
           qr_code?: string | null
-          session_id: string
           status?: string
           updated_at?: string
+          user_id: string
         }
         Update: {
           qr_code?: string | null
-          session_id?: string
           status?: string
           updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -80,6 +83,36 @@ export type Database = {
           updated_at?: string
           user_id?: string
           whatsapp_gid?: string
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          cakto_product_id: string | null
+          created_at: string
+          id: string
+          max_groups: number | null
+          max_schedules: number | null
+          name: string
+          price: number
+        }
+        Insert: {
+          cakto_product_id?: string | null
+          created_at?: string
+          id: string
+          max_groups?: number | null
+          max_schedules?: number | null
+          name: string
+          price: number
+        }
+        Update: {
+          cakto_product_id?: string | null
+          created_at?: string
+          id?: string
+          max_groups?: number | null
+          max_schedules?: number | null
+          name?: string
+          price?: number
         }
         Relationships: []
       }
@@ -158,24 +191,89 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          cakto_subscription_id: string | null
+          created_at: string
+          current_period_end: string | null
+          plan_id: string
+          status: string
+          terms_accepted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cakto_subscription_id?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          plan_id: string
+          status?: string
+          terms_accepted_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cakto_subscription_id?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          plan_id?: string
+          status?: string
+          terms_accepted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_debug_log: {
+        Row: {
+          created_at: string
+          id: number
+          note: string | null
+          payload: Json
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          note?: string | null
+          payload: Json
+          source: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          note?: string | null
+          payload?: Json
+          source?: string
+        }
+        Relationships: []
+      }
       whatsapp_groups_available: {
         Row: {
           gid: string
           name: string
-          session_id: string
           updated_at: string
+          user_id: string
         }
         Insert: {
           gid: string
           name: string
-          session_id: string
           updated_at?: string
+          user_id: string
         }
         Update: {
           gid?: string
           name?: string
-          session_id?: string
           updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -184,7 +282,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_id_by_email: { Args: { lookup_email: string }; Returns: string }
+      has_active_subscription: { Args: { uid: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

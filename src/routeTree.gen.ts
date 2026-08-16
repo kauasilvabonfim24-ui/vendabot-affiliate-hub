@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedConexaoRouteImport } from './routes/_authenticated/conexao'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
 import { Route as AuthenticatedHorariosRouteImport } from './routes/_authenticated/horarios'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
+import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
 import { Route as AuthenticatedPreviewIaRouteImport } from './routes/_authenticated/preview-ia'
 import { Route as AuthenticatedProdutosRouteImport } from './routes/_authenticated/produtos'
 
@@ -31,6 +33,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedConexaoRoute = AuthenticatedConexaoRouteImport.update({
@@ -53,6 +60,11 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlanosRoute = AuthenticatedPlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPreviewIaRoute = AuthenticatedPreviewIaRouteImport.update({
   id: '/preview-ia',
   path: '/preview-ia',
@@ -67,20 +79,24 @@ const AuthenticatedProdutosRoute = AuthenticatedProdutosRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/termos': typeof TermosRoute
   '/conexao': typeof AuthenticatedConexaoRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/painel': typeof AuthenticatedPainelRoute
+  '/planos': typeof AuthenticatedPlanosRoute
   '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/termos': typeof TermosRoute
   '/conexao': typeof AuthenticatedConexaoRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/painel': typeof AuthenticatedPainelRoute
+  '/planos': typeof AuthenticatedPlanosRoute
   '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
 }
@@ -89,10 +105,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/termos': typeof TermosRoute
   '/_authenticated/conexao': typeof AuthenticatedConexaoRoute
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
   '/_authenticated/horarios': typeof AuthenticatedHorariosRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
+  '/_authenticated/planos': typeof AuthenticatedPlanosRoute
   '/_authenticated/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
 }
@@ -101,20 +119,24 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/termos'
     | '/conexao'
     | '/grupos'
     | '/horarios'
     | '/painel'
+    | '/planos'
     | '/preview-ia'
     | '/produtos'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/termos'
     | '/conexao'
     | '/grupos'
     | '/horarios'
     | '/painel'
+    | '/planos'
     | '/preview-ia'
     | '/produtos'
   id:
@@ -122,10 +144,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/termos'
     | '/_authenticated/conexao'
     | '/_authenticated/grupos'
     | '/_authenticated/horarios'
     | '/_authenticated/painel'
+    | '/_authenticated/planos'
     | '/_authenticated/preview-ia'
     | '/_authenticated/produtos'
   fileRoutesById: FileRoutesById
@@ -134,6 +158,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  TermosRoute: typeof TermosRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -157,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/conexao': {
@@ -187,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/planos': {
+      id: '/_authenticated/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof AuthenticatedPlanosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/preview-ia': {
       id: '/_authenticated/preview-ia'
       path: '/preview-ia'
@@ -209,6 +248,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGruposRoute: typeof AuthenticatedGruposRoute
   AuthenticatedHorariosRoute: typeof AuthenticatedHorariosRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
+  AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
   AuthenticatedPreviewIaRoute: typeof AuthenticatedPreviewIaRoute
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
 }
@@ -218,6 +258,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGruposRoute: AuthenticatedGruposRoute,
   AuthenticatedHorariosRoute: AuthenticatedHorariosRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
+  AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
   AuthenticatedPreviewIaRoute: AuthenticatedPreviewIaRoute,
   AuthenticatedProdutosRoute: AuthenticatedProdutosRoute,
 }
@@ -229,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  TermosRoute: TermosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
