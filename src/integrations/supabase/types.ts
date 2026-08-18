@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_config: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       bot_auth_state: {
         Row: {
           data: string
@@ -158,6 +173,90 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_clicks: {
+        Row: {
+          code: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: never
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: never
+        }
+        Relationships: []
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          cakto_subscription_id: string | null
+          created_at: string
+          id: number
+          referred_user_id: string
+          referrer_user_id: string
+          reward_days: number
+        }
+        Insert: {
+          cakto_subscription_id?: string | null
+          created_at?: string
+          id?: never
+          referred_user_id: string
+          referrer_user_id: string
+          reward_days: number
+        }
+        Update: {
+          cakto_subscription_id?: string | null
+          created_at?: string
+          id?: never
+          referred_user_id?: string
+          referrer_user_id?: string
+          reward_days?: number
+        }
+        Relationships: []
+      }
+      referral_signups: {
+        Row: {
+          created_at: string
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+        }
+        Update: {
+          created_at?: string
+          referral_code?: string
+          referred_user_id?: string
+          referrer_user_id?: string
+        }
+        Relationships: []
+      }
       schedules: {
         Row: {
           category: string | null
@@ -282,6 +381,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      capture_referral: { Args: { p_code: string }; Returns: boolean }
+      ensure_referral_code: { Args: Record<PropertyKey, never>; Returns: string }
+      get_referral_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          code: string | null
+          clicks: number
+          signups: number
+          valid_referrals: number
+          days_earned: number
+          reward_days_config: number
+        }[]
+      }
+      grant_referral_reward: {
+        Args: { p_referred_user_id: string; p_cakto_subscription_id: string | null }
+        Returns: undefined
+      }
+      register_referral_click: { Args: { p_code: string }; Returns: undefined }
       get_user_id_by_email: { Args: { lookup_email: string }; Returns: string }
       has_active_subscription: { Args: { uid: string }; Returns: boolean }
     }
@@ -298,7 +415,7 @@ type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
 type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
-export type Tables<
+export type Tables
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
@@ -327,7 +444,7 @@ export type Tables<
       : never
     : never
 
-export type TablesInsert<
+export type TablesInsert
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
@@ -352,7 +469,7 @@ export type TablesInsert<
       : never
     : never
 
-export type TablesUpdate<
+export type TablesUpdate
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
@@ -377,7 +494,7 @@ export type TablesUpdate<
       : never
     : never
 
-export type Enums<
+export type Enums
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
@@ -394,7 +511,7 @@ export type Enums<
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
-export type CompositeTypes<
+export type CompositeTypes
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
