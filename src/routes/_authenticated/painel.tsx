@@ -55,10 +55,10 @@ function PainelPage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Painel</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Painel</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Acompanhe a operação do seu bot de ofertas.
           </p>
@@ -86,23 +86,23 @@ function PainelPage() {
         </button>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
             key={label}
             to={to}
-            className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/50"
+            className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50 sm:p-5"
           >
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">{label}</span>
               <Icon className="h-4 w-4 text-primary" />
             </div>
-            <p className="mt-3 font-display text-4xl font-bold">{value}</p>
+            <p className="mt-2 font-display text-3xl font-bold sm:mt-3 sm:text-4xl">{value}</p>
           </Link>
         ))}
       </div>
 
-      <section className="rounded-xl border border-border bg-card p-5">
+      <section className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <h2 className="text-lg font-semibold">Próximos disparos</h2>
         {upcoming.length === 0 ? (
           <p className="mt-3 text-sm text-muted-foreground">
@@ -112,11 +112,13 @@ function PainelPage() {
             </Link>
           </p>
         ) : (
-          <ul className="mt-4 divide-y divide-border">
+          <ul className="mt-3 divide-y divide-border sm:mt-4">
             {upcoming.slice(0, 6).map((s) => (
-              <li key={s.id} className="flex items-center justify-between py-3">
+              <li key={s.id} className="flex items-center justify-between py-2.5 sm:py-3">
                 <div className="flex items-center gap-3">
-                  <span className="font-display text-xl font-semibold text-primary">{s.time}</span>
+                  <span className="font-display text-lg font-semibold text-primary sm:text-xl">
+                    {s.time}
+                  </span>
                   <span className="text-sm text-muted-foreground">{repeatLabel(s.repeat)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
