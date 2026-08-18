@@ -1,6 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BarChart3, Package, Clock, Users, Sparkles, LogOut, Bot, QrCode } from "lucide-react";
+import {
+  BarChart3,
+  Package,
+  Clock,
+  Users,
+  Sparkles,
+  LogOut,
+  Bot,
+  QrCode,
+  Gift,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
 
@@ -11,6 +21,7 @@ const nav = [
   { to: "/grupos", label: "Grupos", icon: Users },
   { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
+  { to: "/indicacoes", label: "Indique e Ganhe", icon: Gift },
 ] as const;
 
 function useBotStatusVisual() {
@@ -60,7 +71,9 @@ export function AppSidebar() {
         className="mx-5 mt-5 flex items-center gap-2 rounded-lg border border-sidebar-border bg-background/60 px-3 py-2 transition-colors hover:border-primary/40"
       >
         <span className="relative flex h-2.5 w-2.5">
-          <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
+          <span
+            className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`}
+          />
           <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${dotClass}`} />
         </span>
         <span className="text-xs font-medium text-muted-foreground">{statusLabel}</span>
@@ -105,7 +118,9 @@ export function MobileBottomNav() {
           activeProps={{ className: "text-primary" }}
         >
           {to === "/conexao" && (
-            <span className={`absolute top-1.5 right-[calc(50%-14px)] h-1.5 w-1.5 rounded-full ${dotClass}`} />
+            <span
+              className={`absolute top-1.5 right-[calc(50%-14px)] h-1.5 w-1.5 rounded-full ${dotClass}`}
+            />
           )}
           <Icon className="h-5 w-5" />
           <span className="leading-none">{label}</span>
