@@ -70,10 +70,10 @@ function IndicacoesPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <header>
-        <h1 className="flex items-center gap-2 text-3xl font-bold">
-          <Gift className="h-7 w-7 text-primary" />
+        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
+          <Gift className="h-6 w-6 text-primary sm:h-7 sm:w-7" />
           Indique e Ganhe
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -83,7 +83,7 @@ function IndicacoesPage() {
         </p>
       </header>
 
-      <section className="rounded-xl border border-border bg-card p-5">
+      <section className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <h2 className="text-sm font-medium text-muted-foreground">Seu link de indicação</h2>
         {isLoading ? (
           <div className="mt-3 h-11 w-full animate-pulse rounded-lg bg-secondary" />
@@ -115,15 +115,17 @@ function IndicacoesPage() {
       </section>
 
       <section>
-        <h2 className="mb-4 text-lg font-semibold">Seus resultados</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="mb-3 text-lg font-semibold sm:mb-4">Seus resultados</h2>
+        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {cards.map(({ label, value, icon: Icon }) => (
-            <div key={label} className="rounded-xl border border-border bg-card p-5">
+            <div key={label} className="rounded-xl border border-border bg-card p-4 sm:p-5">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{label}</span>
                 <Icon className="h-4 w-4 text-primary" />
               </div>
-              <p className="mt-3 font-display text-4xl font-bold">{isLoading ? "–" : value}</p>
+              <p className="mt-2 font-display text-3xl font-bold sm:mt-3 sm:text-4xl">
+                {isLoading ? "–" : value}
+              </p>
             </div>
           ))}
         </div>
