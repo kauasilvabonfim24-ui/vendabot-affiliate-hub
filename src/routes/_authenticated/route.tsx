@@ -8,6 +8,17 @@ export const Route = createFileRoute("/_authenticated")({
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
 
+    // Se a pessoa chegou por um link /r/CODIGO antes de logar, o código ficou
+    // guardado no navegador — captura aqui, 1x, no primeiro carregamento logado.
+    // Fire-and-forget: a função é idempotente e nunca deve travar a navegação.
+    if (typeof window !== "undefined") {
+      const pendingCode = localStorage.getItem("vendabot_ref_code");
+      if (pendingCode) {
+        localStorage.removeItem("vendabot_ref_code");
+        void supabase.rpc("capture_referral" as never, { p_code: pendingCode } as never);
+      }
+    }
+
     // A tela de planos precisa ficar acessível mesmo sem assinatura ativa,
     // senão o usuário nunca conseguiria chegar até ela pra assinar.
     if (location.pathname !== "/planos") {
