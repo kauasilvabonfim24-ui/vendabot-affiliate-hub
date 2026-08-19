@@ -10,12 +10,17 @@ export const Route = createFileRoute("/_authenticated")({
 
     // Se a pessoa chegou por um link /r/CODIGO antes de logar, o código ficou
     // guardado no navegador — captura aqui, 1x, no primeiro carregamento logado.
-    // Fire-and-forget: a função é idempotente e nunca deve travar a navegação.
+    // Espera a confirmação do servidor antes de seguir (evita perder a captura
+    // numa corrida com o redirect pra /planos que acontece logo abaixo).
     if (typeof window !== "undefined") {
       const pendingCode = localStorage.getItem("vendabot_ref_code");
       if (pendingCode) {
-        localStorage.removeItem("vendabot_ref_code");
-        void supabase.rpc("capture_referral" as never, { p_code: pendingCode } as never);
+        try {
+          await supabase.rpc("capture_referral" as never, { p_code: pendingCode } as never);
+          localStorage.removeItem("vendabot_ref_code");
+        } catch {
+          // falha de rede: mantém o código guardado pra tentar de novo na próxima navegação
+        }
       }
     }
 
