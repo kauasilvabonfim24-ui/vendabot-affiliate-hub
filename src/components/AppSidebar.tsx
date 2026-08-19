@@ -10,6 +10,7 @@ import {
   Bot,
   QrCode,
   Gift,
+  LifeBuoy,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
@@ -22,6 +23,7 @@ const nav = [
   { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
   { to: "/indicacoes", label: "Indique e Ganhe", icon: Gift },
+  { to: "/suporte", label: "Suporte", icon: LifeBuoy },
 ] as const;
 
 function useBotStatusVisual() {
