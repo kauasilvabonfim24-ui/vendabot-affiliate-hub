@@ -434,6 +434,10 @@ export type Database = {
     Functions: {
       capture_referral: { Args: { p_code: string }; Returns: boolean }
       ensure_referral_code: { Args: Record<PropertyKey, never>; Returns: string }
+      get_emails_by_ids: {
+        Args: { ids: string[] }
+        Returns: { id: string; email: string }[]
+      }
       get_referral_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
