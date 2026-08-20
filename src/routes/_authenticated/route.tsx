@@ -2,10 +2,12 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar, MobileBottomNav } from "@/components/AppSidebar";
 
-// Guarda por alguns segundos se a assinatura está ativa, pra não bater no
-// servidor de novo a cada clique no menu — só refaz a checagem quando expira.
+// Só guarda em cache quando a assinatura JÁ está ativa (isso raramente muda
+// de repente, então é seguro reaproveitar por alguns segundos). Quando NÃO
+// está ativa, nunca usa cache — sempre confere ao vivo, pra quem acabou de
+// pagar ver a tela liberar na hora, sem nenhum atraso.
 const SUBSCRIPTION_CACHE_TTL_MS = 30_000;
-let subscriptionCache: { userId: string; ativo: boolean; expiresAt: number } | null = null;
+let subscriptionCache: { userId: string; expiresAt: number } | null = null;
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -36,17 +38,10 @@ export const Route = createFileRoute("/_authenticated")({
     // senão o usuário nunca conseguiria chegar até ela pra assinar.
     if (location.pathname !== "/planos") {
       const now = Date.now();
-      const cached =
-        subscriptionCache &&
-        subscriptionCache.userId === user.id &&
-        subscriptionCache.expiresAt > now
-          ? subscriptionCache
-          : null;
+      const jaSabemosQueEstaAtivo =
+        subscriptionCache && subscriptionCache.userId === user.id && subscriptionCache.expiresAt > now;
 
-      let ativo: boolean;
-      if (cached) {
-        ativo = cached.ativo;
-      } else {
+      if (!jaSabemosQueEstaAtivo) {
         const { data: sub } = await supabase
           .from("subscriptions" as never)
           .select("status,current_period_end")
@@ -54,15 +49,18 @@ export const Route = createFileRoute("/_authenticated")({
           .maybeSingle();
 
         const row = sub as unknown as { status: string; current_period_end: string | null } | null;
-        ativo =
+        const ativo =
           !!row &&
           row.status === "active" &&
           (!row.current_period_end || new Date(row.current_period_end) > new Date());
 
-        subscriptionCache = { userId: user.id, ativo, expiresAt: now + SUBSCRIPTION_CACHE_TTL_MS };
-      }
+        if (!ativo) {
+          subscriptionCache = null; // nunca guarda resultado negativo em cache
+          throw redirect({ to: "/planos" });
+        }
 
-      if (!ativo) throw redirect({ to: "/planos" });
+        subscriptionCache = { userId: user.id, expiresAt: now + SUBSCRIPTION_CACHE_TTL_MS };
+      }
     }
 
     return { user };
