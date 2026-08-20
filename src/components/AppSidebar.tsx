@@ -125,12 +125,12 @@ export function MobileBottomNav() {
   const { dotClass } = useBotStatusVisual();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 flex items-stretch border-t border-sidebar-border bg-sidebar pb-[env(safe-area-inset-bottom)] md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex snap-x snap-mandatory items-stretch gap-1 overflow-x-auto border-t border-sidebar-border bg-sidebar px-1 pb-[env(safe-area-inset-bottom)] [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden">
       {nav.map(({ to, label, icon: Icon }) => (
         <Link
           key={to}
           to={to}
-          className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium text-sidebar-foreground/70"
+          className="relative flex min-w-[72px] shrink-0 snap-start flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium text-sidebar-foreground/70"
           activeProps={{ className: "text-primary" }}
         >
           {to === "/conexao" && (
@@ -139,7 +139,7 @@ export function MobileBottomNav() {
             />
           )}
           <Icon className="h-5 w-5" />
-          <span className="leading-none">{label}</span>
+          <span className="leading-none whitespace-nowrap">{label}</span>
         </Link>
       ))}
     </nav>
