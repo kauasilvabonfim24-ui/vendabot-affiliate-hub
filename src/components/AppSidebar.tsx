@@ -11,9 +11,11 @@ import {
   QrCode,
   Gift,
   LifeBuoy,
+  ShieldCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
+import { useIsAdmin } from "@/hooks/use-admin";
 
 const nav = [
   { to: "/painel", label: "Painel", icon: BarChart3 },
@@ -55,6 +57,7 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { dotClass, statusLabel } = useBotStatusVisual();
+  const { data: isAdmin } = useIsAdmin();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar md:flex">
@@ -93,6 +96,17 @@ export function AppSidebar() {
             {label}
           </Link>
         ))}
+
+        {isAdmin && (
+          <Link
+            to="/admin/suporte"
+            className="mt-2 flex items-center gap-3 rounded-lg border border-dashed border-sidebar-border px-3 py-2.5 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+            activeProps={{ className: "bg-primary/12 text-primary hover:bg-primary/12" }}
+          >
+            <ShieldCheck className="h-4 w-4" />
+            Admin — Suporte
+          </Link>
+        )}
       </nav>
 
       <button
