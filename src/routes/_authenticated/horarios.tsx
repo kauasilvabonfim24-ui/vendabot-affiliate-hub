@@ -90,14 +90,35 @@ function HorariosPage() {
         <h2 className="mb-4 text-lg font-semibold">Novo horário</h2>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
-            <Label htmlFor="time">Horário</Label>
-            <Input
-              id="time"
-              type="time"
-              required
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            />
+            <Label htmlFor="time-hour">Horário</Label>
+            <div className="flex items-center gap-2">
+              <select
+                id="time-hour"
+                aria-label="Hora"
+                value={time.split(":")[0] ?? "09"}
+                onChange={(e) => setTime(`${e.target.value}:${time.split(":")[1] ?? "00"}`)}
+                className="h-9 flex-1 rounded-md border border-input bg-background px-2 text-center text-sm"
+              >
+                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")).map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+              <span className="text-muted-foreground">:</span>
+              <select
+                aria-label="Minuto"
+                value={time.split(":")[1] ?? "00"}
+                onChange={(e) => setTime(`${time.split(":")[0] ?? "09"}:${e.target.value}`)}
+                className="h-9 flex-1 rounded-md border border-input bg-background px-2 text-center text-sm"
+              >
+                {Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0")).map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="repeat">Repetição</Label>
