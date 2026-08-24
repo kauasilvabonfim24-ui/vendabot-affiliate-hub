@@ -70,9 +70,9 @@ function IndicacoesPage() {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 pwa:space-y-4! sm:space-y-8">
       <header>
-        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
+        <h1 className="flex items-center gap-2 text-2xl pwa:text-xl! font-bold sm:text-3xl">
           <Gift className="h-6 w-6 text-primary sm:h-7 sm:w-7" />
           Indique e Ganhe
         </h1>
@@ -116,14 +116,14 @@ function IndicacoesPage() {
 
       <section>
         <h2 className="mb-3 text-lg font-semibold sm:mb-4">Seus resultados</h2>
-        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+        <div className="grid gap-3 pwa:gap-2! sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {cards.map(({ label, value, icon: Icon }) => (
-            <div key={label} className="rounded-xl border border-border bg-card p-4 sm:p-5">
+            <div key={label} className="rounded-xl border border-border bg-card p-4 pwa:p-3! sm:p-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">{label}</span>
+                <span className="text-sm pwa:text-xs! text-muted-foreground">{label}</span>
                 <Icon className="h-4 w-4 text-primary" />
               </div>
-              <p className="mt-2 font-display text-3xl font-bold sm:mt-3 sm:text-4xl">
+              <p className="mt-2 pwa:mt-1! font-display text-3xl pwa:text-2xl! font-bold sm:mt-3 sm:text-4xl">
                 {isLoading ? "–" : value}
               </p>
             </div>
