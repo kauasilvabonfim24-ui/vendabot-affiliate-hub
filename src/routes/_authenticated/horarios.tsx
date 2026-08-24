@@ -78,17 +78,17 @@ function HorariosPage() {
   const groupName = (id: string) => groups?.find((g) => g.id === id)?.name ?? "Grupo removido";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pwa:space-y-5!">
       <header>
-        <h1 className="text-3xl font-bold">Horários</h1>
+        <h1 className="text-3xl pwa:text-xl! font-bold">Horários</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Defina quando o bot deve enviar as ofertas.
         </p>
       </header>
 
-      <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Novo horário</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+      <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
+        <h2 className="mb-4 text-lg pwa:text-base! font-semibold">Novo horário</h2>
+        <div className="grid gap-4 pwa:gap-3! md:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="time-hour">Horário</Label>
             <div className="flex items-center gap-2">
@@ -178,8 +178,8 @@ function HorariosPage() {
         </div>
       </form>
 
-      <section className="rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Horários cadastrados</h2>
+      <section className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
+        <h2 className="mb-4 text-lg pwa:text-base! font-semibold">Horários cadastrados</h2>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando...</p>
         ) : (schedules?.length ?? 0) === 0 ? (
