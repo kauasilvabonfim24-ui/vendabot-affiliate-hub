@@ -78,9 +78,9 @@ function SuportePage() {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 pwa:space-y-4! sm:space-y-8">
       <header>
-        <h1 className="flex items-center gap-2 text-2xl font-bold sm:text-3xl">
+        <h1 className="flex items-center gap-2 text-2xl pwa:text-xl! font-bold sm:text-3xl">
           <LifeBuoy className="h-6 w-6 text-primary sm:h-7 sm:w-7" />
           Suporte
         </h1>
