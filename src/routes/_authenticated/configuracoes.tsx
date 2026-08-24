@@ -38,9 +38,9 @@ function ConfiguracoesPage() {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 pwa:space-y-4! sm:space-y-8">
       <header>
-        <h1 className="text-2xl font-bold sm:text-3xl">Configurações</h1>
+        <h1 className="text-2xl pwa:text-xl! font-bold sm:text-3xl">Configurações</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Sua conta, assinatura e outras opções do VendaBot.
         </p>
