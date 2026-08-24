@@ -72,7 +72,7 @@ function AuthenticatedLayout() {
   return (
     <div className="min-h-screen bg-background">
       <AppSidebar />
-      <main className="px-4 py-6 pb-24 md:ml-64 md:px-8 md:py-8 md:pb-8">
+      <main className="px-4 pwa:px-3! py-6 pwa:py-4! pb-24 md:ml-64 md:px-8 md:py-8 md:pb-8">
         <Outlet />
       </main>
       <MobileBottomNav />
