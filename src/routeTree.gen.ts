@@ -12,14 +12,20 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as AuthenticatedConexaoRouteImport } from './routes/_authenticated/conexao'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
 import { Route as AuthenticatedHorariosRouteImport } from './routes/_authenticated/horarios'
+import { Route as AuthenticatedIndicacoesRouteImport } from './routes/_authenticated/indicacoes'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
 import { Route as AuthenticatedPreviewIaRouteImport } from './routes/_authenticated/preview-ia'
 import { Route as AuthenticatedProdutosRouteImport } from './routes/_authenticated/produtos'
+import { Route as AuthenticatedSuporteRouteImport } from './routes/_authenticated/suporte'
+import { Route as RCodeRouteImport } from './routes/r.$code'
+import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,6 +41,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InicioRoute = InicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -45,6 +56,12 @@ const AuthenticatedConexaoRoute = AuthenticatedConexaoRouteImport.update({
   path: '/conexao',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedGruposRoute = AuthenticatedGruposRouteImport.update({
   id: '/grupos',
   path: '/grupos',
@@ -53,6 +70,11 @@ const AuthenticatedGruposRoute = AuthenticatedGruposRouteImport.update({
 const AuthenticatedHorariosRoute = AuthenticatedHorariosRouteImport.update({
   id: '/horarios',
   path: '/horarios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedIndicacoesRoute = AuthenticatedIndicacoesRouteImport.update({
+  id: '/indicacoes',
+  path: '/indicacoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
@@ -75,90 +97,144 @@ const AuthenticatedProdutosRoute = AuthenticatedProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSuporteRoute = AuthenticatedSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const RCodeRoute = RCodeRouteImport.update({
+  id: '/r/$code',
+  path: '/r/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminSuporteRoute =
+  AuthenticatedAdminSuporteRouteImport.update({
+    id: '/admin/suporte',
+    path: '/admin/suporte',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/inicio': typeof InicioRoute
   '/termos': typeof TermosRoute
   '/conexao': typeof AuthenticatedConexaoRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
+  '/indicacoes': typeof AuthenticatedIndicacoesRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
+  '/suporte': typeof AuthenticatedSuporteRoute
+  '/r/$code': typeof RCodeRoute
+  '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/inicio': typeof InicioRoute
   '/termos': typeof TermosRoute
   '/conexao': typeof AuthenticatedConexaoRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
+  '/indicacoes': typeof AuthenticatedIndicacoesRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
+  '/suporte': typeof AuthenticatedSuporteRoute
+  '/r/$code': typeof RCodeRoute
+  '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/inicio': typeof InicioRoute
   '/termos': typeof TermosRoute
   '/_authenticated/conexao': typeof AuthenticatedConexaoRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
   '/_authenticated/horarios': typeof AuthenticatedHorariosRoute
+  '/_authenticated/indicacoes': typeof AuthenticatedIndicacoesRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/_authenticated/planos': typeof AuthenticatedPlanosRoute
   '/_authenticated/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
+  '/_authenticated/suporte': typeof AuthenticatedSuporteRoute
+  '/r/$code': typeof RCodeRoute
+  '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/inicio'
     | '/termos'
     | '/conexao'
+    | '/configuracoes'
     | '/grupos'
     | '/horarios'
+    | '/indicacoes'
     | '/painel'
     | '/planos'
     | '/preview-ia'
     | '/produtos'
+    | '/suporte'
+    | '/r/$code'
+    | '/admin/suporte'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/inicio'
     | '/termos'
     | '/conexao'
+    | '/configuracoes'
     | '/grupos'
     | '/horarios'
+    | '/indicacoes'
     | '/painel'
     | '/planos'
     | '/preview-ia'
     | '/produtos'
+    | '/suporte'
+    | '/r/$code'
+    | '/admin/suporte'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/inicio'
     | '/termos'
     | '/_authenticated/conexao'
+    | '/_authenticated/configuracoes'
     | '/_authenticated/grupos'
     | '/_authenticated/horarios'
+    | '/_authenticated/indicacoes'
     | '/_authenticated/painel'
     | '/_authenticated/planos'
     | '/_authenticated/preview-ia'
     | '/_authenticated/produtos'
+    | '/_authenticated/suporte'
+    | '/r/$code'
+    | '/_authenticated/admin/suporte'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  InicioRoute: typeof InicioRoute
   TermosRoute: typeof TermosRoute
+  RCodeRoute: typeof RCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -184,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inicio': {
+      id: '/inicio'
+      path: '/inicio'
+      fullPath: '/inicio'
+      preLoaderRoute: typeof InicioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos': {
       id: '/termos'
       path: '/termos'
@@ -198,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConexaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/grupos': {
       id: '/_authenticated/grupos'
       path: '/grupos'
@@ -210,6 +300,13 @@ declare module '@tanstack/react-router' {
       path: '/horarios'
       fullPath: '/horarios'
       preLoaderRoute: typeof AuthenticatedHorariosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/indicacoes': {
+      id: '/_authenticated/indicacoes'
+      path: '/indicacoes'
+      fullPath: '/indicacoes'
+      preLoaderRoute: typeof AuthenticatedIndicacoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/painel': {
@@ -240,27 +337,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProdutosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/suporte': {
+      id: '/_authenticated/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof AuthenticatedSuporteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/r/$code': {
+      id: '/r/$code'
+      path: '/r/$code'
+      fullPath: '/r/$code'
+      preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/suporte': {
+      id: '/_authenticated/admin/suporte'
+      path: '/admin/suporte'
+      fullPath: '/admin/suporte'
+      preLoaderRoute: typeof AuthenticatedAdminSuporteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedConexaoRoute: typeof AuthenticatedConexaoRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedGruposRoute: typeof AuthenticatedGruposRoute
   AuthenticatedHorariosRoute: typeof AuthenticatedHorariosRoute
+  AuthenticatedIndicacoesRoute: typeof AuthenticatedIndicacoesRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
   AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
   AuthenticatedPreviewIaRoute: typeof AuthenticatedPreviewIaRoute
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
+  AuthenticatedSuporteRoute: typeof AuthenticatedSuporteRoute
+  AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConexaoRoute: AuthenticatedConexaoRoute,
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedGruposRoute: AuthenticatedGruposRoute,
   AuthenticatedHorariosRoute: AuthenticatedHorariosRoute,
+  AuthenticatedIndicacoesRoute: AuthenticatedIndicacoesRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
   AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
   AuthenticatedPreviewIaRoute: AuthenticatedPreviewIaRoute,
   AuthenticatedProdutosRoute: AuthenticatedProdutosRoute,
+  AuthenticatedSuporteRoute: AuthenticatedSuporteRoute,
+  AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -270,7 +396,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  InicioRoute: InicioRoute,
   TermosRoute: TermosRoute,
+  RCodeRoute: RCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
