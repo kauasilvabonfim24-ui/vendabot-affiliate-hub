@@ -55,10 +55,10 @@ function PainelPage() {
   });
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 pwa:space-y-4! sm:space-y-8">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold sm:text-3xl">Painel</h1>
+          <h1 className="text-2xl pwa:text-xl! font-bold sm:text-3xl">Painel</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Acompanhe a operação do seu bot de ofertas.
           </p>
@@ -86,18 +86,18 @@ function PainelPage() {
         </button>
       </header>
 
-      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+      <div className="grid gap-3 pwa:gap-2! sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
             key={label}
             to={to}
-            className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50 sm:p-5"
+            className="rounded-xl border border-border bg-card p-4 pwa:p-3! transition-colors hover:border-primary/50 sm:p-5"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">{label}</span>
+              <span className="text-sm pwa:text-xs! text-muted-foreground">{label}</span>
               <Icon className="h-4 w-4 text-primary" />
             </div>
-            <p className="mt-2 font-display text-3xl font-bold sm:mt-3 sm:text-4xl">{value}</p>
+            <p className="mt-2 pwa:mt-1! font-display text-3xl pwa:text-2xl! font-bold sm:mt-3 sm:text-4xl">{value}</p>
           </Link>
         ))}
       </div>
