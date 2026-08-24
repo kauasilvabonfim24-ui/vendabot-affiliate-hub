@@ -5,7 +5,9 @@ export const Route = createFileRoute("/")({
   beforeLoad: async () => {
     const { supabase } = await import("@/integrations/supabase/client");
     const { data } = await supabase.auth.getUser();
-    throw redirect({ to: data.user ? "/painel" : "/auth" });
+    // Usuário já logado vai direto pro painel; visitante novo vê a página de vendas primeiro.
+    if (data.user) throw redirect({ to: "/painel" });
+    throw redirect({ to: "/inicio" });
   },
   component: () => null,
 });
