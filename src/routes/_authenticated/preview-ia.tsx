@@ -38,16 +38,16 @@ function PreviewPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pwa:space-y-5!">
       <header>
-        <h1 className="text-3xl font-bold">Preview IA</h1>
+        <h1 className="text-3xl pwa:text-xl! font-bold">Preview IA</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Simulação da mensagem que o agente vai enviar nos grupos.
         </p>
       </header>
 
-      <div className="rounded-xl border border-ai/30 bg-card p-6">
-        <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+      <div className="rounded-xl border border-ai/30 bg-card p-6 pwa:p-4!">
+        <div className="grid gap-4 pwa:gap-3! md:grid-cols-[1fr_auto] md:items-end">
           <div className="space-y-2">
             <Label htmlFor="product">Produto</Label>
             <select
@@ -85,9 +85,9 @@ function PreviewPage() {
       </div>
 
       {message && (
-        <section className="rounded-xl border border-border bg-card p-6">
+        <section className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Mensagem gerada</h2>
+            <h2 className="text-lg pwa:text-base! font-semibold">Mensagem gerada</h2>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={() => generate(true)} className="gap-2">
                 <RefreshCw className="h-4 w-4" />
