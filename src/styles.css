@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Variante "pwa": só ativa quando o app está instalado e aberto direto da
+   tela inicial do celular (modo standalone). No navegador (site), mesmo no
+   celular, essas classes nunca entram em ação — o site continua exatamente
+   como está. Usada só pra reduzir um pouco os tamanhos que ficam grandes
+   demais no app instalado. */
+@custom-variant pwa (@media (display-mode: standalone));
+
 @theme inline {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
