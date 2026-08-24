@@ -112,17 +112,17 @@ function ProdutosPage() {
 
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pwa:space-y-5!">
       <header>
-        <h1 className="text-3xl font-bold">Produtos</h1>
+        <h1 className="text-3xl pwa:text-xl! font-bold">Produtos</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Cadastre as ofertas que o bot vai divulgar.
         </p>
       </header>
 
-      <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-6">
+      <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg pwa:text-base! font-semibold">
             {editingId ? "Editar produto" : "Novo produto"}
           </h2>
           {editingId && (
@@ -132,7 +132,7 @@ function ProdutosPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 pwa:gap-3! md:grid-cols-2">
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="name">Nome do produto</Label>
             <Input
@@ -221,8 +221,8 @@ function ProdutosPage() {
         </div>
       </form>
 
-      <section className="rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Produtos cadastrados</h2>
+      <section className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
+        <h2 className="mb-4 text-lg pwa:text-base! font-semibold">Produtos cadastrados</h2>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando...</p>
         ) : (products?.length ?? 0) === 0 ? (
