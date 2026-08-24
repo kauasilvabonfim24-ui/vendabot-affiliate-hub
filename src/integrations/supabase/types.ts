@@ -272,42 +272,6 @@ export type Database = {
         }
         Relationships: []
       }
-      support_messages: {
-        Row: {
-          admin_reply: string | null
-          category: string
-          created_at: string
-          id: number
-          message: string
-          rating: number | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          admin_reply?: string | null
-          category?: string
-          created_at?: string
-          id?: never
-          message: string
-          rating?: number | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          admin_reply?: string | null
-          category?: string
-          created_at?: string
-          id?: never
-          message?: string
-          rating?: number | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       schedules: {
         Row: {
           category: string | null
@@ -382,6 +346,42 @@ export type Database = {
           },
         ]
       }
+      support_messages: {
+        Row: {
+          admin_reply: string | null
+          category: string
+          created_at: string
+          id: number
+          message: string
+          rating: number | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_reply?: string | null
+          category?: string
+          created_at?: string
+          id?: never
+          message: string
+          rating?: number | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_reply?: string | null
+          category?: string
+          created_at?: string
+          id?: never
+          message?: string
+          rating?: number | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       webhook_debug_log: {
         Row: {
           created_at: string
@@ -433,29 +433,32 @@ export type Database = {
     }
     Functions: {
       capture_referral: { Args: { p_code: string }; Returns: boolean }
-      ensure_referral_code: { Args: Record<PropertyKey, never>; Returns: string }
+      ensure_referral_code: { Args: never; Returns: string }
       get_emails_by_ids: {
         Args: { ids: string[] }
-        Returns: { id: string; email: string }[]
-      }
-      get_referral_stats: {
-        Args: Record<PropertyKey, never>
         Returns: {
-          code: string | null
-          clicks: number
-          signups: number
-          valid_referrals: number
-          days_earned: number
-          reward_days_config: number
+          email: string
+          id: string
         }[]
       }
+      get_referral_stats: {
+        Args: never
+        Returns: {
+          clicks: number
+          code: string
+          days_earned: number
+          reward_days_config: number
+          signups: number
+          valid_referrals: number
+        }[]
+      }
+      get_user_id_by_email: { Args: { lookup_email: string }; Returns: string }
       grant_referral_reward: {
-        Args: { p_referred_user_id: string; p_cakto_subscription_id: string | null }
+        Args: { p_cakto_subscription_id: string; p_referred_user_id: string }
         Returns: undefined
       }
-      register_referral_click: { Args: { p_code: string }; Returns: undefined }
-      get_user_id_by_email: { Args: { lookup_email: string }; Returns: string }
       has_active_subscription: { Args: { uid: string }; Returns: boolean }
+      register_referral_click: { Args: { p_code: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
