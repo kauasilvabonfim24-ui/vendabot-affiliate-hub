@@ -56,14 +56,14 @@ function PlanosPage() {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-6 pwa:gap-4! sm:grid-cols-2">
           {plans?.map((plan) => (
             <div
               key={plan.id}
-              className="flex flex-col rounded-xl border border-border bg-card p-6"
+              className="flex flex-col rounded-xl border border-border bg-card p-6 pwa:p-4!"
             >
-              <h2 className="font-display text-lg font-semibold">{plan.name}</h2>
-              <p className="mt-2 text-3xl font-bold text-primary">
+              <h2 className="font-display text-lg pwa:text-base! font-semibold">{plan.name}</h2>
+              <p className="mt-2 text-3xl pwa:text-2xl! font-bold text-primary">
                 R$ {plan.price.toFixed(2).replace(".", ",")}
                 <span className="text-sm font-normal text-muted-foreground">
                   /mês
