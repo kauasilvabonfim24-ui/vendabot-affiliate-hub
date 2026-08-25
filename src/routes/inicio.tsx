@@ -69,14 +69,17 @@ const CONFIANCA = [
 
 const DEPOIMENTOS = [
   {
+    avatar: "/avatars/depoimento-1.jpg",
     texto: "Economizei horas do meu dia e minha divulgação aumentou muito. Mudou meu jogo.",
     autor: "Afiliado Shopee",
   },
   {
+    avatar: "/avatars/depoimento-2.jpg",
     texto: "Envio pra vários grupos em minutos. Sobra mais tempo pra criar conteúdo e vender.",
     autor: "Afiliado Mercado Livre",
   },
   {
+    avatar: "/avatars/depoimento-3.jpg",
     texto: "Simples de usar, seguro e o suporte é top. Recomendo demais.",
     autor: "Afiliado",
   },
