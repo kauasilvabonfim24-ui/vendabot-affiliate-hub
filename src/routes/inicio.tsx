@@ -69,14 +69,17 @@ const CONFIANCA = [
 
 const DEPOIMENTOS = [
   {
+    avatar: "/avatars/depoimento-1.jpg",
     texto: "Economizei horas do meu dia e minha divulgação aumentou muito. Mudou meu jogo.",
     autor: "Afiliado Shopee",
   },
   {
+    avatar: "/avatars/depoimento-2.jpg",
     texto: "Envio pra vários grupos em minutos. Sobra mais tempo pra criar conteúdo e vender.",
     autor: "Afiliado Mercado Livre",
   },
   {
+    avatar: "/avatars/depoimento-3.jpg",
     texto: "Simples de usar, seguro e o suporte é top. Recomendo demais.",
     autor: "Afiliado",
   },
@@ -260,13 +263,25 @@ function LandingPage() {
             {DEPOIMENTOS.map((d) => (
               <DepthCard key={d.autor}>
                 <div className="p-4">
-                  <div className="flex gap-0.5 text-primary">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                    ))}
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={d.avatar}
+                      alt={`Foto de perfil de ${d.autor}`}
+                      width={40}
+                      height={40}
+                      loading="lazy"
+                      className="h-10 w-10 rounded-full border border-primary/30 object-cover"
+                    />
+                    <div>
+                      <p className="text-sm font-semibold">{d.autor}</p>
+                      <div className="flex gap-0.5 text-primary">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} className="h-3 w-3 fill-current" />
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm leading-snug">&ldquo;{d.texto}&rdquo;</p>
-                  <p className="mt-2 text-xs text-muted-foreground">— {d.autor}</p>
+                  <p className="mt-3 text-sm leading-snug">&ldquo;{d.texto}&rdquo;</p>
                 </div>
               </DepthCard>
             ))}
