@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LifeBuoy, FileText, ShieldCheck, LogOut, ChevronRight, CreditCard } from "lucide-react";
+import { LifeBuoy, FileText, ShieldCheck, LogOut, ChevronRight, CreditCard, PlayCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-admin";
 import { useMySubscription } from "@/hooks/use-subscription";
@@ -89,6 +89,16 @@ function ConfiguracoesPage() {
           </Link>
         ))}
 
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("vendabot:reopen-tour"))}
+          className="flex w-full items-center gap-3 border-t border-border px-4 py-3.5 text-sm font-medium transition-colors hover:bg-accent"
+        >
+          <PlayCircle className="h-4 w-4 text-primary" />
+          <span className="flex-1 text-left">Ver tutorial novamente</span>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </button>
+
         {isAdmin && (
           <Link
             to="/admin/suporte"
@@ -103,7 +113,7 @@ function ConfiguracoesPage() {
 
       <button
         onClick={handleSignOut}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive transition-colors hover:bg[...]"
       >
         <LogOut className="h-4 w-4" />
         Sair da conta
@@ -111,3 +121,4 @@ function ConfiguracoesPage() {
     </div>
   );
 }
+
