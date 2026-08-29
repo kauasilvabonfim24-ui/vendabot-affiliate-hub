@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar, MobileBottomNav } from "@/components/AppSidebar";
+import { OnboardingTour } from "@/components/OnboardingTour";
 
 // Só guarda em cache quando a assinatura JÁ está ativa (isso raramente muda
 // de repente, então é seguro reaproveitar por alguns segundos). Quando NÃO
@@ -76,6 +77,7 @@ function AuthenticatedLayout() {
         <Outlet />
       </main>
       <MobileBottomNav />
+      <OnboardingTour />
     </div>
   );
 }
