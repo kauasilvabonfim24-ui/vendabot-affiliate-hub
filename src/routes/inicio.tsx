@@ -13,6 +13,9 @@ import {
   ArrowRight,
   Check,
   Send,
+  Facebook,
+  Instagram,
+  Music,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
@@ -344,6 +347,36 @@ function LandingPage() {
             loading="lazy"
             className="mx-auto h-12 w-auto object-contain opacity-90"
           />
+          <p className="mt-4 text-xs font-medium text-foreground">@TITANO-COD</p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <a
+              href="https://facebook.com/TITANO-COD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+            >
+              <Facebook className="h-3.5 w-3.5" />
+              Facebook
+            </a>
+            <a
+              href="https://instagram.com/TITANO-COD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+            >
+              <Instagram className="h-3.5 w-3.5" />
+              Instagram
+            </a>
+            <a
+              href="https://tiktok.com/@TITANO-COD"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+            >
+              <Music className="h-3.5 w-3.5" />
+              TikTok
+            </a>
+          </div>
         </div>
       </footer>
     </main>
