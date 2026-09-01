@@ -130,6 +130,26 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+const MASCOT_URL = "https://i.postimg.cc/HsJHfBbV/Chat-GPT-Image-1-de-set-de-2026-08-41-11.png";
+
+// Mascote do VendaBot como marca d'água sutil, fixa, atrás/sobre o
+// conteúdo em todas as telas do app. Opacidade bem baixa + pointer-events
+// none pra nunca atrapalhar leitura de texto nem clique em botão nenhum.
+function MascotBackground() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed bottom-0 right-0 z-0 h-[70vh] w-[70vw] max-w-[560px] opacity-[0.07] mix-blend-screen md:h-[80vh] md:w-[45vw]"
+      style={{
+        backgroundImage: `url(${MASCOT_URL})`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "bottom right",
+        backgroundSize: "contain",
+      }}
+    />
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
@@ -194,6 +214,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <MascotBackground />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Toaster richColors position="top-right" />
