@@ -15,6 +15,7 @@ import {
   Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
 
 export const Route = createFileRoute("/inicio")({
   ssr: false,
@@ -331,6 +332,20 @@ function LandingPage() {
           </ul>
         </div>
       </section>
+
+      <footer className="border-t border-border px-4 py-8">
+        <div className="mx-auto max-w-lg text-center">
+          <p className="mb-3 text-xs text-muted-foreground">Plataforma feita por</p>
+          <img
+            src={titanouLogoAsset.url}
+            alt="TITANO-COD"
+            width={160}
+            height={60}
+            loading="lazy"
+            className="mx-auto h-12 w-auto object-contain opacity-90"
+          />
+        </div>
+      </footer>
     </main>
   );
 }
