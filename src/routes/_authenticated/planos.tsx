@@ -178,9 +178,9 @@ function PlanosPage() {
                 <p className="mt-1 text-xs text-muted-foreground">
                   Cupom{" "}
                   <span className="font-mono font-semibold text-primary">
-                    {PROMO_CODES[plan.id].code}
+                    {PROMO_CODES[plan.id]?.code}
                   </span>{" "}
-                  = {PROMO_CODES[plan.id].discount} off
+                  = {PROMO_CODES[plan.id]?.discount} off
                 </p>
               )}
               <ul className="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
