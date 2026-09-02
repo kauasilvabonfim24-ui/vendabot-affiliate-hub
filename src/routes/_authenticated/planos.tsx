@@ -1,8 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, PartyPopper, Copy, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+
+const PROMO_CODES: Record<string, { code: string; discount: string }> = {
+  basico: { code: "VENDABOT1", discount: "20%" },
+  pro: { code: "VENDABOT2", discount: "25%" },
+};
+const PROMO_SEEN_KEY = "vendabot_promo_seen";
 
 export const Route = createFileRoute("/_authenticated/planos")({
   head: () => ({
@@ -28,6 +42,27 @@ type Plan = {
 
 function PlanosPage() {
   const [termosAceitos, setTermosAceitos] = useState(false);
+  const [mostrarBalaoPromo, setMostrarBalaoPromo] = useState(false);
+  const [copiado, setCopiado] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Mostra o balão só na primeira vez que a pessoa cai nessa tela
+    // (normalmente logo depois do cadastro, já que /planos é pra onde
+    // todo mundo sem assinatura ativa é redirecionado).
+    const jaViu = localStorage.getItem(PROMO_SEEN_KEY);
+    if (!jaViu) {
+      setMostrarBalaoPromo(true);
+      localStorage.setItem(PROMO_SEEN_KEY, "1");
+    }
+  }, []);
+
+  function copiarCupom(code: string) {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiado(code);
+      toast.success("Cupom copiado!");
+      setTimeout(() => setCopiado(null), 2000);
+    });
+  }
 
   const { data: plans, isLoading } = useQuery({
     queryKey: ["plans"],
@@ -43,6 +78,49 @@ function PlanosPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
+      <Dialog open={mostrarBalaoPromo} onOpenChange={setMostrarBalaoPromo}>
+        <DialogContent className="max-w-sm text-center">
+          <DialogHeader className="items-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <PartyPopper className="h-7 w-7" />
+            </div>
+            <DialogTitle className="text-xl">Parabéns pelo cadastro! 🎉</DialogTitle>
+            <DialogDescription>
+              Você ganhou um cupom de desconto pra sua primeira assinatura do
+              VendaBot.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            {Object.entries(PROMO_CODES).map(([planId, promo]) => (
+              <div key={planId} className="rounded-lg border border-border p-3">
+                <p className="mb-2 text-xs text-muted-foreground">
+                  Plano {planId === "pro" ? "PRO" : "Básico"} — {promo.discount} de
+                  desconto
+                </p>
+                <button
+                  type="button"
+                  onClick={() => copiarCupom(promo.code)}
+                  className="mx-auto flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary bg-primary/10 px-4 py-2.5 font-mono text-base font-bold tracking-wider text-primary transition hover:bg-primary/20"
+                >
+                  {promo.code}
+                  {copiado === promo.code ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Copie o código do plano que você quiser e cole no campo de cupom
+            na página de pagamento, ao assinar.
+          </p>
+        </DialogContent>
+      </Dialog>
+
       <header className="mb-8 text-center">
         <h1 className="font-display text-2xl font-bold">Escolha seu plano</h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -69,6 +147,15 @@ function PlanosPage() {
                   /mês
                 </span>
               </p>
+              {PROMO_CODES[plan.id] && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Cupom{" "}
+                  <span className="font-mono font-semibold text-primary">
+                    {PROMO_CODES[plan.id].code}
+                  </span>{" "}
+                  = {PROMO_CODES[plan.id].discount} off
+                </p>
+              )}
               <ul className="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
