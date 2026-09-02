@@ -48,6 +48,9 @@ function AuthPage() {
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
+        // Dispara pro Meta Pixel só quando o cadastro realmente deu certo
+        // (não em quem apenas abre a tela ou só faz login).
+        (window as any).fbq?.("track", "CompleteRegistration");
         if (data.session) navigate({ to: "/painel", replace: true });
         else toast.success("Conta criada! Confirme seu e-mail para entrar.");
       }
