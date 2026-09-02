@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Loader2, PartyPopper, Copy, Check, AlertTriangle } from "lucide-react";
+import { CheckCircle2, Loader2, PartyPopper, Copy, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,14 +44,6 @@ function PlanosPage() {
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [mostrarBalaoPromo, setMostrarBalaoPromo] = useState(false);
   const [copiado, setCopiado] = useState<string | null>(null);
-
-  const { data: email } = useQuery({
-    queryKey: ["my-email"],
-    queryFn: async () => {
-      const { data } = await supabase.auth.getUser();
-      return data.user?.email ?? null;
-    },
-  });
 
   useEffect(() => {
     // Mostra o balão só na primeira vez que a pessoa cai nessa tela
@@ -137,25 +129,6 @@ function PlanosPage() {
         </p>
       </header>
 
-      <div className="mb-8 flex items-start gap-3 rounded-xl border border-ai/40 bg-ai/10 p-4 text-left">
-        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ai" />
-        <div className="text-sm">
-          <p className="font-semibold">Atenção: use o mesmo e-mail do cadastro</p>
-          <p className="mt-1 text-muted-foreground">
-            Confira certinho o e-mail que você usou pra criar sua conta aqui no
-            VendaBot e use exatamente esse mesmo e-mail no checkout do
-            pagamento. Se os e-mails forem diferentes, a liberação do app não
-            acontece automaticamente e seu acesso pode atrasar.
-          </p>
-          {email && (
-            <p className="mt-2 text-xs">
-              Seu e-mail de cadastro:{" "}
-              <span className="font-mono font-semibold text-primary">{email}</span>
-            </p>
-          )}
-        </div>
-      </div>
-
       {isLoading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -178,9 +151,9 @@ function PlanosPage() {
                 <p className="mt-1 text-xs text-muted-foreground">
                   Cupom{" "}
                   <span className="font-mono font-semibold text-primary">
-                    {PROMO_CODES[plan.id]?.code}
+                    {PROMO_CODES[plan.id].code}
                   </span>{" "}
-                  = {PROMO_CODES[plan.id]?.discount} off
+                  = {PROMO_CODES[plan.id].discount} off
                 </p>
               )}
               <ul className="mt-4 flex-1 space-y-2 text-sm text-muted-foreground">
@@ -207,7 +180,18 @@ function PlanosPage() {
                 rel="noreferrer"
                 aria-disabled={!termosAceitos}
                 onClick={(e) => {
-                  if (!termosAceitos) e.preventDefault();
+                  if (!termosAceitos) {
+                    e.preventDefault();
+                    return;
+                  }
+                  // Dispara só no clique real de quem já aceitou os termos
+                  // e está de fato indo pro checkout — não em quem só olha
+                  // a tela de planos.
+                  (window as any).fbq?.("track", "InitiateCheckout", {
+                    content_name: plan.name,
+                    value: plan.price,
+                    currency: "BRL",
+                  });
                 }}
                 className={`mt-6 block rounded-lg py-2.5 text-center text-sm font-semibold transition ${
                   termosAceitos
