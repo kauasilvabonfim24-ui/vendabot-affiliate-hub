@@ -552,38 +552,34 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="px-4 py-10">
-        <div className="mx-auto max-w-lg">
-          <h2 className="text-center font-display text-lg font-bold">
-            O que afiliados estão dizendo
-          </h2>
-          <div className="mt-6 space-y-4">
-            {DEPOIMENTOS.map((d) => (
-              <DepthCard key={d.autor}>
-                <div className="p-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={d.avatar}
-                      alt={`Foto de perfil de ${d.autor}`}
-                      width={40}
-                      height={40}
-                      loading="lazy"
-                      className="h-10 w-10 rounded-full border border-primary/30 object-cover"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold">{d.autor}</p>
-                      <div className="flex gap-0.5 text-primary">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className="h-3 w-3 fill-current" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-sm leading-snug">&ldquo;{d.texto}&rdquo;</p>
-                </div>
-              </DepthCard>
-            ))}
+      <section className="relative overflow-hidden px-4 py-14 sm:py-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 top-1/2 -z-10 h-72 w-72 -translate-y-1/2 rounded-full bg-ai/10 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-20 top-1/3 -z-10 h-64 w-64 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl"
+        />
+
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col items-center gap-4 text-center sm:mb-14">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <BadgeCheck className="h-3 w-3" />
+              Depoimentos verificados
+            </span>
+            <h2 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+              Resultados{" "}
+              <span className="bg-gradient-to-r from-ai to-primary bg-clip-text text-transparent">
+                incontestáveis
+              </span>
+            </h2>
+            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+              Veja por que afiliados de Shopee e Mercado Livre confiam no VendaBot para escalar suas operações todos os dias.
+            </p>
           </div>
+
+          <TestimonialCarousel items={DEPOIMENTOS} />
         </div>
       </section>
 
