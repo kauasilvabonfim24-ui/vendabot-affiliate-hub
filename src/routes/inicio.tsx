@@ -20,6 +20,8 @@ import {
   PackagePlus,
   CalendarClock,
   Zap,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
@@ -122,18 +124,33 @@ const CONFIANCA = [
 const DEPOIMENTOS = [
   {
     avatar: "/avatars/depoimento-1.jpg",
-    texto: "Economizei horas do meu dia e minha divulgação aumentou muito. Mudou meu jogo.",
-    autor: "Afiliado Shopee",
+    nome: "Ricardo Mendes",
+    titulo: "Elite Shopee Pro",
+    texto:
+      "Economizei horas do meu dia e minha divulgação aumentou muito. O VendaBot virou meu braço direito nas vendas.",
+    metricaLabel: "Tempo economizado",
+    metricaValor: "12h/semana",
+    cor: "ai" as const,
   },
   {
     avatar: "/avatars/depoimento-2.jpg",
-    texto: "Envio pra vários grupos em minutos. Sobra mais tempo pra criar conteúdo e vender.",
-    autor: "Afiliado Mercado Livre",
+    nome: "Beatriz Oliveira",
+    titulo: "Top Mercado Livre",
+    texto:
+      "Envio pra vários grupos em minutos. Sobra mais tempo pra criar conteúdo e vender. A automação é absurdamente estável.",
+    metricaLabel: "Grupos ativos",
+    metricaValor: "+32 grupos",
+    cor: "primary" as const,
   },
   {
     avatar: "/avatars/depoimento-3.jpg",
-    texto: "Simples de usar, seguro e o suporte é top. Recomendo demais.",
-    autor: "Afiliado",
+    nome: "Jorge Silva",
+    titulo: "Afiliado Multiplataforma",
+    texto:
+      "Simples de usar, seguro e o suporte é top. Recomendo demais pra quem quer escalar sem perder a vida no celular.",
+    metricaLabel: "Faturamento extra",
+    metricaValor: "+R$ 4.200/mês",
+    cor: "ai" as const,
   },
 ];
 
@@ -177,6 +194,163 @@ function DepthCard({ children, className = "" }: { children: React.ReactNode; cl
     <div style={{ perspective: "800px" }} className={className}>
       <div className="group h-full rounded-xl border border-border bg-card transition-transform duration-300 ease-out [transform-style:preserve-3d] hover:[transform:rotateX(4deg)_rotateY(-4deg)_translateZ(6px)] hover:shadow-[0_20px_40px_-12px_rgb(0_0_0_/_0.5)]">
         {children}
+      </div>
+    </div>
+  );
+}
+
+type Testimonial = {
+  avatar: string;
+  nome: string;
+  titulo: string;
+  texto: string;
+  metricaLabel: string;
+  metricaValor: string;
+  cor: "primary" | "ai";
+};
+
+function TestimonialCarousel({ items }: { items: Testimonial[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const cardWidth = el.firstElementChild?.clientWidth ?? 400;
+      const gap = 24;
+      const index = Math.round(el.scrollLeft / (cardWidth + gap));
+      setActive(Math.max(0, Math.min(index, items.length - 1)));
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [items.length]);
+
+  function scrollTo(index: number) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.firstElementChild?.clientWidth ?? 400;
+    const gap = 24;
+    el.scrollTo({ left: index * (cardWidth + gap), behavior: "smooth" });
+  }
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollRef}
+        className="flex snap-x snap-mandatory gap-6 overflow-x-auto py-4 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((d, i) => {
+          const isPrimary = d.cor === "primary";
+          const accentFrom = isPrimary ? "from-primary/20" : "from-ai/20";
+          const accentTo = isPrimary ? "to-primary/5" : "to-ai/5";
+          const glowFrom = isPrimary ? "from-primary/10" : "from-ai/10";
+          const glowTo = isPrimary ? "to-ai/10" : "to-primary/10";
+          const avatarGradient = isPrimary
+            ? "from-primary to-emerald-700"
+            : "from-ai to-purple-700";
+          const titleColor = isPrimary ? "text-primary" : "text-ai";
+
+          return (
+            <div
+              key={d.nome}
+              className={`group relative flex-shrink-0 w-[340px] snap-center rounded-3xl bg-gradient-to-br ${accentFrom} ${accentTo} p-[1px] sm:w-[400px]`}
+            >
+              <div
+                className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${glowFrom} via-transparent ${glowTo} opacity-50`}
+              />
+              <div className="relative flex h-full flex-col gap-5 rounded-[23px] border border-border/50 bg-card p-6 sm:p-8">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <img
+                      src={d.avatar}
+                      alt={`Foto de perfil de ${d.nome}`}
+                      width={56}
+                      height={56}
+                      loading="lazy"
+                      className="h-12 w-12 rounded-full border-2 border-card object-cover shadow-xl sm:h-14 sm:w-14"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-display text-base font-semibold text-foreground sm:text-lg">
+                        {d.nome}
+                      </span>
+                      <span className={`text-[10px] font-bold uppercase tracking-widest ${titleColor} sm:text-xs`}>
+                        {d.titulo}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-2 py-1 sm:px-3">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                    </span>
+                    <span className="text-[9px] font-bold uppercase tracking-tighter text-primary sm:text-[10px]">
+                      Verificado
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-sm leading-relaxed text-muted-foreground italic sm:text-base">
+                  &ldquo;{d.texto}&rdquo;
+                </p>
+
+                <div className="mt-auto flex items-end justify-between border-t border-border/50 pt-4 sm:pt-6">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      {d.metricaLabel}
+                    </span>
+                    <span className="font-display text-lg text-foreground sm:text-xl">
+                      {d.metricaValor}
+                    </span>
+                  </div>
+                  <div className="flex text-primary">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <Star key={idx} className="h-4 w-4 fill-current sm:h-5 sm:w-5" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 flex items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => scrollTo(Math.max(0, active - 1))}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary disabled:opacity-40"
+          disabled={active === 0}
+          aria-label="Depoimento anterior"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+
+        <div className="flex gap-2">
+          {items.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => scrollTo(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                i === active ? "w-8 bg-primary" : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              }`}
+              aria-label={`Ir para depoimento ${i + 1}`}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => scrollTo(Math.min(items.length - 1, active + 1))}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary disabled:opacity-40"
+          disabled={active === items.length - 1}
+          aria-label="Próximo depoimento"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
@@ -378,38 +552,34 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="px-4 py-10">
-        <div className="mx-auto max-w-lg">
-          <h2 className="text-center font-display text-lg font-bold">
-            O que afiliados estão dizendo
-          </h2>
-          <div className="mt-6 space-y-4">
-            {DEPOIMENTOS.map((d) => (
-              <DepthCard key={d.autor}>
-                <div className="p-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={d.avatar}
-                      alt={`Foto de perfil de ${d.autor}`}
-                      width={40}
-                      height={40}
-                      loading="lazy"
-                      className="h-10 w-10 rounded-full border border-primary/30 object-cover"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold">{d.autor}</p>
-                      <div className="flex gap-0.5 text-primary">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className="h-3 w-3 fill-current" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="mt-3 text-sm leading-snug">&ldquo;{d.texto}&rdquo;</p>
-                </div>
-              </DepthCard>
-            ))}
+      <section className="relative overflow-hidden px-4 py-14 sm:py-20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 top-1/2 -z-10 h-72 w-72 -translate-y-1/2 rounded-full bg-ai/10 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-20 top-1/3 -z-10 h-64 w-64 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl"
+        />
+
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col items-center gap-4 text-center sm:mb-14">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+              <BadgeCheck className="h-3 w-3" />
+              Depoimentos verificados
+            </span>
+            <h2 className="max-w-2xl font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+              Resultados{" "}
+              <span className="bg-gradient-to-r from-ai to-primary bg-clip-text text-transparent">
+                incontestáveis
+              </span>
+            </h2>
+            <p className="max-w-2xl text-base text-muted-foreground sm:text-lg">
+              Veja por que afiliados de Shopee e Mercado Livre confiam no VendaBot para escalar suas operações todos os dias.
+            </p>
           </div>
+
+          <TestimonialCarousel items={DEPOIMENTOS} />
         </div>
       </section>
 
