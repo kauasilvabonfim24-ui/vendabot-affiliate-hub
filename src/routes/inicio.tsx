@@ -20,6 +20,8 @@ import {
   PackagePlus,
   CalendarClock,
   Zap,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
@@ -122,18 +124,33 @@ const CONFIANCA = [
 const DEPOIMENTOS = [
   {
     avatar: "/avatars/depoimento-1.jpg",
-    texto: "Economizei horas do meu dia e minha divulgação aumentou muito. Mudou meu jogo.",
-    autor: "Afiliado Shopee",
+    nome: "Ricardo Mendes",
+    titulo: "Elite Shopee Pro",
+    texto:
+      "Economizei horas do meu dia e minha divulgação aumentou muito. O VendaBot virou meu braço direito nas vendas.",
+    metricaLabel: "Tempo economizado",
+    metricaValor: "12h/semana",
+    cor: "ai" as const,
   },
   {
     avatar: "/avatars/depoimento-2.jpg",
-    texto: "Envio pra vários grupos em minutos. Sobra mais tempo pra criar conteúdo e vender.",
-    autor: "Afiliado Mercado Livre",
+    nome: "Beatriz Oliveira",
+    titulo: "Top Mercado Livre",
+    texto:
+      "Envio pra vários grupos em minutos. Sobra mais tempo pra criar conteúdo e vender. A automação é absurdamente estável.",
+    metricaLabel: "Grupos ativos",
+    metricaValor: "+32 grupos",
+    cor: "primary" as const,
   },
   {
     avatar: "/avatars/depoimento-3.jpg",
-    texto: "Simples de usar, seguro e o suporte é top. Recomendo demais.",
-    autor: "Afiliado",
+    nome: "Jorge Silva",
+    titulo: "Afiliado Multiplataforma",
+    texto:
+      "Simples de usar, seguro e o suporte é top. Recomendo demais pra quem quer escalar sem perder a vida no celular.",
+    metricaLabel: "Faturamento extra",
+    metricaValor: "+R$ 4.200/mês",
+    cor: "ai" as const,
   },
 ];
 
