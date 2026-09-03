@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   Clock,
   Users,
@@ -15,6 +15,11 @@ import {
   Send,
   Facebook,
   Instagram,
+  Gift,
+  QrCode,
+  PackagePlus,
+  CalendarClock,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
@@ -62,8 +67,52 @@ const BENEFICIOS = [
   },
 ];
 
+const COMO_FUNCIONA = [
+  {
+    icon: QrCode,
+    title: "1. Conecte seu WhatsApp",
+    desc: "Escaneie um QR Code, do mesmo jeito que você já faz no WhatsApp Web. Leva menos de 1 minuto.",
+  },
+  {
+    icon: PackagePlus,
+    title: "2. Cadastre suas ofertas",
+    desc: "Adicione seus produtos e links de afiliado da Shopee ou Mercado Livre.",
+  },
+  {
+    icon: CalendarClock,
+    title: "3. Escolha os horários",
+    desc: "Defina quando cada oferta deve ser enviada e pra quais grupos.",
+  },
+  {
+    icon: Zap,
+    title: "4. O VendaBot dispara sozinho",
+    desc: "Todos os dias, no horário certo, sem você precisar tocar no celular.",
+  },
+];
+
+const PLANOS = [
+  {
+    id: "basico",
+    nome: "Básico",
+    preco: "39,90",
+    destaque: false,
+    itens: ["Até 3 grupos do WhatsApp", "Até 5 agendamentos", "Disparo automático diário", "Suporte humano"],
+  },
+  {
+    id: "pro",
+    nome: "Pro",
+    preco: "79,90",
+    destaque: true,
+    itens: ["Grupos ilimitados", "Agendamentos ilimitados", "Disparo automático diário", "Suporte prioritário"],
+  },
+];
+
 const CONFIANCA = [
-  { icon: Lock, title: "Seguro", desc: "Não armazenamos suas mensagens." },
+  {
+    icon: Lock,
+    title: "Seguro",
+    desc: "Conexão via QR Code oficial do WhatsApp Web — a mesma tecnologia que você já usa no computador, sem gambiarra.",
+  },
   { icon: BadgeCheck, title: "Confiável", desc: "Sistema estável, feito pra rodar todo dia." },
   { icon: Users, title: "Focado em resultado", desc: "Criado por quem também é afiliado." },
   { icon: Headset, title: "Suporte humano", desc: "Time pronto pra te ajudar quando precisar." },
@@ -134,11 +183,28 @@ function DepthCard({ children, className = "" }: { children: React.ReactNode; cl
 }
 
 function LandingPage() {
+  const [temIndicacao, setTemIndicacao] = useState(false);
+
+  useEffect(() => {
+    try {
+      setTemIndicacao(!!localStorage.getItem("vendabot_ref_code"));
+    } catch {
+      // sem localStorage disponível — segue sem o banner
+    }
+  }, []);
+
   return (
     <main
       className="min-h-screen overflow-x-hidden bg-background text-foreground"
       style={{ perspective: "1500px" }}
     >
+      {temIndicacao && (
+        <div className="flex items-center justify-center gap-2 bg-primary px-4 py-2.5 text-center text-xs font-semibold text-primary-foreground sm:text-sm">
+          <Gift className="h-4 w-4 shrink-0" />
+          Você foi indicado! Seus 15 dias grátis já estão garantidos ao criar sua conta.
+        </div>
+      )}
+
       <section className="relative px-4 pb-20 pt-14 sm:pt-20">
         <div
           aria-hidden
@@ -238,6 +304,61 @@ function LandingPage() {
         </div>
       </section>
 
+      <section className="border-y border-border bg-surface px-4 py-10">
+        <div className="mx-auto max-w-lg">
+          <h2 className="text-center font-display text-lg font-bold">Como funciona</h2>
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            {COMO_FUNCIONA.map((c) => (
+              <DepthCard key={c.title}>
+                <div className="p-4">
+                  <c.icon className="h-5 w-5 text-primary" />
+                  <p className="mt-2 text-xs font-semibold">{c.title}</p>
+                  <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{c.desc}</p>
+                </div>
+              </DepthCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-10">
+        <div className="mx-auto max-w-lg">
+          <h2 className="text-center font-display text-lg font-bold">Planos simples, sem pegadinha</h2>
+          <p className="mt-1 text-center text-xs text-muted-foreground">
+            Cancele quando quiser, sem multa.
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {PLANOS.map((p) => (
+              <div
+                key={p.id}
+                className={`relative rounded-xl border p-5 ${
+                  p.destaque ? "border-primary bg-primary/10" : "border-border bg-card"
+                }`}
+              >
+                {p.destaque && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                    Mais popular
+                  </span>
+                )}
+                <h3 className="text-center font-display text-base font-bold">{p.nome}</h3>
+                <p className="mt-2 text-center">
+                  <span className="text-2xl font-bold">R$ {p.preco}</span>
+                  <span className="text-xs text-muted-foreground">/mês</span>
+                </p>
+                <ul className="mt-4 space-y-2 text-xs text-muted-foreground">
+                  {p.itens.map((item) => (
+                    <li key={item} className="flex items-center gap-2">
+                      <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="relative border-y border-border bg-surface px-4 py-10">
         <div className="mx-auto max-w-lg">
           <h2 className="text-center font-display text-lg font-bold">
@@ -325,7 +446,7 @@ function LandingPage() {
             </li>
             <li className="flex items-center gap-2">
               <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-              Atualizações constantes
+              Cancele quando quiser, sem multa
             </li>
             <li className="flex items-center gap-2">
               <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
@@ -348,7 +469,7 @@ function LandingPage() {
           />
           <p className="mt-4 text-xs font-medium text-foreground">@TITANO-COD</p>
           <div className="mt-3 flex items-center justify-center gap-4">
-            <a
+            
               href="https://facebook.com/TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
@@ -357,7 +478,7 @@ function LandingPage() {
               <Facebook className="h-3.5 w-3.5" />
               Facebook
             </a>
-            <a
+            
               href="https://instagram.com/TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
@@ -366,7 +487,7 @@ function LandingPage() {
               <Instagram className="h-3.5 w-3.5" />
               Instagram
             </a>
-            <a
+            
               href="https://tiktok.com/@TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
