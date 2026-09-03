@@ -469,7 +469,7 @@ function LandingPage() {
           />
           <p className="mt-4 text-xs font-medium text-foreground">@TITANO-COD</p>
           <div className="mt-3 flex items-center justify-center gap-4">
-            
+            <a
               href="https://facebook.com/TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
@@ -478,7 +478,7 @@ function LandingPage() {
               <Facebook className="h-3.5 w-3.5" />
               Facebook
             </a>
-            
+            <a
               href="https://instagram.com/TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
@@ -487,7 +487,7 @@ function LandingPage() {
               <Instagram className="h-3.5 w-3.5" />
               Instagram
             </a>
-            
+            <
               href="https://tiktok.com/@TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
