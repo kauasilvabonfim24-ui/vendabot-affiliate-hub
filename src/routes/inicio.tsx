@@ -487,7 +487,7 @@ function LandingPage() {
               <Instagram className="h-3.5 w-3.5" />
               Instagram
             </a>
-            <
+            <a
               href="https://tiktok.com/@TITANO-COD"
               target="_blank"
               rel="noopener noreferrer"
