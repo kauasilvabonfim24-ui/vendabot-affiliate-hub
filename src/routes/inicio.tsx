@@ -199,6 +199,163 @@ function DepthCard({ children, className = "" }: { children: React.ReactNode; cl
   );
 }
 
+type Testimonial = {
+  avatar: string;
+  nome: string;
+  titulo: string;
+  texto: string;
+  metricaLabel: string;
+  metricaValor: string;
+  cor: "primary" | "ai";
+};
+
+function TestimonialCarousel({ items }: { items: Testimonial[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const cardWidth = el.firstElementChild?.clientWidth ?? 400;
+      const gap = 24;
+      const index = Math.round(el.scrollLeft / (cardWidth + gap));
+      setActive(Math.max(0, Math.min(index, items.length - 1)));
+    };
+
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [items.length]);
+
+  function scrollTo(index: number) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.firstElementChild?.clientWidth ?? 400;
+    const gap = 24;
+    el.scrollTo({ left: index * (cardWidth + gap), behavior: "smooth" });
+  }
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollRef}
+        className="flex snap-x snap-mandatory gap-6 overflow-x-auto py-4 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((d, i) => {
+          const isPrimary = d.cor === "primary";
+          const accentFrom = isPrimary ? "from-primary/20" : "from-ai/20";
+          const accentTo = isPrimary ? "to-primary/5" : "to-ai/5";
+          const glowFrom = isPrimary ? "from-primary/10" : "from-ai/10";
+          const glowTo = isPrimary ? "to-ai/10" : "to-primary/10";
+          const avatarGradient = isPrimary
+            ? "from-primary to-emerald-700"
+            : "from-ai to-purple-700";
+          const titleColor = isPrimary ? "text-primary" : "text-ai";
+
+          return (
+            <div
+              key={d.nome}
+              className={`group relative flex-shrink-0 w-[340px] snap-center rounded-3xl bg-gradient-to-br ${accentFrom} ${accentTo} p-[1px] sm:w-[400px]`}
+            >
+              <div
+                className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${glowFrom} via-transparent ${glowTo} opacity-50`}
+              />
+              <div className="relative flex h-full flex-col gap-5 rounded-[23px] border border-border/50 bg-card p-6 sm:p-8">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <img
+                      src={d.avatar}
+                      alt={`Foto de perfil de ${d.nome}`}
+                      width={56}
+                      height={56}
+                      loading="lazy"
+                      className="h-12 w-12 rounded-full border-2 border-card object-cover shadow-xl sm:h-14 sm:w-14"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-display text-base font-semibold text-foreground sm:text-lg">
+                        {d.nome}
+                      </span>
+                      <span className={`text-[10px] font-bold uppercase tracking-widest ${titleColor} sm:text-xs`}>
+                        {d.titulo}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary/10 px-2 py-1 sm:px-3">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                    </span>
+                    <span className="text-[9px] font-bold uppercase tracking-tighter text-primary sm:text-[10px]">
+                      Verificado
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-sm leading-relaxed text-muted-foreground italic sm:text-base">
+                  &ldquo;{d.texto}&rdquo;
+                </p>
+
+                <div className="mt-auto flex items-end justify-between border-t border-border/50 pt-4 sm:pt-6">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      {d.metricaLabel}
+                    </span>
+                    <span className="font-display text-lg text-foreground sm:text-xl">
+                      {d.metricaValor}
+                    </span>
+                  </div>
+                  <div className="flex text-primary">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <Star key={idx} className="h-4 w-4 fill-current sm:h-5 sm:w-5" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 flex items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => scrollTo(Math.max(0, active - 1))}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary disabled:opacity-40"
+          disabled={active === 0}
+          aria-label="Depoimento anterior"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+
+        <div className="flex gap-2">
+          {items.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => scrollTo(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                i === active ? "w-8 bg-primary" : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              }`}
+              aria-label={`Ir para depoimento ${i + 1}`}
+            />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => scrollTo(Math.min(items.length - 1, active + 1))}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary disabled:opacity-40"
+          disabled={active === items.length - 1}
+          aria-label="Próximo depoimento"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function LandingPage() {
   const [temIndicacao, setTemIndicacao] = useState(false);
 
