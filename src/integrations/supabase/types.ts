@@ -476,7 +476,7 @@ export type Database = {
       get_user_id_by_email: { Args: { lookup_email: string }; Returns: string }
       grant_referral_reward: {
         Args: { p_cakto_subscription_id: string; p_referred_user_id: string }
-        Returns: undefined
+        Returns: string
       }
       has_active_subscription: { Args: { uid: string }; Returns: boolean }
       register_referral_click: { Args: { p_code: string }; Returns: undefined }
