@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
 import {
   Sheet,
+  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -173,7 +174,7 @@ export function MobileBottomNav() {
   const { dotClass } = useBotStatusVisual();
 
   return (
-    <nav className="pwa:hidden fixed inset-x-0 bottom-0 z-30 flex snap-x snap-mandatory items-stretch gap-1 overflow-x-auto border-t border-sidebar-border bg-sidebar px-1 pb-[env(safe-area-inset-bottom)] [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden">
+    <nav className="pwa:hidden fixed inset-x-0 bottom-0 z-30 flex snap-x snap-mandatory items-stretch gap-1 overflow-x-auto border-t border-sidebar-border bg-sidebar px-1 pb-[env(safe-area-inset-bottom)]">
       {nav.map(({ to, label, icon: Icon }) => (
         <Link
           key={to}
