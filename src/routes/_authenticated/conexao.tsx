@@ -34,14 +34,14 @@ function ConexaoPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <header className="mb-8">
+      <header className="mb-8 pwa:hidden">
         <h1 className="font-display text-2xl font-bold">Conexão</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Status da sessão do bot com o WhatsApp, atualizado em tempo real.
         </p>
       </header>
 
-      <div className="rounded-xl border border-border bg-card p-8">
+      <div className="rounded-xl border border-border bg-card p-8 pwa:border-none! pwa:bg-transparent! pwa:p-0! pwa:pt-4!">
         {isLoading ? (
           <div className="flex flex-col items-center gap-3 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin" />
@@ -57,25 +57,29 @@ function ConexaoPage() {
             <img
               src={data.qr_code}
               alt="QR Code para conectar o WhatsApp"
-              className="h-64 w-64 rounded-2xl border-4 border-ai bg-card p-2 shadow-[0_0_40px_-12px_var(--ai)]"
+              className="h-64 w-64 pwa:h-auto! pwa:w-[min(70vw,260px)]! rounded-2xl border-4 border-ai bg-card p-2 shadow-[0_0_40px_-12px_var(--ai)]"
             />
             <p className="max-w-sm text-center text-sm text-muted-foreground">
               Escaneie com o WhatsApp: Aparelhos conectados → Conectar um aparelho
             </p>
           </div>
         ) : status === "connected" ? (
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-4 pwa:w-full!">
             <CheckCircle2 className="h-14 w-14 text-primary" />
             <p className="font-display text-lg font-semibold text-primary">WhatsApp conectado!</p>
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" size="sm" disabled className="pwa:h-12! pwa:w-full!">
               Desconectar
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-5">
+          <div className="flex flex-col items-center gap-5 pwa:w-full!">
             <AlertTriangle className="h-12 w-12 text-destructive" />
             <p className="text-sm font-medium">Bot desconectado.</p>
-            <Button onClick={handleConnect} disabled={connectMutation.isPending} className="gap-2">
+            <Button
+              onClick={handleConnect}
+              disabled={connectMutation.isPending}
+              className="gap-2 pwa:h-12! pwa:w-full!"
+            >
               {connectMutation.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
