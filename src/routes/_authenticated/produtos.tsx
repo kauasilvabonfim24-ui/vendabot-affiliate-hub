@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProducts } from "@/hooks/use-vendabot";
@@ -9,6 +9,12 @@ import { brl, discountPercent, platformLabel, type Product } from "@/lib/vendabo
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/_authenticated/produtos")({
   head: () => ({
@@ -38,6 +44,7 @@ function ProdutosPage() {
   const [form, setForm] = useState({ ...emptyForm });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const off = discountPercent(Number(form.old_price), Number(form.price));
 
@@ -55,12 +62,17 @@ function ProdutosPage() {
       image_url: p.image_url ?? "",
       category: p.category ?? "",
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSheetOpen(true);
   }
 
   function cancelEdit() {
     setEditingId(null);
     setForm({ ...emptyForm });
+  }
+
+  function openNew() {
+    cancelEdit();
+    setSheetOpen(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -89,6 +101,7 @@ function ProdutosPage() {
         toast.success("Produto adicionado");
       }
       cancelEdit();
+      setSheetOpen(false);
       queryClient.invalidateQueries({ queryKey: ["products"] });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao salvar produto");
@@ -108,129 +121,157 @@ function ProdutosPage() {
     queryClient.invalidateQueries({ queryKey: ["products"] });
   }
 
+  const formContent = (
+    <form onSubmit={handleSubmit} className="space-y-4 pwa:space-y-3!">
+      <div className="grid gap-4 pwa:gap-3! md:grid-cols-2">
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="name">Nome do produto</Label>
+          <Input
+            id="name"
+            required
+            value={form.name}
+            onChange={(e) => set("name", e.target.value)}
+            placeholder="Fone Bluetooth XYZ"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="platform">Plataforma</Label>
+          <select
+            id="platform"
+            value={form.platform}
+            onChange={(e) => set("platform", e.target.value)}
+            className="h-9 pwa:h-12! w-full rounded-md border border-input bg-background px-3 text-sm"
+          >
+            <option value="shopee">Shopee</option>
+            <option value="mercadolivre">Mercado Livre</option>
+          </select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="category">Categoria (opcional)</Label>
+          <Input
+            id="category"
+            value={form.category}
+            onChange={(e) => set("category", e.target.value)}
+            placeholder="eletronicos"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="old_price">Preço antigo</Label>
+          <Input
+            id="old_price"
+            type="number"
+            step="0.01"
+            min="0"
+            required
+            value={form.old_price}
+            onChange={(e) => set("old_price", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="price">Preço atual</Label>
+          <Input
+            id="price"
+            type="number"
+            step="0.01"
+            min="0"
+            required
+            value={form.price}
+            onChange={(e) => set("price", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="link">Link de afiliado</Label>
+          <Input
+            id="link"
+            type="url"
+            required
+            value={form.link}
+            onChange={(e) => set("link", e.target.value)}
+            placeholder="https://..."
+          />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="image_url">URL da imagem (opcional)</Label>
+          <Input
+            id="image_url"
+            value={form.image_url}
+            onChange={(e) => set("image_url", e.target.value)}
+            placeholder="https://..."
+          />
+        </div>
+      </div>
 
+      <div className="rounded-lg bg-primary/10 px-4 py-3 text-center text-sm text-muted-foreground">
+        Desconto calculado:{" "}
+        <span className="font-display text-lg font-bold text-primary">{off}% OFF</span>
+      </div>
 
+      <Button type="submit" disabled={saving} className="w-full pwa:h-12!">
+        {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Adicionar produto"}
+      </Button>
+    </form>
+  );
 
   return (
-    <div className="space-y-8 pwa:space-y-5!">
-      <header>
-        <h1 className="text-3xl pwa:text-xl! font-bold">Produtos</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Cadastre as ofertas que o bot vai divulgar.
-        </p>
+    <div className="space-y-8 pwa:space-y-4!">
+      <header className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl pwa:text-xl! font-bold">Produtos</h1>
+          <p className="mt-1 text-sm text-muted-foreground pwa:hidden">
+            Cadastre as ofertas que o bot vai divulgar.
+          </p>
+        </div>
+        <Button onClick={openNew} size="sm" className="hidden pwa:flex items-center gap-1.5 rounded-full">
+          <Plus className="h-4 w-4" />
+          Novo
+        </Button>
       </header>
 
-      <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
+      <form onSubmit={handleSubmit} className="pwa:hidden rounded-xl border border-border bg-card p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg pwa:text-base! font-semibold">
-            {editingId ? "Editar produto" : "Novo produto"}
-          </h2>
+          <h2 className="text-lg font-semibold">{editingId ? "Editar produto" : "Novo produto"}</h2>
           {editingId && (
             <Button type="button" variant="ghost" size="sm" onClick={cancelEdit}>
               <X className="mr-1 h-4 w-4" /> Cancelar
             </Button>
           )}
         </div>
-
-        <div className="grid gap-4 pwa:gap-3! md:grid-cols-2">
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="name">Nome do produto</Label>
-            <Input
-              id="name"
-              required
-              value={form.name}
-              onChange={(e) => set("name", e.target.value)}
-              placeholder="Fone Bluetooth XYZ"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="platform">Plataforma</Label>
-            <select
-              id="platform"
-              value={form.platform}
-              onChange={(e) => set("platform", e.target.value)}
-              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="shopee">Shopee</option>
-              <option value="mercadolivre">Mercado Livre</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="category">Categoria (opcional)</Label>
-            <Input
-              id="category"
-              value={form.category}
-              onChange={(e) => set("category", e.target.value)}
-              placeholder="eletronicos"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="old_price">Preço antigo</Label>
-            <Input
-              id="old_price"
-              type="number"
-              step="0.01"
-              min="0"
-              required
-              value={form.old_price}
-              onChange={(e) => set("old_price", e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price">Preço atual</Label>
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              min="0"
-              required
-              value={form.price}
-              onChange={(e) => set("price", e.target.value)}
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="link">Link de afiliado</Label>
-            <Input
-              id="link"
-              type="url"
-              required
-              value={form.link}
-              onChange={(e) => set("link", e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="image_url">URL da imagem (opcional)</Label>
-            <Input
-              id="image_url"
-              value={form.image_url}
-              onChange={(e) => set("image_url", e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-        </div>
-
-        <div className="mt-5 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Desconto calculado:{" "}
-            <span className="font-display text-lg font-bold text-primary">{off}% OFF</span>
-          </div>
-          <Button type="submit" disabled={saving}>
-            {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Adicionar produto"}
-          </Button>
-        </div>
+        {formContent}
       </form>
 
-      <section className="rounded-xl border border-border bg-card p-6 pwa:p-4!">
-        <h2 className="mb-4 text-lg pwa:text-base! font-semibold">Produtos cadastrados</h2>
+      <Sheet
+        open={sheetOpen}
+        onOpenChange={(open) => {
+          setSheetOpen(open);
+          if (!open) cancelEdit();
+        }}
+      >
+        <SheetContent
+          side="bottom"
+          className="hidden pwa:block max-h-[85vh] overflow-y-auto rounded-t-2xl pb-[calc(env(safe-area-inset-bottom)+16px)]"
+        >
+          <SheetHeader className="mb-3">
+            <SheetTitle className="text-left">
+              {editingId ? "Editar produto" : "Novo produto"}
+            </SheetTitle>
+          </SheetHeader>
+          {formContent}
+        </SheetContent>
+      </Sheet>
+
+      <section className="rounded-xl border border-border bg-card p-6 pwa:border-none! pwa:bg-transparent! pwa:p-0!">
+        <h2 className="mb-4 text-lg font-semibold pwa:hidden">Produtos cadastrados</h2>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando...</p>
         ) : (products?.length ?? 0) === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum produto cadastrado ainda.</p>
         ) : (
-          <ul className="divide-y divide-border">
+          <ul className="divide-y divide-border pwa:space-y-2! pwa:divide-y-0!">
             {products!.map((p) => (
-              <li key={p.id} className="flex items-center gap-4 py-4">
+              <li
+                key={p.id}
+                className="flex items-center gap-4 py-4 pwa:rounded-xl! pwa:border! pwa:border-border! pwa:bg-card! pwa:p-3! pwa:py-3!"
+              >
                 {p.image_url ? (
                   <img
                     src={p.image_url}
@@ -257,11 +298,21 @@ function ProdutosPage() {
                     </span>
                   </p>
                 </div>
-                <div className="flex shrink-0 gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => startEdit(p)}>
+                <div className="flex shrink-0 gap-1 pwa:flex-col! pwa:gap-1.5!">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => startEdit(p)}
+                    className="pwa:h-11! pwa:w-11!"
+                  >
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(p.id)}
+                    className="pwa:h-11! pwa:w-11!"
+                  >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
