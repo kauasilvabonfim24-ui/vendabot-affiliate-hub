@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Package, Clock, Users, Bell, BellOff, Loader2 } from "lucide-react";
+import { Package, Clock, Users, Gift, Bell, BellOff, Loader2 } from "lucide-react";
 import { useGroups, useProducts, useSchedules } from "@/hooks/use-vendabot";
+import { useReferralStats } from "@/hooks/use-referral";
 import { usePushPermission } from "@/hooks/use-push-permission";
 import { repeatLabel } from "@/lib/vendabot";
 
@@ -20,11 +21,12 @@ function PainelPage() {
   const products = useProducts();
   const groups = useGroups();
   const schedules = useSchedules();
+  const referral = useReferralStats();
   const push = usePushPermission();
 
   const cards = [
     {
-      label: "Produtos cadastrados",
+      label: "Produtos",
       value: products.data?.length ?? 0,
       icon: Package,
       to: "/produtos" as const,
@@ -36,10 +38,16 @@ function PainelPage() {
       to: "/horarios" as const,
     },
     {
-      label: "Grupos cadastrados",
+      label: "Grupos",
       value: groups.data?.length ?? 0,
       icon: Users,
       to: "/grupos" as const,
+    },
+    {
+      label: "Indicações",
+      value: referral.data?.valid_referrals ?? 0,
+      icon: Gift,
+      to: "/indicacoes" as const,
     },
   ];
 
@@ -59,7 +67,7 @@ function PainelPage() {
       <header className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl pwa:text-xl! font-bold sm:text-3xl">Painel</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground pwa:hidden">
             Acompanhe a operação do seu bot de ofertas.
           </p>
         </div>
@@ -86,18 +94,18 @@ function PainelPage() {
         </button>
       </header>
 
-      <div className="grid gap-3 pwa:gap-2! sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
             key={label}
             to={to}
             className="rounded-xl border border-border bg-card p-4 pwa:p-3! transition-colors hover:border-primary/50 sm:p-5"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-sm pwa:text-xs! text-muted-foreground">{label}</span>
-              <Icon className="h-4 w-4 text-primary" />
-            </div>
-            <p className="mt-2 pwa:mt-1! font-display text-3xl pwa:text-2xl! font-bold sm:mt-3 sm:text-4xl">{value}</p>
+            <Icon className="h-4 w-4 text-primary" />
+            <p className="mt-2 pwa:mt-1.5! font-display text-2xl pwa:text-xl! font-bold sm:mt-3 sm:text-4xl">
+              {value}
+            </p>
+            <p className="mt-0.5 text-xs pwa:text-[11px]! text-muted-foreground">{label}</p>
           </Link>
         ))}
       </div>
@@ -112,9 +120,12 @@ function PainelPage() {
             </Link>
           </p>
         ) : (
-          <ul className="mt-3 divide-y divide-border sm:mt-4">
+          <ul className="mt-3 space-y-2 pwa:space-y-2! sm:mt-4 sm:space-y-0 sm:divide-y sm:divide-border">
             {upcoming.slice(0, 6).map((s) => (
-              <li key={s.id} className="flex items-center justify-between py-2.5 sm:py-3">
+              <li
+                key={s.id}
+                className="flex min-h-12 items-center justify-between rounded-lg bg-secondary/40 px-3 py-2.5 pwa:bg-secondary/40! sm:rounded-none sm:bg-transparent! sm:px-0 sm:py-3"
+              >
                 <div className="flex items-center gap-3">
                   <span className="font-display text-lg font-semibold text-primary sm:text-xl">
                     {s.time}
