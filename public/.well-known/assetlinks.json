@@ -1,0 +1,8 @@
+   [{
+     "relation": ["delegate_permission/common.handle_all_urls"],
+     "target": {
+       "namespace": "android_app",
+       "package_name": "app.lovable.vendabot_affiliate_hub.twa",
+       "sha256_cert_fingerprints": ["2C:31:FB:4D:A1:FD:BF:26:55:0A:24:54:7A:3F:5B:2A:70:9D:4D:F7:F3:1D:75:33:51:5B:F6:2A:6C:99:E6:0B"]
+     }
+   }]
