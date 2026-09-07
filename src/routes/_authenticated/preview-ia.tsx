@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Sparkles, RefreshCw, Copy } from "lucide-react";
+import {
+  IconSparkles as Sparkles, IconRefresh as RefreshCw, IconCopy as Copy,
+} from "@tabler/icons-react";
 import { toast } from "sonner";
 import { useProducts } from "@/hooks/use-vendabot";
 import { generateSalesMessage } from "@/lib/vendabot";
@@ -76,7 +78,7 @@ function PreviewPage() {
 
         {(products?.length ?? 0) === 0 && (
           <p className="mt-3 text-sm text-muted-foreground">
-            Nenhum produto cadastrado.{" "}
+            Nenhum produto cadastrado. {" "}
             <Link to="/produtos" className="text-primary hover:underline">
               Cadastrar produto
             </Link>
