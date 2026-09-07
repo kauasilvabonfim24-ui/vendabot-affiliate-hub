@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type BotStatusRow = {
   user_id: string;
-  status: "requested" | "qr" | "connected" | "disconnected" | string;
+  status: "requested" | "qr" | "pairing" | "connected" | "disconnected" | "disconnect_requested" | string;
   qr_code: string | null;
+  pairing_code: string | null;
+  connection_method: "qr" | "pairing" | string;
+  phone_number: string | null;
   updated_at: string;
 };
 
@@ -72,7 +75,7 @@ export function useConnectWhatsApp() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (opts?: { method?: "qr" | "pairing"; phone?: string }) => {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData.user?.id;
       if (!userId) throw new Error("Usuário não autenticado");
@@ -81,6 +84,31 @@ export function useConnectWhatsApp() {
         user_id: userId,
         status: "requested",
         qr_code: null,
+        pairing_code: null,
+        connection_method: opts?.method ?? "qr",
+        phone_number: opts?.method === "pairing" ? opts?.phone ?? null : null,
+        updated_at: new Date().toISOString(),
+      } as never);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bot_status"] });
+    },
+  });
+}
+
+export function useDisconnectWhatsApp() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      if (!userId) throw new Error("Usuário não autenticado");
+
+      const { error } = await supabase.from("bot_status" as never).upsert({
+        user_id: userId,
+        status: "disconnect_requested",
         updated_at: new Date().toISOString(),
       } as never);
       if (error) throw error;
