@@ -110,6 +110,32 @@ function ConexaoPage() {
               Aparelhos conectados → Conectar um aparelho → Conectar com número de telefone,
               e digite esse código.
             </p>
+            <div className="flex w-full max-w-xs flex-col gap-3">
+              <Button
+                onClick={handleConnectPairing}
+                disabled={connectMutation.isPending || disconnectMutation.isPending}
+                className="gap-2 pwa:h-12!"
+              >
+                {connectMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Gerar novo código
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  disconnectMutation.mutate(undefined, {
+                    onError: (err) => {
+                      toast.error(err instanceof Error ? err.message : "Erro ao cancelar");
+                    },
+                  });
+                  setMetodoEscolhido(null);
+                }}
+                disabled={disconnectMutation.isPending}
+              >
+                {disconnectMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Cancelar
+              </Button>
+            </div>
           </div>
         ) : status === "connected" ? (
           <div className="flex flex-col items-center gap-4 pwa:w-full!">
