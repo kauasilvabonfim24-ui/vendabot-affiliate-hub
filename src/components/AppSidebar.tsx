@@ -1,20 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  BarChart3,
-  Package,
-  Clock,
-  Users,
-  Sparkles,
-  LogOut,
-  Bot,
-  QrCode,
-  Gift,
-  Settings,
-  Receipt,
-  LifeBuoy,
-  MoreHorizontal,
-} from "lucide-react";
+  IconChartBar as BarChart3, IconPackage as Package, IconClock as Clock,
+  IconUsers as Users, IconSparkles as Sparkles, IconLogout as LogOut,
+  IconRobot as Bot, IconQrcode as QrCode, IconGift as Gift,
+  IconSettings as Settings, IconReceipt as Receipt, IconLifebuoy as LifeBuoy,
+  IconDots as MoreHorizontal,
+} from "@tabler/icons-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
 import {
