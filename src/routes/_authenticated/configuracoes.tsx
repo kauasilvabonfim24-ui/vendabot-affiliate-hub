@@ -1,6 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LifeBuoy, FileText, ShieldCheck, LogOut, ChevronRight, CreditCard, PlayCircle } from "lucide-react";
+import {
+  IconLifebuoy as LifeBuoy, IconFileText as FileText,
+  IconShieldCheck as ShieldCheck, IconLogout as LogOut,
+  IconChevronRight as ChevronRight, IconCreditCard as CreditCard,
+  IconPlayerPlay as PlayCircle,
+} from "@tabler/icons-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-admin";
 import { useMySubscription } from "@/hooks/use-subscription";
@@ -113,7 +118,7 @@ function ConfiguracoesPage() {
 
       <button
         onClick={handleSignOut}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive transition-colors hover:bg[...]"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive transition-colors hover:bg[...][...]"
       >
         <LogOut className="h-4 w-4" />
         Sair da conta
@@ -121,4 +126,3 @@ function ConfiguracoesPage() {
     </div>
   );
 }
-
