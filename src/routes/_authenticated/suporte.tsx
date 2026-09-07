@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  LifeBuoy,
-  Star,
-  Send,
-  Loader2,
-  MessageCircle,
-  Lightbulb,
-  AlertTriangle,
-} from "lucide-react";
+  IconLifebuoy as LifeBuoy,
+  IconStar as Star,
+  IconSend as Send,
+  IconLoader2 as Loader2,
+  IconMessageCircle as MessageCircle,
+  IconBulb as Lightbulb,
+  IconAlertTriangle as AlertTriangle,
+} from "@tabler/icons-react";
 import { toast } from "sonner";
 import {
   useSupportMessages,
