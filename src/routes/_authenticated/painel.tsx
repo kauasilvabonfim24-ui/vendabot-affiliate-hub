@@ -109,8 +109,8 @@ function PainelPage() {
             to={to}
             className="rounded-xl border border-border bg-card p-4 pwa:p-3! transition-colors hover:border-primary/50 sm:p-5"
           >
-            <Icon className="h-4 w-4 text-primary" />
-            <p className="mt-2 pwa:mt-1.5! font-display text-2xl pwa:text-xl! font-bold sm:mt-3 sm:text-4xl">
+            <Icon className="h-4 w-4 pwa:h-5! pwa:w-5! text-primary" />
+            <p className="mt-2 pwa:mt-1.5! font-display text-2xl pwa:text-2xl! font-bold sm:mt-3 sm:text-4xl">
               {value}
             </p>
             <p className="mt-0.5 text-xs pwa:text-[11px]! text-muted-foreground">{label}</p>
