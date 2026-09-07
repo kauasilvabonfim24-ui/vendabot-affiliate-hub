@@ -65,7 +65,7 @@ function PainelPage() {
   return (
     <div className="space-y-6 pwa:space-y-4! sm:space-y-8">
       <header className="flex items-start justify-between gap-4">
-        <div>
+        <div className="pwa:hidden">
           <h1 className="text-2xl pwa:text-xl! font-bold sm:text-3xl">Painel</h1>
           <p className="mt-1 text-sm text-muted-foreground pwa:hidden">
             Acompanhe a operação do seu bot de ofertas.
