@@ -1,5 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Package, Clock, Users, Gift, Bell, BellOff, Loader2 } from "lucide-react";
+import {
+  IconPackage as Package,
+  IconClock as Clock,
+  IconUsers as Users,
+  IconGift as Gift,
+  IconBell as Bell,
+  IconBellOff as BellOff,
+  IconLoader2 as Loader2,
+} from "@tabler/icons-react";
 import { useGroups, useProducts, useSchedules } from "@/hooks/use-vendabot";
 import { useReferralStats } from "@/hooks/use-referral";
 import { usePushPermission } from "@/hooks/use-push-permission";
