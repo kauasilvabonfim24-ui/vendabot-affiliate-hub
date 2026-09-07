@@ -104,7 +104,7 @@ function PlanosPage() {
                 <button
                   type="button"
                   onClick={() => copiarCupom(promo.code)}
-                  className="mx-auto flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary bg-primary/10 px-4 py-2.5 font-mono text-base font-bold tracking-wid[...]
+                  className="mx-auto flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary bg-primary/10 px-4 py-2.5 font-mono text-base font-bold tracking-widest text-primary transition-colors hover:bg-primary/20"
                 >
                   {promo.code}
                   {copiado === promo.code ? (

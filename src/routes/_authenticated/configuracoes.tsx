@@ -118,7 +118,7 @@ function ConfiguracoesPage() {
 
       <button
         onClick={handleSignOut}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive transition-colors hover:bg[...][...]"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
       >
         <LogOut className="h-4 w-4" />
         Sair da conta
