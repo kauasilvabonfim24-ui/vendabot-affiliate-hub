@@ -1,6 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
-import { Star, Send, Loader2, ShieldCheck } from "lucide-react";
+import {
+  IconStar as Star, IconSend as Send, IconLoader2 as Loader2,
+  IconShieldCheck as ShieldCheck,
+} from "@tabler/icons-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
