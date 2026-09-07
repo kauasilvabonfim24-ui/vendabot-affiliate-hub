@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Loader2, PartyPopper, Copy, Check } from "lucide-react";
+import {
+  IconCircleCheck as CheckCircle2, IconLoader2 as Loader2,
+  IconConfetti as PartyPopper, IconCopy as Copy, IconCheck as Check,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -101,7 +104,7 @@ function PlanosPage() {
                 <button
                   type="button"
                   onClick={() => copiarCupom(promo.code)}
-                  className="mx-auto flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary bg-primary/10 px-4 py-2.5 font-mono text-base font-bold tracking-wider text-primary transition hover:bg-primary/20"
+                  className="mx-auto flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary bg-primary/10 px-4 py-2.5 font-mono text-base font-bold tracking-wid[...]
                 >
                   {promo.code}
                   {copiado === promo.code ? (
