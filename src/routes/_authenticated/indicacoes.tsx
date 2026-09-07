@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Copy, Share2, Gift, MousePointerClick, UserPlus, PartyPopper } from "lucide-react";
+import {
+  IconCopy as Copy, IconShare2 as Share2, IconGift as Gift,
+  IconClick as MousePointerClick, IconUserPlus as UserPlus,
+  IconConfetti as PartyPopper,
+} from "@tabler/icons-react";
 import { toast } from "sonner";
 import { useReferralStats } from "@/hooks/use-referral";
 
@@ -96,7 +100,7 @@ function IndicacoesPage() {
               <button
                 onClick={handleCopy}
                 disabled={!link}
-                className="flex items-center justify-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2.5 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2.5 text-sm font-medium transition-colors hover:border-primary/40 hover:text-prim[...]
               >
                 <Copy className="h-4 w-4" />
                 {copied ? "Copiado!" : "Copiar"}
