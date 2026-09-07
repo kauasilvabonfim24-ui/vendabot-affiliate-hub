@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, AlertTriangle, Loader2, Smartphone } from "lucide-react";
+import {
+  IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle,
+  IconLoader2 as Loader2, IconDeviceMobile as Smartphone,
+} from "@tabler/icons-react";
 import { useBotStatus, useConnectWhatsApp } from "@/hooks/use-bot-status";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
