@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DefinirSenhaRouteImport } from './routes/definir-senha'
 import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as TermosRouteImport } from './routes/termos'
+import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known.assetlinks[.]json'
 import { Route as AuthenticatedConexaoRouteImport } from './routes/_authenticated/conexao'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
@@ -57,6 +58,12 @@ const TermosRoute = TermosRouteImport.update({
   path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DotwellKnownAssetlinksDotjsonRoute =
+  DotwellKnownAssetlinksDotjsonRouteImport.update({
+    id: '/.well-known/assetlinks.json',
+    path: '/.well-known/assetlinks.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedConexaoRoute = AuthenticatedConexaoRouteImport.update({
   id: '/conexao',
   path: '/conexao',
@@ -126,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/definir-senha': typeof DefinirSenhaRoute
   '/inicio': typeof InicioRoute
   '/termos': typeof TermosRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/conexao': typeof AuthenticatedConexaoRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/grupos': typeof AuthenticatedGruposRoute
@@ -145,6 +153,7 @@ export interface FileRoutesByTo {
   '/definir-senha': typeof DefinirSenhaRoute
   '/inicio': typeof InicioRoute
   '/termos': typeof TermosRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/conexao': typeof AuthenticatedConexaoRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/grupos': typeof AuthenticatedGruposRoute
@@ -166,6 +175,7 @@ export interface FileRoutesById {
   '/definir-senha': typeof DefinirSenhaRoute
   '/inicio': typeof InicioRoute
   '/termos': typeof TermosRoute
+  '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/_authenticated/conexao': typeof AuthenticatedConexaoRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/definir-senha'
     | '/inicio'
     | '/termos'
+    | '/.well-known/assetlinks.json'
     | '/conexao'
     | '/configuracoes'
     | '/grupos'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/definir-senha'
     | '/inicio'
     | '/termos'
+    | '/.well-known/assetlinks.json'
     | '/conexao'
     | '/configuracoes'
     | '/grupos'
@@ -226,6 +238,7 @@ export interface FileRouteTypes {
     | '/definir-senha'
     | '/inicio'
     | '/termos'
+    | '/.well-known/assetlinks.json'
     | '/_authenticated/conexao'
     | '/_authenticated/configuracoes'
     | '/_authenticated/grupos'
@@ -247,6 +260,7 @@ export interface RootRouteChildren {
   DefinirSenhaRoute: typeof DefinirSenhaRoute
   InicioRoute: typeof InicioRoute
   TermosRoute: typeof TermosRoute
+  DotwellKnownAssetlinksDotjsonRoute: typeof DotwellKnownAssetlinksDotjsonRoute
   RCodeRoute: typeof RCodeRoute
 }
 
@@ -292,6 +306,13 @@ declare module '@tanstack/react-router' {
       path: '/termos'
       fullPath: '/termos'
       preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/assetlinks.json': {
+      id: '/.well-known/assetlinks.json'
+      path: '/.well-known/assetlinks.json'
+      fullPath: '/.well-known/assetlinks.json'
+      preLoaderRoute: typeof DotwellKnownAssetlinksDotjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/conexao': {
@@ -419,6 +440,7 @@ const rootRouteChildren: RootRouteChildren = {
   DefinirSenhaRoute: DefinirSenhaRoute,
   InicioRoute: InicioRoute,
   TermosRoute: TermosRoute,
+  DotwellKnownAssetlinksDotjsonRoute: DotwellKnownAssetlinksDotjsonRoute,
   RCodeRoute: RCodeRoute,
 }
 export const routeTree = rootRouteImport
