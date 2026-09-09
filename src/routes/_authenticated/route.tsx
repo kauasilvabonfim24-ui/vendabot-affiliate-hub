@@ -6,6 +6,12 @@ import { OnboardingTour } from "@/components/OnboardingTour";
 const SUBSCRIPTION_CACHE_TTL_MS = 30_000;
 let subscriptionCache: { userId: string; expiresAt: number } | null = null;
 
+// Rotas que qualquer usuário logado pode ver, mesmo sem assinatura ativa.
+// Ideia: deixar a pessoa experimentar o produto (cadastrar produto,
+// simular a mensagem de venda) antes de pedir pra pagar. Só a operação
+// de verdade (conectar WhatsApp, grupos, horários, config) fica trancada.
+const FREE_ROUTES = ["/planos", "/painel", "/produtos", "/preview-ia"];
+
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async ({ location }) => {
@@ -25,7 +31,7 @@ export const Route = createFileRoute("/_authenticated")({
       }
     }
 
-    if (location.pathname !== "/planos") {
+    if (!FREE_ROUTES.includes(location.pathname)) {
       const now = Date.now();
       const jaSabemosQueEstaAtivo =
         subscriptionCache && subscriptionCache.userId === user.id && subscriptionCache.expiresAt > now;
