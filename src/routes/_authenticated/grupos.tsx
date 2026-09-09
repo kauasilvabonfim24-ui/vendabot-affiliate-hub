@@ -160,10 +160,10 @@ function GruposPage() {
         </Button>
       </header>
 
-      <form onSubmit={handleSubmit} className="pwa:hidden rounded-xl border border-border bg-card p-6">
+      <div className="pwa:hidden rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">Novo grupo</h2>
         {formContent}
-      </form>
+      </div>
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
