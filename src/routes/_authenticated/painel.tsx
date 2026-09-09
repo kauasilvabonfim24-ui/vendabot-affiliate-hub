@@ -7,11 +7,17 @@ import {
   IconBell as Bell,
   IconBellOff as BellOff,
   IconLoader2 as Loader2,
+  IconSparkles as Sparkles,
+  IconArrowRight as ArrowRight,
+  IconCircleCheck as CheckCircle2,
+  IconCircle as Circle,
 } from "@tabler/icons-react";
 import { useGroups, useProducts, useSchedules } from "@/hooks/use-vendabot";
 import { useReferralStats } from "@/hooks/use-referral";
 import { usePushPermission } from "@/hooks/use-push-permission";
+import { useMySubscription } from "@/hooks/use-subscription";
 import { repeatLabel } from "@/lib/vendabot";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -31,32 +37,13 @@ function PainelPage() {
   const schedules = useSchedules();
   const referral = useReferralStats();
   const push = usePushPermission();
+  const subscription = useMySubscription();
 
   const cards = [
-    {
-      label: "Produtos",
-      value: products.data?.length ?? 0,
-      icon: Package,
-      to: "/produtos" as const,
-    },
-    {
-      label: "Horários ativos",
-      value: schedules.data?.length ?? 0,
-      icon: Clock,
-      to: "/horarios" as const,
-    },
-    {
-      label: "Grupos",
-      value: groups.data?.length ?? 0,
-      icon: Users,
-      to: "/grupos" as const,
-    },
-    {
-      label: "Indicações",
-      value: referral.data?.valid_referrals ?? 0,
-      icon: Gift,
-      to: "/indicacoes" as const,
-    },
+    { label: "Produtos", value: products.data?.length ?? 0, icon: Package, to: "/produtos" as const },
+    { label: "Horários ativos", value: schedules.data?.length ?? 0, icon: Clock, to: "/horarios" as const },
+    { label: "Grupos", value: groups.data?.length ?? 0, icon: Users, to: "/grupos" as const },
+    { label: "Indicações", value: referral.data?.valid_referrals ?? 0, icon: Gift, to: "/indicacoes" as const },
   ];
 
   const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
@@ -66,9 +53,21 @@ function PainelPage() {
       const v = h * 60 + m;
       return v < nowMinutes ? v + 1440 : v;
     };
-
     return toM(a.time) - toM(b.time);
   });
+
+  // Mesma regra de "ativo" usada no route.tsx: precisa ter status "active"
+  // e, se tiver data de fim, ela precisa estar no futuro.
+  const ativo =
+    !!subscription.data &&
+    subscription.data.status === "active" &&
+    (!subscription.data.current_period_end ||
+      new Date(subscription.data.current_period_end) > new Date());
+
+  // Só mostra o banner depois que a consulta terminou (isSuccess), pra não
+  // "piscar" o bloco à toa pra quem já é assinante enquanto carrega.
+  const mostrarPrimeirosPassos = subscription.isSuccess && !ativo;
+  const temProduto = (products.data?.length ?? 0) > 0;
 
   return (
     <div className="space-y-6 pwa:space-y-4! sm:space-y-8">
@@ -101,6 +100,79 @@ function PainelPage() {
           </span>
         </button>
       </header>
+
+      {mostrarPrimeirosPassos && (
+        <section className="rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Primeiros passos</h2>
+          </div>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Você ainda não assinou — mas já dá pra ver o VendaBot funcionando antes
+            de decidir. Siga os passos abaixo.
+          </p>
+
+          <ol className="space-y-3">
+            <li className="flex items-center justify-between gap-3 rounded-lg bg-card p-3 sm:p-4">
+              <div className="flex items-center gap-3">
+                {temProduto ? (
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
+                ) : (
+                  <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
+                )}
+                <div>
+                  <p className="text-sm font-medium">Cadastre seu primeiro produto</p>
+                  <p className="text-xs text-muted-foreground">
+                    Um link de afiliado da Shopee ou Mercado Livre, com preço e imagem.
+                  </p>
+                </div>
+              </div>
+              <Button asChild size="sm" variant={temProduto ? "outline" : "default"}>
+                <Link to="/produtos">
+                  {temProduto ? "Ver produtos" : "Cadastrar"}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </li>
+
+            <li className="flex items-center justify-between gap-3 rounded-lg bg-card p-3 sm:p-4">
+              <div className="flex items-center gap-3">
+                <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Veja o bot gerando a mensagem de venda</p>
+                  <p className="text-xs text-muted-foreground">
+                    Simulação real, sem precisar conectar o WhatsApp ainda.
+                  </p>
+                </div>
+              </div>
+              <Button asChild size="sm" variant="outline" disabled={!temProduto}>
+                <Link to="/preview-ia">
+                  Testar
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </li>
+
+            <li className="flex items-center justify-between gap-3 rounded-lg bg-card p-3 sm:p-4">
+              <div className="flex items-center gap-3">
+                <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Assine pra conectar no WhatsApp de verdade</p>
+                  <p className="text-xs text-muted-foreground">
+                    Libera grupos, horários automáticos e o bot rodando ao vivo.
+                  </p>
+                </div>
+              </div>
+              <Button asChild size="sm">
+                <Link to="/planos">
+                  Ver planos
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </li>
+          </ol>
+        </section>
+      )}
 
       <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-4">
         {cards.map(({ label, value, icon: Icon, to }) => (
