@@ -88,18 +88,27 @@ export type Database = {
       }
       bot_status: {
         Row: {
+          connection_method: string
+          pairing_code: string | null
+          phone_number: string | null
           qr_code: string | null
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          connection_method?: string
+          pairing_code?: string | null
+          phone_number?: string | null
           qr_code?: string | null
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          connection_method?: string
+          pairing_code?: string | null
+          phone_number?: string | null
           qr_code?: string | null
           status?: string
           updated_at?: string
