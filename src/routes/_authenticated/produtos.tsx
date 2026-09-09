@@ -3,7 +3,9 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   IconPencil as Pencil, IconTrash as Trash2, IconX as X, IconPlus as Plus,
+  IconPhoto as Photo, IconLoader2 as Loader2,
 } from "@tabler/icons-react";
+import { useRef } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProducts } from "@/hooks/use-vendabot";
@@ -47,6 +49,40 @@ function ProdutosPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      if (!user) throw new Error("Sessão expirada, faça login de novo.");
+
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("product-images")
+        .upload(path, file, { upsert: false });
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrl } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(path);
+
+      set("image_url", publicUrl.publicUrl);
+      toast.success("Foto enviada");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao enviar foto");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   const off = discountPercent(Number(form.old_price), Number(form.price));
 
@@ -65,6 +101,7 @@ function ProdutosPage() {
       category: p.category ?? "",
     });
     setSheetOpen(true);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   function cancelEdit() {
@@ -193,13 +230,57 @@ function ProdutosPage() {
           />
         </div>
         <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="image_url">URL da imagem (opcional)</Label>
-          <Input
-            id="image_url"
-            value={form.image_url}
-            onChange={(e) => set("image_url", e.target.value)}
-            placeholder="https://..."
+          <Label>Foto do produto</Label>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
           />
+
+          <div className="flex items-center gap-3">
+            {form.image_url ? (
+              <img
+                src={form.image_url}
+                alt="Prévia do produto"
+                className="h-16 w-16 shrink-0 rounded-lg border border-border object-cover"
+              />
+            ) : (
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-dashed border-border bg-secondary/40">
+                <Photo className="h-5 w-5 text-muted-foreground" />
+              </div>
+            )}
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="gap-2"
+            >
+              {uploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Photo className="h-4 w-4" />
+              )}
+              {uploading ? "Enviando..." : form.image_url ? "Trocar foto" : "Escolher da galeria"}
+            </Button>
+          </div>
+
+          <details className="pt-1">
+            <summary className="cursor-pointer text-xs text-muted-foreground">
+              Já tem a foto hospedada em outro lugar? Cole o link aqui
+            </summary>
+            <Input
+              className="mt-2"
+              value={form.image_url}
+              onChange={(e) => set("image_url", e.target.value)}
+              placeholder="https://..."
+            />
+          </details>
         </div>
       </div>
 
