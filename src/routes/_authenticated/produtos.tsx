@@ -229,7 +229,7 @@ function ProdutosPage() {
         </Button>
       </header>
 
-      <form onSubmit={handleSubmit} className="pwa:hidden rounded-xl border border-border bg-card p-6">
+      <div className="pwa:hidden rounded-xl border border-border bg-card p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">{editingId ? "Editar produto" : "Novo produto"}</h2>
           {editingId && (
@@ -239,7 +239,7 @@ function ProdutosPage() {
           )}
         </div>
         {formContent}
-      </form>
+      </div>
 
       <Sheet
         open={sheetOpen}
