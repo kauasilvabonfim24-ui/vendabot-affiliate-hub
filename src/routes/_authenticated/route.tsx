@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar, MobileBottomNav, PwaTopBar, PwaBottomNav } from "@/components/AppSidebar";
 import { OnboardingTour } from "@/components/OnboardingTour";
+import { NotificationPrompt } from "@/components/NotificationPrompt";
 
 const SUBSCRIPTION_CACHE_TTL_MS = 30_000;
 let subscriptionCache: { userId: string; expiresAt: number } | null = null;
@@ -74,6 +75,7 @@ function AuthenticatedLayout() {
       <MobileBottomNav />
       <PwaBottomNav />
       <OnboardingTour />
+      <NotificationPrompt />
     </div>
   );
 }
