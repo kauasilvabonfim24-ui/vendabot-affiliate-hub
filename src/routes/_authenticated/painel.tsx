@@ -56,16 +56,12 @@ function PainelPage() {
     return toM(a.time) - toM(b.time);
   });
 
-  // Mesma regra de "ativo" usada no route.tsx: precisa ter status "active"
-  // e, se tiver data de fim, ela precisa estar no futuro.
   const ativo =
     !!subscription.data &&
     subscription.data.status === "active" &&
     (!subscription.data.current_period_end ||
       new Date(subscription.data.current_period_end) > new Date());
 
-  // Só mostra o banner depois que a consulta terminou (isSuccess), pra não
-  // "piscar" o bloco à toa pra quem já é assinante enquanto carrega.
   const mostrarPrimeirosPassos = subscription.isSuccess && !ativo;
   const temProduto = (products.data?.length ?? 0) > 0;
 
@@ -145,7 +141,7 @@ function PainelPage() {
                   </p>
                 </div>
               </div>
-              <Button asChild size="sm" variant="outline" disabled={!temProduto}>
+              <Button asChild size="sm" variant="outline">
                 <Link to="/preview-ia">
                   Testar
                   <ArrowRight className="h-4 w-4" />
