@@ -82,6 +82,15 @@ function ConexaoPage() {
             <Loader2 className="h-6 w-6 animate-spin" />
             <p className="text-sm">Carregando status...</p>
           </div>
+        ) : status === "iniciando" ? (
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-10 w-10 animate-spin text-ai" />
+            <p className="text-sm font-medium">Preparando servidor...</p>
+            <p className="max-w-sm text-center text-xs text-muted-foreground">
+              O servidor acabou de iniciar e está estabilizando. Isso leva só
+              alguns segundos, aguarde — não precisa clicar em nada.
+            </p>
+          </div>
         ) : status === "requested" ? (
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-ai" />
