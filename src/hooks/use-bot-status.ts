@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type BotStatusRow = {
   user_id: string;
-  status: "requested" | "qr" | "pairing" | "connected" | "disconnected" | "disconnect_requested" | string;
+  status: "requested" | "iniciando" | "qr" | "pairing" | "connected" | "disconnected" | "disconnect_requested" | string;
   qr_code: string | null;
   pairing_code: string | null;
   connection_method: "qr" | "pairing" | string;
