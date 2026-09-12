@@ -18,6 +18,7 @@ import { Route as TermosRouteImport } from './routes/termos'
 import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known.assetlinks[.]json'
 import { Route as AuthenticatedConexaoRouteImport } from './routes/_authenticated/conexao'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
+import { Route as AuthenticatedEnviosRouteImport } from './routes/_authenticated/envios'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
 import { Route as AuthenticatedHorariosRouteImport } from './routes/_authenticated/horarios'
 import { Route as AuthenticatedIndicacoesRouteImport } from './routes/_authenticated/indicacoes'
@@ -75,6 +76,11 @@ const AuthenticatedConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedEnviosRoute = AuthenticatedEnviosRouteImport.update({
+  id: '/envios',
+  path: '/envios',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedGruposRoute = AuthenticatedGruposRouteImport.update({
   id: '/grupos',
   path: '/grupos',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/conexao': typeof AuthenticatedConexaoRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/envios': typeof AuthenticatedEnviosRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/conexao': typeof AuthenticatedConexaoRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/envios': typeof AuthenticatedEnviosRoute
   '/grupos': typeof AuthenticatedGruposRoute
   '/horarios': typeof AuthenticatedHorariosRoute
   '/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/_authenticated/conexao': typeof AuthenticatedConexaoRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/_authenticated/envios': typeof AuthenticatedEnviosRoute
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
   '/_authenticated/horarios': typeof AuthenticatedHorariosRoute
   '/_authenticated/indicacoes': typeof AuthenticatedIndicacoesRoute
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/.well-known/assetlinks.json'
     | '/conexao'
     | '/configuracoes'
+    | '/envios'
     | '/grupos'
     | '/horarios'
     | '/indicacoes'
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/.well-known/assetlinks.json'
     | '/conexao'
     | '/configuracoes'
+    | '/envios'
     | '/grupos'
     | '/horarios'
     | '/indicacoes'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/.well-known/assetlinks.json'
     | '/_authenticated/conexao'
     | '/_authenticated/configuracoes'
+    | '/_authenticated/envios'
     | '/_authenticated/grupos'
     | '/_authenticated/horarios'
     | '/_authenticated/indicacoes'
@@ -329,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/envios': {
+      id: '/_authenticated/envios'
+      path: '/envios'
+      fullPath: '/envios'
+      preLoaderRoute: typeof AuthenticatedEnviosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/grupos': {
       id: '/_authenticated/grupos'
       path: '/grupos'
@@ -405,6 +424,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedConexaoRoute: typeof AuthenticatedConexaoRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
+  AuthenticatedEnviosRoute: typeof AuthenticatedEnviosRoute
   AuthenticatedGruposRoute: typeof AuthenticatedGruposRoute
   AuthenticatedHorariosRoute: typeof AuthenticatedHorariosRoute
   AuthenticatedIndicacoesRoute: typeof AuthenticatedIndicacoesRoute
@@ -419,6 +439,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConexaoRoute: AuthenticatedConexaoRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
+  AuthenticatedEnviosRoute: AuthenticatedEnviosRoute,
   AuthenticatedGruposRoute: AuthenticatedGruposRoute,
   AuthenticatedHorariosRoute: AuthenticatedHorariosRoute,
   AuthenticatedIndicacoesRoute: AuthenticatedIndicacoesRoute,
