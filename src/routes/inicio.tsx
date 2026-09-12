@@ -429,31 +429,78 @@ function LandingPage() {
         </div>
 
         <TiltCard className="mx-auto mt-10 max-w-sm">
-          <div className="mb-3 flex items-center gap-2 border-b border-border pb-3">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+          {/* Cabeçalho estilo conversa de grupo do WhatsApp */}
+          <div className="-m-4 mb-0 flex items-center gap-3 rounded-t-2xl border-b border-border bg-surface px-4 py-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <Users className="h-4 w-4" />
             </span>
-            <p className="text-xs font-medium text-muted-foreground">
-              VendaBot disparando agora
+            <div className="min-w-0 flex-1 text-left">
+              <p className="truncate text-sm font-semibold text-foreground">
+                Achados &amp; Ofertas — Grupo 1
+              </p>
+              <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                </span>
+                VendaBot disparando agora
+              </p>
+            </div>
+            <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+              09:00
+            </span>
+          </div>
+
+          {/* Mensagem enviada */}
+          <div className="-mx-4 bg-background/60 px-4 py-5">
+            <div
+              style={{ transform: "translateZ(30px)" }}
+              className="ml-auto max-w-[88%] overflow-hidden rounded-2xl rounded-tr-sm border border-primary/25 bg-primary/10 text-left shadow-xl"
+            >
+              <div className="relative">
+                <img
+                  src={foneDemo}
+                  alt="Fone de ouvido Bluetooth sem fio com estojo de carregamento"
+                  width={800}
+                  height={800}
+                  loading="lazy"
+                  className="h-36 w-full bg-white object-contain p-2"
+                />
+                <span className="absolute left-2 top-2 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                  56% OFF
+                </span>
+                <span className="absolute right-2 top-2 rounded-md bg-background/85 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
+                  Shopee
+                </span>
+              </div>
+
+              <div className="space-y-1.5 p-3">
+                <p className="text-sm font-semibold leading-snug text-foreground">
+                  Fone Bluetooth TWS com Estojo de Carga
+                </p>
+                <p className="flex items-baseline gap-2">
+                  <span className="text-xs text-muted-foreground line-through">R$ 89,90</span>
+                  <span className="font-display text-lg font-bold text-primary">R$ 39,90</span>
+                </p>
+                <p className="truncate rounded-md bg-background/60 px-2 py-1 text-[11px] text-muted-foreground">
+                  link.vendabot.app/fone-tws
+                </p>
+                <p className="flex items-center justify-end gap-1 pt-0.5 text-[10px] text-muted-foreground">
+                  09:00
+                  <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Rodapé de status */}
+          <div className="-m-4 mt-0 flex items-center justify-center gap-2 rounded-b-2xl border-t border-border bg-surface px-4 py-2.5">
+            <CheckCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
+            <p className="text-[11px] text-muted-foreground">
+              Entregue em <span className="font-medium text-foreground">8 grupos</span> · sem você
+              tocar no celular
             </p>
           </div>
-          <div
-            style={{ transform: "translateZ(30px)" }}
-            className="ml-auto max-w-[85%] rounded-lg rounded-tr-sm bg-primary/15 p-3 text-left text-sm shadow-lg"
-          >
-            <p className="leading-snug">
-              🔥 <span className="font-semibold">Fone Bluetooth</span>
-              <br />
-              💰 De ~~R$ 89,90~~ por <span className="font-semibold text-primary">R$ 39,90</span>
-              <br />
-              👉 Confira aqui: link.vendabot.app/xyz
-            </p>
-            <p className="mt-1 text-right text-[10px] text-muted-foreground">enviado ✓✓</p>
-          </div>
-          <p className="mt-3 text-center text-[11px] text-muted-foreground">
-            Enviado automaticamente para 8 grupos
-          </p>
         </TiltCard>
       </section>
 
