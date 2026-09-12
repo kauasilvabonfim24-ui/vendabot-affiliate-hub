@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle,
@@ -31,6 +31,21 @@ function ConexaoPage() {
   const [metodoEscolhido, setMetodoEscolhido] = useState<"qr" | "pairing" | null>(null);
   const [telefone, setTelefone] = useState("");
   const status = data?.status ?? "disconnected";
+
+  // Depois de um tempo com o código de pareamento na tela sem confirmar, mostra
+  // um aviso tranquilizador — o WhatsApp às vezes já aceitou o pareamento no
+  // celular, mas nosso lado ainda está terminando de fechar a conexão, e sem
+  // esse aviso o cliente acha que travou e fecha o app no meio do processo.
+  const [pareamentoDemorando, setPareamentoDemorando] = useState(false);
+  useEffect(() => {
+    if (status !== "pairing" || !data?.pairing_code) {
+      setPareamentoDemorando(false);
+      return;
+    }
+    setPareamentoDemorando(false);
+    const timer = setTimeout(() => setPareamentoDemorando(true), 20000);
+    return () => clearTimeout(timer);
+  }, [status, data?.pairing_code]);
 
   function handleConnectQr() {
     connectMutation.mutate(
@@ -119,6 +134,13 @@ function ConexaoPage() {
               Aparelhos conectados → Conectar um aparelho → Conectar com número de telefone,
               e digite esse código.
             </p>
+            {pareamentoDemorando && (
+              <p className="max-w-sm text-center text-xs text-amber-500">
+                Já apareceu "conectado" no seu WhatsApp mas continua nessa tela?
+                É normal — nosso servidor pode levar até 1 minuto pra confirmar.
+                Não feche o app, só aguarde mais um pouco.
+              </p>
+            )}
             <div className="flex w-full max-w-xs flex-col gap-3">
               <Button
                 onClick={handleConnectPairing}
