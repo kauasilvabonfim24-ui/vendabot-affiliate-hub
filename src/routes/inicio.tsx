@@ -22,9 +22,11 @@ import {
   Zap,
   ChevronLeft,
   ChevronRight,
+  CheckCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
+import foneDemo from "@/assets/demo-fone-bluetooth.jpg";
 
 export const Route = createFileRoute("/inicio")({
   ssr: false,
