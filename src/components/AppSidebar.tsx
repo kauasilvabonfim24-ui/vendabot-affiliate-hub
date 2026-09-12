@@ -5,7 +5,7 @@ import {
   IconUsers as Users, IconSparkles as Sparkles, IconLogout as LogOut,
   IconRobot as Bot, IconQrcode as QrCode, IconGift as Gift,
   IconSettings as Settings, IconReceipt as Receipt, IconLifebuoy as LifeBuoy,
-  IconDots as MoreHorizontal,
+  IconDots as MoreHorizontal, IconListCheck as ListCheck,
 } from "@tabler/icons-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
@@ -25,6 +25,7 @@ const nav = [
   { to: "/produtos", label: "Produtos", icon: Package },
   { to: "/horarios", label: "Horários", icon: Clock },
   { to: "/grupos", label: "Grupos", icon: Users },
+  { to: "/envios", label: "Envios", icon: ListCheck },
   { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
   { to: "/indicacoes", label: "Indique e Ganhe", icon: Gift },
@@ -41,6 +42,7 @@ const mainNav = [
 
 // Só usada no modo instalado (PWA): itens que ficam dentro do menu "Mais".
 const moreNav = [
+  { to: "/envios", label: "Envios", icon: ListCheck },
   { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
   { to: "/indicacoes", label: "Indique e ganhe", icon: Gift },
