@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
+import { NotificationsBell } from "@/components/NotificationsBell";
 import {
   Sheet,
   SheetTrigger,
@@ -87,14 +88,17 @@ export function AppSidebar() {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar md:flex">
-      <div className="flex items-center gap-2 px-5 pt-6">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-          <Bot className="h-5 w-5" />
-        </span>
-        <div>
-          <p className="font-display text-lg leading-none font-bold">VendaBot</p>
-          <p className="text-xs text-muted-foreground">Afiliados no WhatsApp</p>
+      <div className="flex items-center justify-between gap-2 px-5 pt-6">
+        <div className="flex items-center gap-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <Bot className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="font-display text-lg leading-none font-bold">VendaBot</p>
+            <p className="text-xs text-muted-foreground">Afiliados no WhatsApp</p>
+          </div>
         </div>
+        <NotificationsBell />
       </div>
 
       <Link
@@ -150,13 +154,16 @@ export function PwaTopBar() {
         </span>
         <span className="truncate text-base font-semibold">{title}</span>
       </div>
-      <span className="flex shrink-0 items-center gap-1.5 text-[11px] text-muted-foreground">
-        <span className="relative flex h-2 w-2">
-          <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
-          <span className={`relative inline-flex h-2 w-2 rounded-full ${dotClass}`} />
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="flex shrink-0 items-center gap-1.5 text-[11px] text-muted-foreground">
+          <span className="relative flex h-2 w-2">
+            <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${dotClass}`} />
+            <span className={`relative inline-flex h-2 w-2 rounded-full ${dotClass}`} />
+          </span>
+          <span className="hidden sm:inline">{statusLabel}</span>
         </span>
-        <span className="hidden sm:inline">{statusLabel}</span>
-      </span>
+        <NotificationsBell />
+      </div>
     </header>
   );
 }
