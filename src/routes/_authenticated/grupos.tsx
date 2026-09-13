@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { IconTrash as Trash2, IconUsers as Users, IconPlus as Plus } from "@tabler/icons-react";
+import { IconTrash as Trash2, IconUsers as Users, IconPlus as Plus, IconPencil as Pencil } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useGroups } from "@/hooks/use-vendabot";
@@ -29,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/grupos")({
   component: GruposPage,
 });
 
+type GroupRow = NonNullable<ReturnType<typeof useGroups>["data"]>[number];
+
 function GruposPage() {
   const { data: groups, isLoading } = useGroups();
   const { data: available, isLoading: loadingAvailable } = useAvailableGroups();
@@ -38,23 +40,51 @@ function GruposPage() {
   const [role, setRole] = useState("member");
   const [saving, setSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  function resetForm() {
+    setName("");
+    setGid("");
+    setRole("member");
+    setEditingId(null);
+  }
+
+  function startNew() {
+    resetForm();
+    setSheetOpen(true);
+  }
+
+  function startEdit(g: GroupRow) {
+    setName(g.name);
+    setGid(g.whatsapp_gid);
+    setRole(g.role);
+    setEditingId(g.id);
+    setSheetOpen(true);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const { error } = await supabase.from("groups").insert({
-        name,
-        whatsapp_gid: gid,
-        role,
-        user_id: userData.user!.id,
-      });
-      if (error) throw error;
-      toast.success("Grupo adicionado");
-      setName("");
-      setGid("");
-      setRole("member");
+      if (editingId) {
+        const { error } = await supabase
+          .from("groups")
+          .update({ name, role })
+          .eq("id", editingId);
+        if (error) throw error;
+        toast.success("Grupo atualizado");
+      } else {
+        const { data: userData } = await supabase.auth.getUser();
+        const { error } = await supabase.from("groups").insert({
+          name,
+          whatsapp_gid: gid,
+          role,
+          user_id: userData.user!.id,
+        });
+        if (error) throw error;
+        toast.success("Grupo adicionado");
+      }
+      resetForm();
       setSheetOpen(false);
       queryClient.invalidateQueries({ queryKey: ["groups"] });
     } catch (err) {
@@ -71,45 +101,48 @@ function GruposPage() {
       return;
     }
     toast.success("Grupo excluído");
+    if (editingId === id) resetForm();
     queryClient.invalidateQueries({ queryKey: ["groups"] });
   }
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-4 pwa:space-y-3!">
       <div className="grid gap-4 pwa:gap-3! md:grid-cols-3">
-        <div className="space-y-2 md:order-2">
-          <Label htmlFor="gid">Grupo do WhatsApp</Label>
-          {loadingAvailable ? (
-            <p className="pt-2 text-sm text-muted-foreground">Carregando grupos...</p>
-          ) : (available?.length ?? 0) === 0 ? (
-            <p className="pt-2 text-sm text-muted-foreground">
-              Nenhum grupo encontrado ainda —{" "}
-              <Link to="/conexao" className="text-primary hover:underline">
-                conecte o WhatsApp primeiro
-              </Link>
-            </p>
-          ) : (
-            <select
-              id="gid"
-              required
-              value={gid}
-              onChange={(e) => {
-                const value = e.target.value;
-                setGid(value);
-                const found = available!.find((g) => g.gid === value);
-                if (found && !name.trim()) setName(found.name);
-              }}
-              className="h-9 pwa:h-12! w-full rounded-md border border-input bg-background px-3 text-sm"
-            >
-              <option value="">Selecione um grupo</option>
-              {available!.map((g) => (
-                <option key={g.gid} value={g.gid}>
-                  {g.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
+        {!editingId && (
+          <div className="space-y-2 md:order-2">
+            <Label htmlFor="gid">Grupo do WhatsApp</Label>
+            {loadingAvailable ? (
+              <p className="pt-2 text-sm text-muted-foreground">Carregando grupos...</p>
+            ) : (available?.length ?? 0) === 0 ? (
+              <p className="pt-2 text-sm text-muted-foreground">
+                Nenhum grupo encontrado ainda —{" "}
+                <Link to="/conexao" className="text-primary hover:underline">
+                  conecte o WhatsApp primeiro
+                </Link>
+              </p>
+            ) : (
+              <select
+                id="gid"
+                required
+                value={gid}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setGid(value);
+                  const found = available!.find((g) => g.gid === value);
+                  if (found && !name.trim()) setName(found.name);
+                }}
+                className="h-9 pwa:h-12! w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">Selecione um grupo</option>
+                {available!.map((g) => (
+                  <option key={g.gid} value={g.gid}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
 
         <div className="space-y-2 md:order-1">
           <Label htmlFor="gname">Nome do grupo</Label>
@@ -135,8 +168,8 @@ function GruposPage() {
           </select>
         </div>
       </div>
-      <Button type="submit" disabled={saving || !gid} className="w-full pwa:h-12!">
-        {saving ? "Salvando..." : "Adicionar grupo"}
+      <Button type="submit" disabled={saving || (!editingId && !gid)} className="w-full pwa:h-12!">
+        {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Adicionar grupo"}
       </Button>
     </form>
   );
@@ -151,7 +184,7 @@ function GruposPage() {
           </p>
         </div>
         <Button
-          onClick={() => setSheetOpen(true)}
+          onClick={startNew}
           size="sm"
           className="hidden pwa:flex items-center gap-1.5 rounded-full"
         >
@@ -161,17 +194,17 @@ function GruposPage() {
       </header>
 
       <div className="pwa:hidden rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Novo grupo</h2>
+        <h2 className="mb-4 text-lg font-semibold">{editingId ? "Editar grupo" : "Novo grupo"}</h2>
         {formContent}
       </div>
 
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+      <Sheet open={sheetOpen} onOpenChange={(v) => { setSheetOpen(v); if (!v) resetForm(); }}>
         <SheetContent
           side="bottom"
           className="hidden pwa:block max-h-[85vh] overflow-y-auto rounded-t-2xl pb-[calc(env(safe-area-inset-bottom)+16px)]"
         >
           <SheetHeader className="mb-3">
-            <SheetTitle className="text-left">Novo grupo</SheetTitle>
+            <SheetTitle className="text-left">{editingId ? "Editar grupo" : "Novo grupo"}</SheetTitle>
           </SheetHeader>
           {formContent}
         </SheetContent>
@@ -203,6 +236,14 @@ function GruposPage() {
                   <span className="rounded-full bg-secondary px-2 py-1 text-xs whitespace-nowrap text-muted-foreground">
                     {g.role === "admin" ? "Admin" : "Membro"}
                   </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => startEdit(g)}
+                    className="pwa:h-11! pwa:w-11!"
+                  >
+                    <Pencil className="h-4 w-4 text-muted-foreground" />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"
