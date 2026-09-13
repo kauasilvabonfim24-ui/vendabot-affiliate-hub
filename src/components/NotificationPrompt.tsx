@@ -10,25 +10,26 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePushPermission } from "@/hooks/use-push-permission";
 
-const DISMISS_KEY = "vendabot_notif_prompt_dismissed";
+const DISMISS_KEY = "vendabot_notif_prompt_dismissed_until";
+const SETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Convite explicando o motivo antes de disparar o popup nativo do
-// navegador — quem entende o benefício antes tende muito mais a aceitar
-// do que quando o navegador só "aparece perguntando" sem contexto.
+// navegador. "Agora não" dá uma soneca de 7 dias (não é "nunca mais").
 export function NotificationPrompt() {
   const { permission, loading, requestPermission } = usePushPermission();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (permission !== "default") return;
-    if (localStorage.getItem(DISMISS_KEY)) return;
+    const dismissedUntil = Number(localStorage.getItem(DISMISS_KEY) ?? 0);
+    if (dismissedUntil > Date.now()) return;
 
     const timer = setTimeout(() => setOpen(true), 2500);
     return () => clearTimeout(timer);
   }, [permission]);
 
   function dismiss() {
-    localStorage.setItem(DISMISS_KEY, "1");
+    localStorage.setItem(DISMISS_KEY, String(Date.now() + SETE_DIAS_MS));
     setOpen(false);
   }
 
