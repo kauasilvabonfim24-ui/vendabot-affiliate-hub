@@ -30,6 +30,15 @@ export function useBotStatus() {
       if (error) throw error;
       return (data ?? null) as BotStatusRow | null;
     },
+    // Enquanto a conexão está em andamento, o realtime pode perder algum evento
+    // (aba em segundo plano, rede instável). Uma checagem periódica garante que
+    // a tela não fique presa em "aguardando" depois que o Render já confirmou.
+    refetchInterval: (query) => {
+      const status = (query.state.data as BotStatusRow | null)?.status;
+      const emAndamento = ["requested", "iniciando", "qr", "pairing", "disconnect_requested"];
+      return status && emAndamento.includes(status) ? 3000 : false;
+    },
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
