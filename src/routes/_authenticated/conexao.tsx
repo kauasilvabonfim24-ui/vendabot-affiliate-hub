@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle,
   IconLoader2 as Loader2, IconDeviceMobile as Smartphone, IconQrcode as QrCodeIcon,
+  IconCopy as Copy,
 } from "@tabler/icons-react";
 import { useBotStatus, useConnectWhatsApp, useDisconnectWhatsApp } from "@/hooks/use-bot-status";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,14 @@ function ConexaoPage() {
     });
   }
 
+  function handleCopyCode() {
+    if (!data?.pairing_code) return;
+    navigator.clipboard
+      .writeText(data.pairing_code)
+      .then(() => toast.success("Código copiado!"))
+      .catch(() => toast.error("Não deu pra copiar, tenta selecionar manualmente"));
+  }
+
   return (
     <div className="mx-auto max-w-2xl">
       <header className="mb-8 pwa:hidden">
@@ -129,6 +138,15 @@ function ConexaoPage() {
                 {data.pairing_code}
               </p>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyCode}
+              className="gap-2 pwa:h-12!"
+            >
+              <Copy className="h-4 w-4" />
+              Copiar código
+            </Button>
             <p className="max-w-sm text-center text-sm text-muted-foreground">
               No próprio celular do número informado, abra o WhatsApp:
               Aparelhos conectados → Conectar um aparelho → Conectar com número de telefone,
