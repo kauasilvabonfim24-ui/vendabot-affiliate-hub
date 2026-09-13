@@ -64,7 +64,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a
+          
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
@@ -227,6 +227,40 @@ function RootComponent() {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") syncIdentity(session?.user.id ?? null);
       if (event === "SIGNED_OUT") syncIdentity(null);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  // Mantém push_subscriptions sincronizada com o estado real do OneSignal
+  // nesse navegador — é o que permite ao send-push saber se vale a pena
+  // tentar OneSignal ou só gravar a notificação in-app.
+  useEffect(() => {
+    function syncPushSubscription() {
+      (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+      (window as any).OneSignalDeferred.push(async (OneSignal: any) => {
+        const { data } = await supabase.auth.getUser();
+        const userId = data.user?.id;
+        if (!userId) return;
+        const subscribed = !!OneSignal.User.PushSubscription.optedIn;
+        const onesignalId = OneSignal.User.PushSubscription.id ?? null;
+        await supabase
+          .from("push_subscriptions")
+          .upsert(
+            { user_id: userId, subscribed, onesignal_id: onesignalId, updated_at: new Date().toISOString() },
+            { onConflict: "user_id" },
+          );
+      });
+    }
+
+    syncPushSubscription();
+
+    (window as any).OneSignalDeferred = (window as any).OneSignalDeferred || [];
+    (window as any).OneSignalDeferred.push((OneSignal: any) => {
+      OneSignal.User.PushSubscription.addEventListener("change", syncPushSubscription);
+    });
+
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") syncPushSubscription();
     });
     return () => data.subscription.unsubscribe();
   }, []);
