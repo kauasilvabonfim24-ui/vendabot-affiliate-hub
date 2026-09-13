@@ -33,20 +33,55 @@ function ConexaoPage() {
   const [telefone, setTelefone] = useState("");
   const status = data?.status ?? "disconnected";
 
-  // Depois de um tempo com o código de pareamento na tela sem confirmar, mostra
-  // um aviso tranquilizador — o WhatsApp às vezes já aceitou o pareamento no
-  // celular, mas nosso lado ainda está terminando de fechar a conexão, e sem
-  // esse aviso o cliente acha que travou e fecha o app no meio do processo.
+  // Depois de um tempo no status "pairing" sem confirmar, mostra um aviso
+  // tranquilizador — o WhatsApp às vezes já aceitou o pareamento no celular,
+  // mas nosso lado ainda está terminando de fechar a conexão, e sem esse
+  // aviso o cliente acha que travou e fecha o app no meio do processo.
+  // Importante: a contagem depende só do STATUS (não do código em si) —
+  // o backend às vezes gera um código novo sozinho no meio de uma tentativa
+  // automática (ver bot.js), e se a contagem reiniciasse a cada código novo,
+  // esse aviso quase nunca chegaria a aparecer, mesmo com o cliente esperando
+  // bem mais que 20s no total.
   const [pareamentoDemorando, setPareamentoDemorando] = useState(false);
   useEffect(() => {
-    if (status !== "pairing" || !data?.pairing_code) {
+    if (status !== "pairing") {
       setPareamentoDemorando(false);
       return;
     }
     setPareamentoDemorando(false);
     const timer = setTimeout(() => setPareamentoDemorando(true), 20000);
     return () => clearTimeout(timer);
-  }, [status, data?.pairing_code]);
+  }, [status]);
+
+  // Aviso leve de que o código mudou sozinho (retry automático do servidor) —
+  // sem isso, o cliente vê o código trocar do nada e acha que é um bug.
+  const [codigoAtualizadoAutomaticamente, setCodigoAtualizadoAutomaticamente] = useState(false);
+  const [ultimoCodigoVisto, setUltimoCodigoVisto] = useState<string | null>(null);
+  useEffect(() => {
+    if (status !== "pairing" || !data?.pairing_code) return;
+    if (ultimoCodigoVisto && ultimoCodigoVisto !== data.pairing_code) {
+      setCodigoAtualizadoAutomaticamente(true);
+      const t = setTimeout(() => setCodigoAtualizadoAutomaticamente(false), 6000);
+      setUltimoCodigoVisto(data.pairing_code);
+      return () => clearTimeout(t);
+    }
+    setUltimoCodigoVisto(data.pairing_code);
+  }, [status, data?.pairing_code, ultimoCodigoVisto]);
+
+  // Mesmo tipo de aviso do pairing, mas pro QR — hoje o QR não tinha nenhuma
+  // explicação quando demorava, e como o QR do WhatsApp naturalmente se renova
+  // sozinho a cada 20-40s enquanto não é escaneado, a imagem trocar do nada
+  // sem esse aviso também passava a impressão de estar travado/quebrado.
+  const [qrDemorando, setQrDemorando] = useState(false);
+  useEffect(() => {
+    if (status !== "qr") {
+      setQrDemorando(false);
+      return;
+    }
+    setQrDemorando(false);
+    const timer = setTimeout(() => setQrDemorando(true), 30000);
+    return () => clearTimeout(timer);
+  }, [status]);
 
   function handleConnectQr() {
     connectMutation.mutate(
@@ -158,6 +193,13 @@ function ConexaoPage() {
             <p className="max-w-sm text-center text-sm text-muted-foreground">
               Escaneie com o WhatsApp: Aparelhos conectados → Conectar um aparelho
             </p>
+            {qrDemorando && (
+              <p className="max-w-sm text-center text-xs text-amber-500">
+                O QR pode mudar sozinho de tempos em tempos até você escanear — é
+                normal, é só o WhatsApp renovando o código. Aponte a câmera pro
+                que estiver aparecendo na hora.
+              </p>
+            )}
           </div>
         ) : status === "pairing" && data?.pairing_code ? (
           <div className="flex flex-col items-center gap-5">
@@ -180,6 +222,11 @@ function ConexaoPage() {
               Aparelhos conectados → Conectar um aparelho → Conectar com número de telefone,
               e digite esse código.
             </p>
+            {codigoAtualizadoAutomaticamente && (
+              <p className="max-w-sm text-center text-xs text-muted-foreground">
+                Gerei um código novo porque a tentativa anterior expirou sozinha — é normal, só use esse aqui.
+              </p>
+            )}
             {pareamentoDemorando && (
               <p className="max-w-sm text-center text-xs text-amber-500">
                 Já apareceu "conectado" no seu WhatsApp mas continua nessa tela?
