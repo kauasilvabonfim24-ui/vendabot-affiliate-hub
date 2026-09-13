@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { IconClock as Clock, IconTrash as Trash2, IconPlus as Plus } from "@tabler/icons-react";
+import { IconClock as Clock, IconTrash as Trash2, IconPlus as Plus, IconPencil as Pencil } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useGroups, useSchedules } from "@/hooks/use-vendabot";
@@ -29,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/horarios")({
   component: HorariosPage,
 });
 
+type ScheduleRow = NonNullable<ReturnType<typeof useSchedules>["data"]>[number];
+
 function HorariosPage() {
   const { data: schedules, isLoading } = useSchedules();
   const { data: groups } = useGroups();
@@ -39,9 +41,32 @@ function HorariosPage() {
   const [groupIds, setGroupIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   function toggleGroup(id: string) {
     setGroupIds((ids) => (ids.includes(id) ? ids.filter((g) => g !== id) : [...ids, id]));
+  }
+
+  function resetForm() {
+    setTime("09:00");
+    setRepeat("daily");
+    setCategory("");
+    setGroupIds([]);
+    setEditingId(null);
+  }
+
+  function startNew() {
+    resetForm();
+    setSheetOpen(true);
+  }
+
+  function startEdit(s: ScheduleRow) {
+    setTime(s.time.slice(0, 5));
+    setRepeat(s.repeat);
+    setCategory(s.category ?? "");
+    setGroupIds(s.group_ids ?? []);
+    setEditingId(s.id);
+    setSheetOpen(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -52,18 +77,31 @@ function HorariosPage() {
     }
     setSaving(true);
     try {
-      const { data: userData } = await supabase.auth.getUser();
-      const { error } = await supabase.from("schedules").insert({
-        time,
-        repeat,
-        group_ids: groupIds,
-        category: category || null,
-        user_id: userData.user!.id,
-      });
-      if (error) throw error;
-      toast.success("Horário adicionado");
-      setCategory("");
-      setGroupIds([]);
+      if (editingId) {
+        const { error } = await supabase
+          .from("schedules")
+          .update({
+            time,
+            repeat,
+            group_ids: groupIds,
+            category: category || null,
+          })
+          .eq("id", editingId);
+        if (error) throw error;
+        toast.success("Horário atualizado");
+      } else {
+        const { data: userData } = await supabase.auth.getUser();
+        const { error } = await supabase.from("schedules").insert({
+          time,
+          repeat,
+          group_ids: groupIds,
+          category: category || null,
+          user_id: userData.user!.id,
+        });
+        if (error) throw error;
+        toast.success("Horário adicionado");
+      }
+      resetForm();
       setSheetOpen(false);
       queryClient.invalidateQueries({ queryKey: ["schedules"] });
     } catch (err) {
@@ -80,6 +118,7 @@ function HorariosPage() {
       return;
     }
     toast.success("Horário excluído");
+    if (editingId === id) resetForm();
     queryClient.invalidateQueries({ queryKey: ["schedules"] });
   }
 
@@ -171,7 +210,7 @@ function HorariosPage() {
       </div>
 
       <Button type="submit" disabled={saving} className="w-full pwa:h-12!">
-        {saving ? "Salvando..." : "Adicionar horário"}
+        {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Adicionar horário"}
       </Button>
     </form>
   );
@@ -186,7 +225,7 @@ function HorariosPage() {
           </p>
         </div>
         <Button
-          onClick={() => setSheetOpen(true)}
+          onClick={startNew}
           size="sm"
           className="hidden pwa:flex items-center gap-1.5 rounded-full"
         >
@@ -196,17 +235,17 @@ function HorariosPage() {
       </header>
 
       <div className="pwa:hidden rounded-xl border border-border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Novo horário</h2>
+        <h2 className="mb-4 text-lg font-semibold">{editingId ? "Editar horário" : "Novo horário"}</h2>
         {formContent}
       </div>
 
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+      <Sheet open={sheetOpen} onOpenChange={(v) => { setSheetOpen(v); if (!v) resetForm(); }}>
         <SheetContent
           side="bottom"
           className="hidden pwa:block max-h-[85vh] overflow-y-auto rounded-t-2xl pb-[calc(env(safe-area-inset-bottom)+16px)]"
         >
           <SheetHeader className="mb-3">
-            <SheetTitle className="text-left">Novo horário</SheetTitle>
+            <SheetTitle className="text-left">{editingId ? "Editar horário" : "Novo horário"}</SheetTitle>
           </SheetHeader>
           {formContent}
         </SheetContent>
@@ -245,6 +284,14 @@ function HorariosPage() {
                   <span className="rounded-full bg-ai/15 px-2 py-1 text-xs whitespace-nowrap text-ai">
                     {s.category ?? "IA decide"}
                   </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => startEdit(s)}
+                    className="pwa:h-11! pwa:w-11!"
+                  >
+                    <Pencil className="h-4 w-4 text-muted-foreground" />
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"
