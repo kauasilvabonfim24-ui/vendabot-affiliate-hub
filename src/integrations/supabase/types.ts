@@ -146,6 +146,63 @@ export type Database = {
         }
         Relationships: []
       }
+      message_logs: {
+        Row: {
+          error_message: string | null
+          group_id: string | null
+          group_name: string | null
+          id: string
+          sent_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          error_message?: string | null
+          group_id?: string | null
+          group_name?: string | null
+          id?: string
+          sent_at?: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          error_message?: string | null
+          group_id?: string | null
+          group_name?: string | null
+          id?: string
+          sent_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       plans: {
         Row: {
           cakto_product_id: string | null
@@ -213,6 +270,27 @@ export type Database = {
           old_price?: number
           platform?: string
           price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          onesignal_id: string | null
+          subscribed: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          onesignal_id?: string | null
+          subscribed?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          onesignal_id?: string | null
+          subscribed?: boolean
           updated_at?: string
           user_id?: string
         }
