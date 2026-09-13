@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar, MobileBottomNav, PwaTopBar, PwaBottomNav } from "@/components/AppSidebar";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { NotificationPrompt } from "@/components/NotificationPrompt";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 const SUBSCRIPTION_CACHE_TTL_MS = 30_000;
 let subscriptionCache: { userId: string; expiresAt: number } | null = null;
@@ -67,6 +68,12 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthenticatedLayout() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Sino flutuante só pro modo navegador mobile (não instalado, não
+          desktop) — é o único dos 3 modos que hoje não tem uma barra
+          superior própria pra encaixar o sino. */}
+      <div className="pwa:hidden md:hidden fixed top-3 right-3 z-40">
+        <NotificationsBell />
+      </div>
       <PwaTopBar />
       <AppSidebar />
       <main className="px-4 pwa:px-3! py-6 pwa:py-4! pb-24 pwa:pb-28! md:ml-64 md:px-8 md:py-8 md:pb-8">
