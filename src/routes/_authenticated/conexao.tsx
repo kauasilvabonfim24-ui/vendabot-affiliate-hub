@@ -115,10 +115,38 @@ function ConexaoPage() {
               alguns segundos, aguarde — não precisa clicar em nada.
             </p>
           </div>
-        ) : status === "requested" ? (
+        ) : status === "requested" ||
+          (status === "pairing" && !data?.pairing_code) ||
+          (status === "qr" && !data?.qr_code) ? (
+          // Enquanto o servidor ainda não gravou o código/QR, seguramos a tela de
+          // espera. Sem isso a pessoa caía de volta no formulário do número e
+          // achava que tinha dado erro.
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-10 w-10 animate-spin text-ai" />
-            <p className="text-sm font-medium">Preparando conexão...</p>
+            <p className="text-sm font-medium">
+              {data?.connection_method === "pairing"
+                ? "Gerando o código de conexão..."
+                : "Preparando conexão..."}
+            </p>
+            <p className="max-w-sm text-center text-xs text-muted-foreground">
+              Isso pode levar alguns segundos. O código aparece aqui sozinho assim
+              que o servidor gerar — não precisa clicar de novo.
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                disconnectMutation.mutate(undefined, {
+                  onError: (err) => {
+                    toast.error(err instanceof Error ? err.message : "Erro ao cancelar");
+                  },
+                });
+                setMetodoEscolhido(null);
+              }}
+              disabled={disconnectMutation.isPending}
+            >
+              Cancelar
+            </Button>
           </div>
         ) : status === "qr" && data?.qr_code ? (
           <div className="flex flex-col items-center gap-5">
