@@ -137,6 +137,28 @@ function ConexaoPage() {
       </header>
 
       <div className="rounded-xl border border-border bg-card p-8 pwa:border-none! pwa:bg-transparent! pwa:p-0! pwa:pt-4!">
+        {status !== "connected" && (
+          <div className="mb-6 flex gap-3 rounded-lg border border-ai/20 bg-ai/10 p-4 text-sm">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-ai" />
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">A conexão pode demorar um pouco — e tudo bem</p>
+              <p className="text-muted-foreground">
+                Tanto pelo QR Code quanto pelo número de telefone, o WhatsApp atualiza os códigos de
+                segurança o tempo todo. Isso não está sob nosso controle.
+              </p>
+              <p className="text-muted-foreground">
+                Se o WhatsApp já mostrou <span className="font-medium text-foreground">“conectado”</span>{" "}
+                mas o app ainda ficou na tela do código, <span className="font-medium text-foreground">não feche o app</span>.
+                Ele está finalizando a conexão sozinho em segundo plano.
+              </p>
+              <p className="text-muted-foreground">
+                Enquanto isso, você pode ir configurando produtos e horários. Aceite as notificações
+                para receber um aviso assim que a conexão for concluída.
+              </p>
+            </div>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="flex flex-col items-center gap-3 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin" />
