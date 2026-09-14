@@ -23,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CheckCheck,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
