@@ -115,7 +115,7 @@ const CONFIANCA = [
   {
     icon: Lock,
     title: "Seguro",
-    desc: "Conexão via QR Code oficial do WhatsApp Web — a mesma tecnologia que você já usa no computador, sem gambiarra.",
+    desc: "Conexão oficial do WhatsApp: QR Code ou número de telefone — a mesma tecnologia que você já usa no computador, sem gambiarra.",
   },
   { icon: BadgeCheck, title: "Confiável", desc: "Sistema estável, feito pra rodar todo dia." },
   { icon: Users, title: "Focado em resultado", desc: "Criado por quem também é afiliado." },
