@@ -58,7 +58,7 @@ function ConexaoPage() {
   const [codigoAtualizadoAutomaticamente, setCodigoAtualizadoAutomaticamente] = useState(false);
   const [ultimoCodigoVisto, setUltimoCodigoVisto] = useState<string | null>(null);
   useEffect(() => {
-    if (status !== "pairing" || !data?.pairing_code) return;
+    if (status !== "pairing" || !data?.pairing_code) return undefined;
     if (ultimoCodigoVisto && ultimoCodigoVisto !== data.pairing_code) {
       setCodigoAtualizadoAutomaticamente(true);
       const t = setTimeout(() => setCodigoAtualizadoAutomaticamente(false), 6000);
@@ -66,6 +66,7 @@ function ConexaoPage() {
       return () => clearTimeout(t);
     }
     setUltimoCodigoVisto(data.pairing_code);
+    return undefined;
   }, [status, data?.pairing_code, ultimoCodigoVisto]);
 
   // Mesmo tipo de aviso do pairing, mas pro QR — hoje o QR não tinha nenhuma

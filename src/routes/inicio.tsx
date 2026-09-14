@@ -75,7 +75,7 @@ const COMO_FUNCIONA = [
   {
     icon: QrCode,
     title: "1. Conecte seu WhatsApp",
-    desc: "Escaneie um QR Code, do mesmo jeito que você já faz no WhatsApp Web. Leva menos de 1 minuto.",
+    desc: "Escolha o jeito mais fácil: escaneie um QR Code ou conecte pelo número de telefone, igual ao WhatsApp Web. Leva menos de 1 minuto.",
   },
   {
     icon: PackagePlus,
@@ -115,7 +115,7 @@ const CONFIANCA = [
   {
     icon: Lock,
     title: "Seguro",
-    desc: "Conexão via QR Code oficial do WhatsApp Web — a mesma tecnologia que você já usa no computador, sem gambiarra.",
+    desc: "Conexão oficial do WhatsApp: QR Code ou número de telefone — a mesma tecnologia que você já usa no computador, sem gambiarra.",
   },
   { icon: BadgeCheck, title: "Confiável", desc: "Sistema estável, feito pra rodar todo dia." },
   { icon: Users, title: "Focado em resultado", desc: "Criado por quem também é afiliado." },
