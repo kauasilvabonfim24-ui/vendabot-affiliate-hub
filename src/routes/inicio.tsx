@@ -76,7 +76,11 @@ const COMO_FUNCIONA = [
   {
     icon: QrCode,
     title: "1. Conecte seu WhatsApp",
-    desc: "Escolha o jeito mais fácil: escaneie um QR Code ou conecte pelo número de telefone, igual ao WhatsApp Web. Leva menos de 1 minuto.",
+    desc: "Escolha o jeito mais fácil. Leva menos de 1 minuto, igual ao WhatsApp Web.",
+    methods: [
+      { icon: QrCode, label: "QR Code" },
+      { icon: Smartphone, label: "Número de telefone" },
+    ],
   },
   {
     icon: PackagePlus,
