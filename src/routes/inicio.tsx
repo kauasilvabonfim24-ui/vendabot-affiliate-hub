@@ -542,6 +542,21 @@ function LandingPage() {
                   <c.icon className="h-5 w-5 text-primary" />
                   <p className="mt-2 text-xs font-semibold">{c.title}</p>
                   <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{c.desc}</p>
+                  {c.methods && (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {c.methods.map((m) => (
+                        <div
+                          key={m.label}
+                          className="flex flex-col items-center gap-1 rounded-lg border border-border bg-background/60 px-2 py-2 text-center"
+                        >
+                          <m.icon className="h-4 w-4 text-primary" />
+                          <span className="text-[10px] font-medium leading-tight text-foreground">
+                            {m.label}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </DepthCard>
             ))}
