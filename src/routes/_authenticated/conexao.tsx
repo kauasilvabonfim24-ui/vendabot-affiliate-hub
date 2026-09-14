@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle,
   IconLoader2 as Loader2, IconDeviceMobile as Smartphone, IconQrcode as QrCodeIcon,
-  IconCopy as Copy,
+  IconCopy as Copy, IconInfoCircle as Info,
 } from "@tabler/icons-react";
 import { useBotStatus, useConnectWhatsApp, useDisconnectWhatsApp } from "@/hooks/use-bot-status";
 import { Button } from "@/components/ui/button";
