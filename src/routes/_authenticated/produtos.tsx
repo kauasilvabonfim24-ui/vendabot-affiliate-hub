@@ -149,14 +149,39 @@ function ProdutosPage() {
     }
   }
 
+  function storagePathFromUrl(url: string | null): string | null {
+    if (!url) return null;
+    const marker = "/product-images/";
+    const idx = url.indexOf(marker);
+    if (idx === -1) return null;
+    return url.slice(idx + marker.length);
+  }
+
   async function handleDelete(id: string) {
+    const target = products?.find((p) => p.id === id);
+    const confirmed = window.confirm(
+      `Excluir "${target?.name ?? "este produto"}" definitivamente?\n\nIsso apaga o produto, o link, a foto e todos os dados — não tem como desfazer.`,
+    );
+    if (!confirmed) return;
+
+    const path = storagePathFromUrl(target?.image_url ?? null);
+
     const { error } = await supabase.from("products").delete().eq("id", id);
     if (error) {
       toast.error(error.message);
       return;
     }
+
+    if (path) {
+      const { error: storageError } = await supabase.storage.from("product-images").remove([path]);
+      if (storageError) {
+        // O produto já foi excluído; só avisa que a foto pode ter ficado órfã no storage.
+        toast.warning("Produto excluído, mas não consegui remover a foto do storage.");
+      }
+    }
+
     if (editingId === id) cancelEdit();
-    toast.success("Produto excluído");
+    toast.success("Produto excluído completamente");
     queryClient.invalidateQueries({ queryKey: ["products"] });
   }
 
