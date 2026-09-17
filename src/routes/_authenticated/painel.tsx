@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react";
 import { useGroups, useProducts, useSchedules } from "@/hooks/use-vendabot";
 import { useReferralStats } from "@/hooks/use-referral";
+import { useMessageLogs } from "@/hooks/use-message-logs";
 import { usePushPermission } from "@/hooks/use-push-permission";
 import { useMySubscription } from "@/hooks/use-subscription";
 import { repeatLabel } from "@/lib/vendabot";
@@ -38,12 +39,24 @@ function PainelPage() {
   const referral = useReferralStats();
   const push = usePushPermission();
   const subscription = useMySubscription();
+  const logs = useMessageLogs();
+
+  const logsHoje = (logs.data ?? []).filter(
+    (l) => new Date(l.sent_at).toDateString() === new Date().toDateString(),
+  );
+  const enviadosHoje = logsHoje.filter((l) => l.status === "enviado").length;
 
   const cards = [
     { label: "Produtos", value: products.data?.length ?? 0, icon: Package, to: "/produtos" as const },
     { label: "Horários ativos", value: schedules.data?.length ?? 0, icon: Clock, to: "/horarios" as const },
     { label: "Grupos", value: groups.data?.length ?? 0, icon: Users, to: "/grupos" as const },
     { label: "Indicações", value: referral.data?.valid_referrals ?? 0, icon: Gift, to: "/indicacoes" as const },
+    {
+      label: "Envios hoje",
+      value: logs.isLoading ? "…" : enviadosHoje,
+      icon: CheckCircle2,
+      to: "/envios" as const,
+    },
   ];
 
   const nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
@@ -170,7 +183,7 @@ function PainelPage() {
         </section>
       )}
 
-      <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-5">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
             key={label}
