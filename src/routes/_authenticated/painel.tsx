@@ -183,7 +183,7 @@ function PainelPage() {
         </section>
       )}
 
-      <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-5">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
             key={label}
