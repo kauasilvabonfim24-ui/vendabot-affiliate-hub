@@ -46,26 +46,73 @@ export const platformLabel = (platform: string) =>
 export const repeatLabel = (repeat: string) =>
   repeat === "weekdays" ? "Dias úteis" : "Todos os dias";
 
-const openers = [
-  "🔥 ACHADO DO DIA",
-  "⚡ OFERTA RELÂMPAGO",
-  "🚨 PREÇO DESPENCOU",
-  "💥 PROMOÇÃO IMPERDÍVEL",
+export type MessageStyle = "urgencia" | "pergunta" | "beneficio" | "storytelling" | "social";
+
+export const styleLabel: Record<MessageStyle, string> = {
+  urgencia: "Urgência",
+  pergunta: "Pergunta",
+  beneficio: "Benefício direto",
+  storytelling: "Relato rápido",
+  social: "Prova social",
+};
+
+const openers: { text: string; style: MessageStyle }[] = [
+  { text: "🔥 ACHADO DO DIA", style: "urgencia" },
+  { text: "⚡ OFERTA RELÂMPAGO", style: "urgencia" },
+  { text: "🚨 PREÇO DESPENCOU", style: "urgencia" },
+  { text: "💥 PROMOÇÃO IMPERDÍVEL", style: "urgencia" },
+  { text: "⏰ ÚLTIMAS HORAS NESSE PREÇO", style: "urgencia" },
+  { text: "🤔 JÁ TAVA PRECISANDO DISSO?", style: "pergunta" },
+  { text: "👀 QUEM TAVA ESPERANDO BAIXAR?", style: "pergunta" },
+  { text: "💭 CANSADO DE PAGAR CARO NISSO?", style: "pergunta" },
+  { text: "✅ RESOLVE NA HORA", style: "beneficio" },
+  { text: "🙋 PRA FACILITAR O DIA A DIA", style: "beneficio" },
+  { text: "🎯 OFERTA QUE VALE A PENA", style: "beneficio" },
+  { text: "📝 ACHEI ESSE AQUI NAVEGANDO E VIM AVISAR", style: "storytelling" },
+  { text: "🗣️ CHEGOU PEDIDO DE INDICAÇÃO — SEGUE", style: "storytelling" },
+  { text: "👥 A GALERA TÁ COMPRANDO ESSE AQUI", style: "social" },
+  { text: "🌟 OFERTA DO MOMENTO", style: "social" },
 ];
 
-const closers = [
-  "Corre que é por tempo limitado! 🏃‍♂️",
-  "Estoque baixo, garanta o seu 👇",
-  "Promoção pode acabar a qualquer momento ⏳",
-  "Aproveita antes que volte o preço 😱",
+const closers: { text: string; style: MessageStyle }[] = [
+  { text: "Corre que é por tempo limitado! 🏃‍♂️", style: "urgencia" },
+  { text: "Estoque baixo, garanta o seu 👇", style: "urgencia" },
+  { text: "Promoção pode acabar a qualquer momento ⏳", style: "urgencia" },
+  { text: "Aproveita antes que volte o preço 😱", style: "urgencia" },
+  { text: "Vale a pena conferir 👉", style: "beneficio" },
+  { text: "Simples, útil e no precinho ✨", style: "beneficio" },
+  { text: "Dá uma olhada nessa promoção 👀", style: "pergunta" },
+  { text: "Confere aí e me conta o que achou 🙌", style: "pergunta" },
+  { text: "Achei que ia gostar, olha só 👉", style: "storytelling" },
+  { text: "Vale conferir antes que suba de novo 📈", style: "storytelling" },
+  { text: "Tá bombando por aqui 🔥", style: "social" },
+  { text: "Bastante gente já garantiu o seu 🙌", style: "social" },
 ];
 
-export function generateSalesMessage(product: Product, variation = 0) {
+function pickIndices(poolSize: number, count: number, seedOffset = 0): number[] {
+  // Embaralha de forma determinística a partir de um offset, sem repetir índice
+  // dentro do mesmo lote — puramente local, sem custo de API.
+  const indices = Array.from({ length: poolSize }, (_, i) => (i + seedOffset) % poolSize);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = indices[i]!;
+    indices[i] = indices[j]!;
+    indices[j] = tmp;
+  }
+  return indices.slice(0, Math.min(count, poolSize));
+}
+
+const FALLBACK_OPENER = openers[0]!;
+const FALLBACK_CLOSER = closers[0]!;
+
+export function generateSalesMessage(product: Product, variation = 0, style?: MessageStyle) {
   const off = discountPercent(Number(product.old_price), Number(product.price));
-  const opener = openers[variation % openers.length];
-  const closer = closers[variation % closers.length];
+  const openerPool = style ? openers.filter((o) => o.style === style) : openers;
+  const closerPool = style ? closers.filter((c) => c.style === style) : closers;
+  const opener = (openerPool.length ? openerPool[variation % openerPool.length] : undefined) ?? FALLBACK_OPENER;
+  const closer = (closerPool.length ? closerPool[variation % closerPool.length] : undefined) ?? FALLBACK_CLOSER;
   return [
-    `${opener} — ${platformLabel(product.platform)}`,
+    `${opener.text} — ${platformLabel(product.platform)}`,
     "",
     `*${product.name}*`,
     "",
@@ -74,6 +121,17 @@ export function generateSalesMessage(product: Product, variation = 0) {
     "",
     `🛒 ${product.link}`,
     "",
-    closer,
+    closer.text,
   ].join("\n");
+}
+
+export type SalesMessageVariant = { message: string; style: MessageStyle };
+
+/** Gera várias variações de uma vez, sem repetir combinação de estilo dentro do lote. Zero custo — tudo local. */
+export function generateSalesMessages(product: Product, count = 3, seedOffset = 0): SalesMessageVariant[] {
+  const idxs = pickIndices(openers.length, count, seedOffset);
+  return idxs.map((i) => ({
+    message: generateSalesMessage(product, i),
+    style: (openers[i] ?? FALLBACK_OPENER).style,
+  }));
 }
