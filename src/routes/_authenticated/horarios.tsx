@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { IconClock as Clock, IconTrash as Trash2, IconPlus as Plus, IconPencil as Pencil } from "@tabler/icons-react";
+import { IconClock as Clock, IconTrash as Trash2, IconPlus as Plus, IconPencil as Pencil, IconAlertTriangle as AlertTriangle } from "@tabler/icons-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useGroups, useSchedules } from "@/hooks/use-vendabot";
@@ -233,6 +233,21 @@ function HorariosPage() {
           Novo
         </Button>
       </header>
+
+      <div className="flex gap-3 rounded-lg border border-ai/20 bg-ai/10 p-4 text-sm">
+        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-ai" />
+        <div className="space-y-1">
+          <p className="font-medium text-foreground">Cuidado com o ritmo dos disparos</p>
+          <p className="text-muted-foreground">
+            Evite marcar horários um em cima do outro. O WhatsApp pode interpretar isso como spam
+            e <span className="font-medium text-foreground">banir o seu número</span>.
+          </p>
+          <p className="text-muted-foreground">
+            Recomendado: deixe sempre um intervalo de <span className="font-medium text-foreground">10 a 15 minutos</span>{" "}
+            entre um horário e o próximo, dando um descanso pra conexão antes do novo disparo.
+          </p>
+        </div>
+      </div>
 
       <div className="pwa:hidden rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 text-lg font-semibold">{editingId ? "Editar horário" : "Novo horário"}</h2>
