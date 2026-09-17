@@ -50,6 +50,39 @@ export type Database = {
         }
         Relationships: []
       }
+      agente_historico: {
+        Row: {
+          copys_rodada_geral: Json
+          copys_rodada_motoboy: Json
+          grupo_id: string
+          produtos_rodada: Json
+          ultima_copy_geral: number | null
+          ultima_copy_motoboy: number | null
+          ultimo_produto: string | null
+          updated_at: string
+        }
+        Insert: {
+          copys_rodada_geral?: Json
+          copys_rodada_motoboy?: Json
+          grupo_id: string
+          produtos_rodada?: Json
+          ultima_copy_geral?: number | null
+          ultima_copy_motoboy?: number | null
+          ultimo_produto?: string | null
+          updated_at?: string
+        }
+        Update: {
+          copys_rodada_geral?: Json
+          copys_rodada_motoboy?: Json
+          grupo_id?: string
+          produtos_rodada?: Json
+          ultima_copy_geral?: number | null
+          ultima_copy_motoboy?: number | null
+          ultimo_produto?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       app_config: {
         Row: {
           key: string
