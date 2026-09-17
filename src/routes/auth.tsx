@@ -27,6 +27,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -60,6 +61,66 @@ function AuthPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleReset(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Enviamos um link de redefinição para seu e-mail. Verifique a caixa de entrada e o spam.");
+      setResetMode(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível enviar o e-mail.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (resetMode) {
+    return (
+      <main className="flex min-h-screen items-center justify-center px-4">
+        <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-2xl">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <Bot className="h-5 w-5" />
+            </span>
+            <div>
+              <h1 className="text-xl font-bold">Recuperar senha</h1>
+              <p className="text-xs text-muted-foreground">Vamos te enviar um link por e-mail</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleReset} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-email">E-mail da sua conta</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="voce@email.com"
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Enviando..." : "Enviar link de redefinição"}
+            </Button>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => setResetMode(false)}
+            className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-foreground"
+          >
+            Voltar para o login
+          </button>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -114,6 +175,16 @@ function AuthPage() {
             {loading ? "Aguarde..." : mode === "signin" ? "Entrar" : "Criar conta"}
           </Button>
         </form>
+
+        {mode === "signin" && (
+          <button
+            type="button"
+            onClick={() => setResetMode(true)}
+            className="mt-3 w-full text-center text-xs text-muted-foreground hover:text-foreground"
+          >
+            Esqueci minha senha
+          </button>
+        )}
 
         <button
           type="button"
