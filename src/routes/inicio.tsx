@@ -90,7 +90,7 @@ const COMO_FUNCIONA = [
   {
     icon: CalendarClock,
     title: "3. Escolha os horários",
-    desc: "Defina quando cada oferta deve ser enviada e pra quais grupos.",
+    desc: "Defina quando cada oferta deve ser enviada e pra quais grupos — com dicas de ritmo pra proteger seu número.",
   },
   {
     icon: Zap,
@@ -126,6 +126,11 @@ const CONFIANCA = [
   { icon: Users, title: "Focado em resultado", desc: "Criado por quem também é afiliado." },
   { icon: Headset, title: "Suporte humano", desc: "Time pronto pra te ajudar quando precisar." },
   { icon: ThumbsUp, title: "Aprovado por quem usa", desc: "Afiliados recomendam todos os dias." },
+  {
+    icon: ShieldCheck,
+    title: "Proteção anti-ban",
+    desc: "Plataforma cautelosa: a gente te orienta no ritmo certo de disparos pra evitar que o WhatsApp bania o seu número.",
+  },
 ];
 
 const DEPOIMENTOS = [
