@@ -6,6 +6,7 @@ import {
   IconRobot as Bot, IconQrcode as QrCode, IconGift as Gift,
   IconSettings as Settings, IconReceipt as Receipt, IconLifebuoy as LifeBuoy,
   IconDots as MoreHorizontal, IconListCheck as ListCheck,
+  IconBrandTelegram as TelegramIcon,
 } from "@tabler/icons-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useBotStatus } from "@/hooks/use-bot-status";
@@ -28,6 +29,7 @@ const nav = [
   { to: "/grupos", label: "Grupos", icon: Users },
   { to: "/envios", label: "Envios", icon: ListCheck },
   { to: "/conexao", label: "Conexão", icon: QrCode },
+  { to: "/conexao-telegram", label: "Telegram", icon: TelegramIcon },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
   { to: "/indicacoes", label: "Indique e Ganhe", icon: Gift },
   { to: "/configuracoes", label: "Config.", icon: Settings },
@@ -45,6 +47,7 @@ const mainNav = [
 const moreNav = [
   { to: "/envios", label: "Envios", icon: ListCheck },
   { to: "/conexao", label: "Conexão", icon: QrCode },
+  { to: "/conexao-telegram", label: "Telegram", icon: TelegramIcon },
   { to: "/preview-ia", label: "Preview IA", icon: Sparkles },
   { to: "/indicacoes", label: "Indique e ganhe", icon: Gift },
   { to: "/planos", label: "Planos", icon: Receipt },
