@@ -5,6 +5,7 @@ import { IconClock as Clock, IconTrash as Trash2, IconPlus as Plus, IconPencil a
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useGroups, useSchedules } from "@/hooks/use-vendabot";
+import { useTelegramGroups } from "@/hooks/use-telegram-connection";
 import { repeatLabel } from "@/lib/vendabot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,11 +35,13 @@ type ScheduleRow = NonNullable<ReturnType<typeof useSchedules>["data"]>[number];
 function HorariosPage() {
   const { data: schedules, isLoading } = useSchedules();
   const { data: groups } = useGroups();
+  const { data: telegramGroups } = useTelegramGroups();
   const queryClient = useQueryClient();
   const [time, setTime] = useState("09:00");
   const [repeat, setRepeat] = useState("daily");
   const [category, setCategory] = useState("");
   const [groupIds, setGroupIds] = useState<string[]>([]);
+  const [telegramGroupIds, setTelegramGroupIds] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -47,11 +50,16 @@ function HorariosPage() {
     setGroupIds((ids) => (ids.includes(id) ? ids.filter((g) => g !== id) : [...ids, id]));
   }
 
+  function toggleTelegramGroup(id: string) {
+    setTelegramGroupIds((ids) => (ids.includes(id) ? ids.filter((g) => g !== id) : [...ids, id]));
+  }
+
   function resetForm() {
     setTime("09:00");
     setRepeat("daily");
     setCategory("");
     setGroupIds([]);
+    setTelegramGroupIds([]);
     setEditingId(null);
   }
 
@@ -65,14 +73,15 @@ function HorariosPage() {
     setRepeat(s.repeat);
     setCategory(s.category ?? "");
     setGroupIds(s.group_ids ?? []);
+    setTelegramGroupIds(s.telegram_group_ids ?? []);
     setEditingId(s.id);
     setSheetOpen(true);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (groupIds.length === 0) {
-      toast.error("Selecione pelo menos um grupo");
+    if (groupIds.length === 0 && telegramGroupIds.length === 0) {
+      toast.error("Selecione pelo menos um grupo (WhatsApp ou Telegram)");
       return;
     }
     setSaving(true);
@@ -84,6 +93,7 @@ function HorariosPage() {
             time,
             repeat,
             group_ids: groupIds,
+            telegram_group_ids: telegramGroupIds,
             category: category || null,
           })
           .eq("id", editingId);
@@ -95,6 +105,7 @@ function HorariosPage() {
           time,
           repeat,
           group_ids: groupIds,
+          telegram_group_ids: telegramGroupIds,
           category: category || null,
           user_id: userData.user!.id,
         });
@@ -123,6 +134,8 @@ function HorariosPage() {
   }
 
   const groupName = (id: string) => groups?.find((g) => g.id === id)?.name ?? "Grupo removido";
+  const telegramGroupName = (id: string) =>
+    telegramGroups?.find((g) => g.id === id)?.chat_title ?? "Grupo removido";
 
   const formContent = (
     <form onSubmit={handleSubmit} className="space-y-5 pwa:space-y-4!">
@@ -182,7 +195,7 @@ function HorariosPage() {
       </div>
 
       <div>
-        <Label>Grupos que recebem</Label>
+        <Label>Grupos do WhatsApp que recebem</Label>
         {(groups?.length ?? 0) === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">
             Nenhum grupo cadastrado.{" "}
@@ -203,6 +216,34 @@ function HorariosPage() {
                   className="shrink-0 pwa:h-5! pwa:w-5!"
                 />
                 <span className="min-w-0 flex-1 truncate">{g.name}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div>
+        <Label>Grupos do Telegram que recebem</Label>
+        {(telegramGroups?.length ?? 0) === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Nenhum grupo do Telegram ativo ainda.{" "}
+            <Link to="/conexao-telegram" className="text-primary hover:underline">
+              Conectar Telegram
+            </Link>
+          </p>
+        ) : (
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {telegramGroups!.map((g) => (
+              <label
+                key={g.id}
+                className="flex min-h-11 pwa:min-h-12! min-w-0 cursor-pointer items-center gap-3 rounded-lg border border-border bg-background/60 px-3 py-2 text-sm"
+              >
+                <Checkbox
+                  checked={telegramGroupIds.includes(g.id)}
+                  onCheckedChange={() => toggleTelegramGroup(g.id)}
+                  className="shrink-0 pwa:h-5! pwa:w-5!"
+                />
+                <span className="min-w-0 flex-1 truncate">{g.chat_title ?? "Sem nome"}</span>
               </label>
             ))}
           </div>
@@ -291,8 +332,13 @@ function HorariosPage() {
                       </span>
                     </p>
                     <p className="mt-1 truncate text-xs text-muted-foreground">
-                      {(s.group_ids ?? []).map(groupName).join(", ") || "Sem grupos"}
+                      {(s.group_ids ?? []).map(groupName).join(", ") || "Sem grupos WhatsApp"}
                     </p>
+                    {(s.telegram_group_ids ?? []).length > 0 && (
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                        Telegram: {(s.telegram_group_ids ?? []).map(telegramGroupName).join(", ")}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center justify-between gap-2 sm:justify-end">
