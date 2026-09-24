@@ -115,3 +115,7 @@ div[style*="Edit with Lovable"],
   position: absolute !important;
   z-index: -9999 !important;
 }
+
+#lovable-badge {
+  display: none !important;
+}
