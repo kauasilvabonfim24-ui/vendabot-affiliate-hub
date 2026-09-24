@@ -68,18 +68,24 @@ const BENEFICIOS = [
   {
     icon: ShieldCheck,
     title: "Seguro e estável",
-    desc: "Conecta com seu WhatsApp por QR Code. Sua sessão fica protegida e o sistema roda 24h na nuvem.",
+    desc: "Conecta com seu WhatsApp por QR Code e, agora, também com um bot do Telegram. Sua sessão fica protegida e o sistema roda 24h na nuvem.",
+  },
+  {
+    icon: Send,
+    title: "Agora também no Telegram",
+    desc: "Conecte um bot do Telegram em minutos e dispare nos seus grupos de lá também — no mesmo sistema, sem risco de ban.",
   },
 ];
 
 const COMO_FUNCIONA = [
   {
     icon: QrCode,
-    title: "1. Conecte seu WhatsApp",
-    desc: "Escolha o jeito mais fácil. Leva menos de 1 minuto, igual ao WhatsApp Web.",
+    title: "1. Conecte seus canais",
+    desc: "WhatsApp, Telegram, ou os dois. Leva menos de 1 minuto pra conectar.",
     methods: [
       { icon: QrCode, label: "QR Code" },
       { icon: Smartphone, label: "Número de telefone" },
+      { icon: Send, label: "Bot do Telegram" },
     ],
   },
   {
@@ -90,7 +96,7 @@ const COMO_FUNCIONA = [
   {
     icon: CalendarClock,
     title: "3. Escolha os horários",
-    desc: "Defina quando cada oferta deve ser enviada e pra quais grupos — com dicas de ritmo pra proteger seu número.",
+    desc: "Defina quando cada oferta deve ser enviada e pra quais grupos (WhatsApp e/ou Telegram) — com dicas de ritmo pra proteger seu número.",
   },
   {
     icon: Zap,
@@ -105,14 +111,26 @@ const PLANOS = [
     nome: "Básico",
     preco: "39,90",
     destaque: false,
-    itens: ["Até 3 grupos do WhatsApp", "Até 5 agendamentos", "Disparo automático diário", "Suporte humano"],
+    itens: [
+      "Até 3 grupos (WhatsApp + Telegram)",
+      "Até 5 agendamentos",
+      "Disparo automático diário",
+      "Telegram incluso, sem custo extra",
+      "Suporte humano",
+    ],
   },
   {
     id: "pro",
     nome: "Pro",
     preco: "79,90",
     destaque: true,
-    itens: ["Grupos ilimitados", "Agendamentos ilimitados", "Disparo automático diário", "Suporte prioritário"],
+    itens: [
+      "Grupos ilimitados (WhatsApp + Telegram)",
+      "Agendamentos ilimitados",
+      "Disparo automático diário",
+      "Telegram incluso, sem custo extra",
+      "Suporte prioritário",
+    ],
   },
 ];
 
@@ -419,8 +437,8 @@ function LandingPage() {
 
           <p className="mx-auto mt-4 max-w-sm text-base text-muted-foreground">
             O <span className="font-semibold text-foreground">VendaBot</span> automatiza seus
-            disparos de oferta no WhatsApp, no horário que você escolher — você foca no que
-            importa: vender mais.
+            disparos de oferta no WhatsApp e no Telegram, no horário que você escolher — você
+            foca no que importa: vender mais.
           </p>
 
           <div className="mt-7 flex flex-col items-center gap-3">
@@ -440,80 +458,109 @@ function LandingPage() {
           </div>
         </div>
 
-        <TiltCard className="mx-auto mt-10 max-w-sm">
-          {/* Cabeçalho estilo conversa de grupo do WhatsApp */}
-          <div className="-m-4 mb-0 flex items-center gap-3 rounded-t-2xl border-b border-border bg-surface px-4 py-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-              <Users className="h-4 w-4" />
-            </span>
-            <div className="min-w-0 flex-1 text-left">
-              <p className="truncate text-sm font-semibold text-foreground">
-                Achados &amp; Ofertas — Grupo 1
-              </p>
-              <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-                </span>
-                VendaBot disparando agora
-              </p>
+        <div className="relative mx-auto mt-10 max-w-sm" style={{ perspective: "1200px" }}>
+          {/* Cartão de fundo — Telegram, empilhado atrás pra dar profundidade real */}
+          <div
+            aria-hidden
+            style={{
+              transform: "translateZ(-50px) translateY(16px) translateX(20px) rotate(5deg)",
+              transformStyle: "preserve-3d",
+            }}
+            className="absolute inset-x-4 top-3 z-0 scale-[0.9] overflow-hidden rounded-2xl border border-[#29a9e0]/25 bg-card/90 opacity-75 shadow-[0_20px_50px_-20px_rgb(0_0_0_/_0.5)]"
+          >
+            <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#29a9e0]/15 text-[#29a9e0]">
+                <Send className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1 text-left">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  Ofertas VIP — Telegram
+                </p>
+                <p className="text-[11px] text-muted-foreground">Canal sem risco de ban</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-[#29a9e0] px-2 py-0.5 text-[9px] font-bold text-white">
+                NOVO
+              </span>
             </div>
-            <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-              09:00
-            </span>
+            <div className="h-28 bg-gradient-to-b from-background/40 to-background/10" />
           </div>
 
-          {/* Mensagem enviada */}
-          <div className="-mx-4 bg-background/60 px-4 py-5">
-            <div
-              style={{ transform: "translateZ(30px)" }}
-              className="ml-auto max-w-[88%] overflow-hidden rounded-2xl rounded-tr-sm border border-primary/25 bg-primary/10 text-left shadow-xl"
-            >
-              <div className="relative">
-                <img
-                  src={foneDemo}
-                  alt="Fone de ouvido Bluetooth sem fio com estojo de carregamento"
-                  width={800}
-                  height={800}
-                  loading="lazy"
-                  className="h-36 w-full bg-white object-contain p-2"
-                />
-                <span className="absolute left-2 top-2 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
-                  56% OFF
-                </span>
-                <span className="absolute right-2 top-2 rounded-md bg-background/85 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
-                  Shopee
-                </span>
-              </div>
-
-              <div className="space-y-1.5 p-3">
-                <p className="text-sm font-semibold leading-snug text-foreground">
-                  Fone Bluetooth TWS com Estojo de Carga
+          {/* Cartão principal — WhatsApp, em primeiro plano com tilt interativo */}
+          <TiltCard className="relative z-10">
+            {/* Cabeçalho estilo conversa de grupo do WhatsApp */}
+            <div className="-m-4 mb-0 flex items-center gap-3 rounded-t-2xl border-b border-border bg-surface px-4 py-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                <Users className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1 text-left">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  Achados &amp; Ofertas — Grupo 1
                 </p>
-                <p className="flex items-baseline gap-2">
-                  <span className="text-xs text-muted-foreground line-through">R$ 89,90</span>
-                  <span className="font-display text-lg font-bold text-primary">R$ 39,90</span>
-                </p>
-                <p className="truncate rounded-md bg-background/60 px-2 py-1 text-[11px] text-muted-foreground">
-                  link.vendabot.app/fone-tws
-                </p>
-                <p className="flex items-center justify-end gap-1 pt-0.5 text-[10px] text-muted-foreground">
-                  09:00
-                  <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                  </span>
+                  VendaBot disparando agora
                 </p>
               </div>
+              <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                09:00
+              </span>
             </div>
-          </div>
 
-          {/* Rodapé de status */}
-          <div className="-m-4 mt-0 flex items-center justify-center gap-2 rounded-b-2xl border-t border-border bg-surface px-4 py-2.5">
-            <CheckCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
-            <p className="text-[11px] text-muted-foreground">
-              Entregue em <span className="font-medium text-foreground">8 grupos</span> · sem você
-              tocar no celular
-            </p>
-          </div>
-        </TiltCard>
+            {/* Mensagem enviada */}
+            <div className="-mx-4 bg-background/60 px-4 py-5">
+              <div
+                style={{ transform: "translateZ(30px)" }}
+                className="ml-auto max-w-[88%] overflow-hidden rounded-2xl rounded-tr-sm border border-primary/25 bg-primary/10 text-left shadow-xl"
+              >
+                <div className="relative">
+                  <img
+                    src={foneDemo}
+                    alt="Fone de ouvido Bluetooth sem fio com estojo de carregamento"
+                    width={800}
+                    height={800}
+                    loading="lazy"
+                    className="h-36 w-full bg-white object-contain p-2"
+                  />
+                  <span className="absolute left-2 top-2 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                    56% OFF
+                  </span>
+                  <span className="absolute right-2 top-2 rounded-md bg-background/85 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
+                    Shopee
+                  </span>
+                </div>
+
+                <div className="space-y-1.5 p-3">
+                  <p className="text-sm font-semibold leading-snug text-foreground">
+                    Fone Bluetooth TWS com Estojo de Carga
+                  </p>
+                  <p className="flex items-baseline gap-2">
+                    <span className="text-xs text-muted-foreground line-through">R$ 89,90</span>
+                    <span className="font-display text-lg font-bold text-primary">R$ 39,90</span>
+                  </p>
+                  <p className="truncate rounded-md bg-background/60 px-2 py-1 text-[11px] text-muted-foreground">
+                    link.vendabot.app/fone-tws
+                  </p>
+                  <p className="flex items-center justify-end gap-1 pt-0.5 text-[10px] text-muted-foreground">
+                    09:00
+                    <CheckCheck className="h-3.5 w-3.5 text-primary" />
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Rodapé de status */}
+            <div className="-m-4 mt-0 flex items-center justify-center gap-2 rounded-b-2xl border-t border-border bg-surface px-4 py-2.5">
+              <CheckCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <p className="text-[11px] text-muted-foreground">
+                Entregue em <span className="font-medium text-foreground">8 grupos</span> ·
+                WhatsApp e Telegram, sem você tocar no celular
+              </p>
+            </div>
+          </TiltCard>
+        </div>
       </section>
 
       <section className="px-4 py-10">
@@ -548,14 +595,14 @@ function LandingPage() {
                   <p className="mt-2 text-xs font-semibold">{c.title}</p>
                   <p className="mt-1 text-[11px] leading-snug text-muted-foreground">{c.desc}</p>
                   {c.methods && (
-                    <div className="mt-3 grid grid-cols-2 gap-2">
+                    <div className="mt-3 grid grid-cols-3 gap-1.5">
                       {c.methods.map((m) => (
                         <div
                           key={m.label}
-                          className="flex flex-col items-center gap-1 rounded-lg border border-border bg-background/60 px-2 py-2 text-center"
+                          className="flex flex-col items-center gap-1 rounded-lg border border-border bg-background/60 px-1.5 py-2 text-center"
                         >
                           <m.icon className="h-4 w-4 text-primary" />
-                          <span className="text-[10px] font-medium leading-tight text-foreground">
+                          <span className="text-[9px] font-medium leading-tight text-foreground">
                             {m.label}
                           </span>
                         </div>
@@ -573,7 +620,7 @@ function LandingPage() {
         <div className="mx-auto max-w-lg">
           <h2 className="text-center font-display text-lg font-bold">Planos simples, sem pegadinha</h2>
           <p className="mt-1 text-center text-xs text-muted-foreground">
-            Cancele quando quiser, sem multa.
+            Cancele quando quiser, sem multa. WhatsApp e Telegram inclusos em todos os planos.
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {PLANOS.map((p) => (
