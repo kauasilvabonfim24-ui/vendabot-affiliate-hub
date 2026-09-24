@@ -22,13 +22,11 @@ import {
   Zap,
   ChevronLeft,
   ChevronRight,
-  CheckCheck,
   Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { IconBrandWhatsapp, IconBrandTelegram } from "@tabler/icons-react";
 import titanouLogoAsset from "@/assets/titanou-cod-logo.png.asset.json";
-import foneDemo from "@/assets/demo-fone-bluetooth.jpg";
+import heroWhatsappTelegram from "@/assets/hero-whatsapp-telegram.webp";
 
 export const Route = createFileRoute("/inicio")({
   ssr: false,
@@ -38,12 +36,12 @@ export const Route = createFileRoute("/inicio")({
       {
         name: "description",
         content:
-          "Pare de perder tempo copiando e colando ofertas no WhatsApp e no Telegram. O VendaBot automatiza seus disparos para afiliados Shopee e Mercado Livre.",
+          "Pare de perder tempo copiando e colando ofertas no WhatsApp. O VendaBot automatiza seus disparos para afiliados Shopee e Mercado Livre.",
       },
       { property: "og:title", content: "VendaBot — Automação que vende enquanto você descansa" },
       {
         property: "og:description",
-        content: "Automatize seus disparos de ofertas no WhatsApp e no Telegram e foque em vender mais.",
+        content: "Automatize seus disparos de ofertas no WhatsApp e foque em vender mais.",
       },
     ],
   }),
@@ -139,7 +137,7 @@ const CONFIANCA = [
   {
     icon: Lock,
     title: "Seguro",
-    desc: "Conexão oficial: WhatsApp por QR Code ou número, Telegram por bot próprio — as mesmas tecnologias que você já confia, sem gambiarra.",
+    desc: "Conexão oficial do WhatsApp: QR Code ou número de telefone — a mesma tecnologia que você já usa no computador, sem gambiarra.",
   },
   { icon: BadgeCheck, title: "Confiável", desc: "Sistema estável, feito pra rodar todo dia." },
   { icon: Users, title: "Focado em resultado", desc: "Criado por quem também é afiliado." },
@@ -215,6 +213,41 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
         className="rounded-2xl border border-border bg-card p-4 shadow-[0_25px_60px_-15px_rgb(0_0_0_/_0.6)]"
       >
         {children}
+      </div>
+    </div>
+  );
+}
+
+function TiltImage({ src, alt, className = "" }: { src: string; alt: string; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  function handleMove(e: PointerEvent<HTMLDivElement>) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: py * -8, y: px * 10 });
+  }
+
+  return (
+    <div
+      style={{ perspective: "1200px" }}
+      className={className}
+      onPointerMove={handleMove}
+      onPointerLeave={() => setTilt({ x: 0, y: 0 })}
+    >
+      <div
+        ref={ref}
+        style={{
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transformStyle: "preserve-3d",
+          transition: "transform 150ms ease-out",
+        }}
+        className="overflow-hidden rounded-[1.75rem] shadow-[0_35px_80px_-20px_rgb(0_0_0_/_0.75)]"
+      >
+        <img src={src} alt={alt} width={1024} height={952} loading="eager" className="block w-full h-auto" />
       </div>
     </div>
   );
@@ -459,128 +492,15 @@ function LandingPage() {
           </div>
         </div>
 
-        <div className="relative mx-auto mt-10 max-w-sm" style={{ perspective: "1200px" }}>
-          {/* Cartão de fundo — Telegram, empilhado atrás pra dar profundidade real */}
+        <div className="relative mx-auto mt-10 max-w-sm">
           <div
             aria-hidden
-            style={{
-              transform: "translateZ(-50px) translateY(16px) translateX(20px) rotate(5deg)",
-              transformStyle: "preserve-3d",
-            }}
-            className="absolute inset-x-4 top-3 z-0 scale-[0.9] overflow-hidden rounded-2xl border border-[#29a9e0]/25 bg-card/90 opacity-75 shadow-[0_20px_50px_-20px_rgb(0_0_0_/_0.5)]"
-          >
-            <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#29a9e0]/15 text-[#29a9e0]">
-                <IconBrandTelegram className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1 text-left">
-                <p className="truncate text-sm font-semibold text-foreground">
-                  Ofertas VIP — Telegram
-                </p>
-                <p className="text-[11px] text-muted-foreground">Canal sem risco de ban</p>
-              </div>
-              <span className="shrink-0 rounded-full bg-[#29a9e0] px-2 py-0.5 text-[9px] font-bold text-white">
-                NOVO
-              </span>
-            </div>
-            <div className="h-28 bg-gradient-to-b from-background/40 to-background/10" />
-          </div>
-
-          {/* Cartão principal — WhatsApp, em primeiro plano com tilt interativo */}
-          <TiltCard className="relative z-10">
-            {/* Cabeçalho estilo conversa de grupo do WhatsApp */}
-            <div className="-m-4 mb-0 flex items-center gap-3 rounded-t-2xl border-b border-border bg-surface px-4 py-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <IconBrandWhatsapp className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1 text-left">
-                <p className="truncate text-sm font-semibold text-foreground">
-                  Achados &amp; Ofertas — Grupo 1
-                </p>
-                <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-                  </span>
-                  VendaBot disparando agora
-                </p>
-              </div>
-              <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                09:00
-              </span>
-            </div>
-
-            {/* Mensagem enviada */}
-            <div className="-mx-4 bg-background/60 px-4 py-5">
-              <div
-                style={{ transform: "translateZ(30px)" }}
-                className="ml-auto max-w-[88%] overflow-hidden rounded-2xl rounded-tr-sm border border-primary/25 bg-primary/10 text-left shadow-xl"
-              >
-                <div className="relative">
-                  <img
-                    src={foneDemo}
-                    alt="Fone de ouvido Bluetooth sem fio com estojo de carregamento"
-                    width={800}
-                    height={800}
-                    loading="lazy"
-                    className="h-36 w-full bg-white object-contain p-2"
-                  />
-                  <span className="absolute left-2 top-2 rounded-md bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
-                    56% OFF
-                  </span>
-                  <span className="absolute right-2 top-2 rounded-md bg-background/85 px-1.5 py-0.5 text-[10px] font-medium text-foreground">
-                    Shopee
-                  </span>
-                </div>
-
-                <div className="space-y-1.5 p-3">
-                  <p className="text-sm font-semibold leading-snug text-foreground">
-                    Fone Bluetooth TWS com Estojo de Carga
-                  </p>
-                  <p className="flex items-baseline gap-2">
-                    <span className="text-xs text-muted-foreground line-through">R$ 89,90</span>
-                    <span className="font-display text-lg font-bold text-primary">R$ 39,90</span>
-                  </p>
-                  <p className="truncate rounded-md bg-background/60 px-2 py-1 text-[11px] text-muted-foreground">
-                    link.vendabot.app/fone-tws
-                  </p>
-                  <p className="flex items-center justify-end gap-1 pt-0.5 text-[10px] text-muted-foreground">
-                    09:00
-                    <CheckCheck className="h-3.5 w-3.5 text-primary" />
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Selo de preço saltando pra fora da borda do telefone — efeito de adesivo em 3D */}
-            <div
-              aria-hidden
-              style={{ transform: "translateZ(75px) rotate(-7deg)", transformStyle: "preserve-3d" }}
-              className="absolute -bottom-4 -right-4 z-20 flex items-center gap-2 rounded-xl border border-primary/40 bg-card px-3 py-2 shadow-[0_18px_35px_-10px_rgb(0_0_0_/_0.55)]"
-            >
-              <img
-                src={foneDemo}
-                alt=""
-                width={80}
-                height={80}
-                loading="lazy"
-                className="h-9 w-9 shrink-0 rounded-lg bg-white object-contain p-1"
-              />
-              <div className="text-left leading-tight">
-                <p className="text-[9px] font-bold uppercase tracking-wide text-primary">56% OFF</p>
-                <p className="font-display text-sm font-bold text-foreground">R$ 39,90</p>
-              </div>
-            </div>
-
-            {/* Rodapé de status */}
-            <div className="-m-4 mt-0 flex items-center justify-center gap-2 rounded-b-2xl border-t border-border bg-surface px-4 py-2.5">
-              <CheckCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
-              <p className="text-[11px] text-muted-foreground">
-                Entregue em <span className="font-medium text-foreground">8 grupos</span> ·
-                WhatsApp e Telegram, sem você tocar no celular
-              </p>
-            </div>
-          </TiltCard>
+            className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-primary/25 via-transparent to-[#29a9e0]/25 blur-2xl"
+          />
+          <TiltImage
+            src={heroWhatsappTelegram}
+            alt="Robô do VendaBot enviando ofertas automaticamente para grupos do WhatsApp e do Telegram"
+          />
         </div>
       </section>
 
@@ -738,7 +658,7 @@ function LandingPage() {
             Pronto para ter mais tempo e mais vendas?
           </h2>
           <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
-            Crie sua conta grátis e conecte seu WhatsApp e Telegram em minutos.
+            Crie sua conta grátis e conecte seu WhatsApp em minutos.
           </p>
           <Button
             asChild
