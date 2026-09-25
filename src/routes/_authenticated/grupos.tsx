@@ -88,7 +88,16 @@ function GruposPage() {
       setSheetOpen(false);
       queryClient.invalidateQueries({ queryKey: ["groups"] });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao salvar grupo");
+      const msg = err instanceof Error ? err.message : "Erro ao salvar grupo";
+      toast.error(msg);
+      // Além do toast (que some da tela), registra a notificação persistente
+      // (sino + push) quando foi o limite do plano que bloqueou — mesmo
+      // alerta que o Telegram já dispara pro mesmo caso.
+      if (msg.includes("Limite de")) {
+        supabase.functions
+          .invoke("notify-limit-reached", { body: { canal: "whatsapp" } })
+          .catch(() => {});
+      }
     } finally {
       setSaving(false);
     }
