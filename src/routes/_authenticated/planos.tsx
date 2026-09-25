@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   IconCircleCheck as CheckCircle2, IconLoader2 as Loader2,
   IconConfetti as PartyPopper, IconCopy as Copy, IconCheck as Check,
+  IconBrandTelegram as TelegramIcon,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -163,8 +164,8 @@ function PlanosPage() {
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
                   {plan.max_groups
-                    ? `Até ${plan.max_groups} grupos do WhatsApp`
-                    : "Grupos ilimitados"}
+                    ? `Até ${plan.max_groups} grupos (WhatsApp + Telegram)`
+                    : "Grupos ilimitados (WhatsApp + Telegram)"}
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
@@ -175,6 +176,10 @@ function PlanosPage() {
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
                   Agente de IA gerando as ofertas automaticamente
+                </li>
+                <li className="flex items-center gap-2 font-medium text-foreground">
+                  <TelegramIcon className="h-4 w-4 shrink-0 text-ai" />
+                  Telegram incluído
                 </li>
               </ul>
               <a
