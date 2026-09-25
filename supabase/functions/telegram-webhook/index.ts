@@ -1,5 +1,26 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
+// Avisa o usuário (in-app + push, via send-push) quando um grupo não entra
+// porque bateu no limite do plano. Sem isso, o grupo só falha em silêncio
+// no upsert e some sem explicação (veio de webhook, não tem toast na tela).
+async function notificarLimiteAtingido(supabaseUrl: string, userId: string) {
+  try {
+    await fetch(`${supabaseUrl}/functions/v1/send-push`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: Deno.env.get("INTERNAL_TRIGGER_SECRET")!,
+        user_id: userId,
+        title: "🚀 Limite de grupos atingido",
+        message:
+          "Esse grupo do Telegram não foi adicionado porque seu plano bateu o limite (WhatsApp + Telegram). Faça upgrade pro plano com grupos ilimitados.",
+      }),
+    });
+  } catch (e) {
+    console.error("Erro ao notificar limite de grupos:", String(e));
+  }
+}
+
 Deno.serve(async (req) => {
   try {
     const webhookSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET")!;
@@ -51,7 +72,7 @@ Deno.serve(async (req) => {
           const isAdmin = newStatus === "administrator";
 
           if (isActive) {
-            await supabaseAdmin.from("telegram_groups").upsert(
+            const { error: upsertError } = await supabaseAdmin.from("telegram_groups").upsert(
               {
                 user_id: connection.user_id,
                 chat_id: chat.id,
@@ -62,6 +83,10 @@ Deno.serve(async (req) => {
               },
               { onConflict: "user_id,chat_id" }
             );
+
+            if (upsertError && upsertError.message?.includes("Limite de")) {
+              await notificarLimiteAtingido(Deno.env.get("SUPABASE_URL")!, connection.user_id);
+            }
           } else {
             await supabaseAdmin
               .from("telegram_groups")
