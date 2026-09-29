@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useMyTrial } from "@/hooks/use-trial";
 
 const PROMO_CODES: Record<string, { code: string; discount: string }> = {
   basico: { code: "VENDABOT1", discount: "20%" },
@@ -48,6 +49,7 @@ function PlanosPage() {
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [mostrarBalaoPromo, setMostrarBalaoPromo] = useState(false);
   const [copiado, setCopiado] = useState<string | null>(null);
+  const { data: trial } = useMyTrial();
 
   useEffect(() => {
     // Mostra o balão só na primeira vez que a pessoa cai nessa tela
@@ -82,6 +84,14 @@ function PlanosPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
+      {trial && !trial.active && (
+        <div className="mb-6 rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm">
+          <p className="font-semibold">Seu teste grátis terminou</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Escolha um plano pra continuar disparando suas ofertas e liberar o WhatsApp.
+          </p>
+        </div>
+      )}
       <Dialog open={mostrarBalaoPromo} onOpenChange={setMostrarBalaoPromo}>
         <DialogContent className="max-w-sm text-center">
           <DialogHeader className="items-center">
