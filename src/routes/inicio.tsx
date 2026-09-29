@@ -106,12 +106,28 @@ const COMO_FUNCIONA = [
 
 const PLANOS = [
   {
+    id: "teste",
+    nome: "Teste grátis",
+    preco: "Grátis",
+    gratis: true,
+    cta: "Testar grátis",
+    destaque: false,
+    itens: [
+      "Teste o VendaBot de verdade no Telegram",
+      "Produtos e horários à vontade",
+      "Disparo automático das suas ofertas",
+      "Sem cartão de crédito",
+    ],
+  },
+  {
     id: "basico",
     nome: "Básico",
     preco: "39,90",
+    gratis: false,
+    cta: "Assinar Básico",
     destaque: false,
     itens: [
-      "Até 3 grupos (WhatsApp + Telegram)",
+      "Até 5 grupos (WhatsApp + Telegram)",
       "Até 5 agendamentos",
       "Disparo automático diário",
       "Telegram incluso, sem custo extra",
@@ -122,6 +138,8 @@ const PLANOS = [
     id: "pro",
     nome: "Pro",
     preco: "79,90",
+    gratis: false,
+    cta: "Assinar Pro",
     destaque: true,
     itens: [
       "Grupos ilimitados (WhatsApp + Telegram)",
@@ -486,6 +504,13 @@ function LandingPage() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+            <Link
+              to="/auth"
+              search={{ teste: true }}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              Ou teste grátis no Telegram
+            </Link>
             <p className="text-xs text-muted-foreground">
               Indique um amigo e ganhe <span className="text-primary">15 dias grátis</span>
             </p>
@@ -558,12 +583,12 @@ function LandingPage() {
       </section>
 
       <section className="px-4 py-10">
-        <div className="mx-auto max-w-lg">
+        <div className="mx-auto max-w-3xl">
           <h2 className="text-center font-display text-lg font-bold">Planos simples, sem pegadinha</h2>
           <p className="mt-1 text-center text-xs text-muted-foreground">
-            Cancele quando quiser, sem multa. WhatsApp e Telegram inclusos em todos os planos.
+            Cancele quando quiser, sem multa. WhatsApp e Telegram inclusos nos planos pagos.
           </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {PLANOS.map((p) => (
               <div
                 key={p.id}
@@ -578,8 +603,14 @@ function LandingPage() {
                 )}
                 <h3 className="text-center font-display text-base font-bold">{p.nome}</h3>
                 <p className="mt-2 text-center">
-                  <span className="text-2xl font-bold">R$ {p.preco}</span>
-                  <span className="text-xs text-muted-foreground">/mês</span>
+                  {p.gratis ? (
+                    <span className="text-2xl font-bold">{p.preco}</span>
+                  ) : (
+                    <>
+                      <span className="text-2xl font-bold">R$ {p.preco}</span>
+                      <span className="text-xs text-muted-foreground">/mês</span>
+                    </>
+                  )}
                 </p>
                 <ul className="mt-4 space-y-2 text-xs text-muted-foreground">
                   {p.itens.map((item) => (
@@ -589,6 +620,20 @@ function LandingPage() {
                     </li>
                   ))}
                 </ul>
+                <Button
+                  asChild
+                  size="sm"
+                  variant={p.destaque || p.gratis ? "default" : "outline"}
+                  className="mt-5 w-full"
+                >
+                  {p.gratis ? (
+                    <Link to="/auth" search={{ teste: true }}>
+                      {p.cta}
+                    </Link>
+                  ) : (
+                    <Link to="/auth">{p.cta}</Link>
+                  )}
+                </Button>
               </div>
             ))}
           </div>
@@ -658,7 +703,7 @@ function LandingPage() {
             Pronto para ter mais tempo e mais vendas?
           </h2>
           <p className="mx-auto mt-2 max-w-xs text-sm text-muted-foreground">
-            Crie sua conta grátis e conecte seu WhatsApp em minutos.
+            Crie sua conta e conecte seu WhatsApp ou Telegram em minutos.
           </p>
           <Button
             asChild
@@ -670,6 +715,13 @@ function LandingPage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
+          <Link
+            to="/auth"
+            search={{ teste: true }}
+            className="mt-3 inline-block text-sm font-medium text-primary hover:underline"
+          >
+            Ou teste grátis no Telegram
+          </Link>
 
           <ul className="mx-auto mt-6 flex max-w-xs flex-col gap-1.5 text-left text-xs text-muted-foreground">
             <li className="flex items-center gap-2">
