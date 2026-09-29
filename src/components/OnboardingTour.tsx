@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useMySubscription } from "@/hooks/use-subscription";
+import { useMyTrial } from "@/hooks/use-trial";
 
 // Cada passo representa uma tela ou ação importante do app.
 // title/description ficam curtos de propósito — é um tutorial pra quem tá
@@ -68,11 +69,56 @@ const STEPS: { title: string; description: string; to?: string }[] = [
   },
 ];
 
+// Tour de quem entrou pelo "Teste grátis": começa direto no Telegram
+// (WhatsApp só libera com plano pago).
+const TRIAL_STEPS: { title: string; description: string; to?: string }[] = [
+  {
+    title: "Bem-vindo ao VendaBot!",
+    description:
+      "Seu teste grátis está ativo. Vamos te mostrar rapidinho como colocar o bot pra disparar ofertas no Telegram.",
+  },
+  {
+    title: "1. Conectar o Telegram",
+    description:
+      "Em Conexão Telegram, crie um bot no @BotFather, cole o token e depois adicione o bot como admin no seu grupo.",
+    to: "/conexao-telegram",
+  },
+  {
+    title: "2. Cadastrar produtos",
+    description:
+      "Em Produtos, adicione as ofertas que quer divulgar: nome, plataforma, preço antigo, preço atual e o link de afiliado.",
+    to: "/produtos",
+  },
+  {
+    title: "3. Definir os horários",
+    description:
+      "Em Horários, escolha quando o bot envia as ofertas e marque o grupo do Telegram que vai receber.",
+    to: "/horarios",
+  },
+  {
+    title: "4. Ver como vai ficar a mensagem",
+    description:
+      "Em Preview IA, simule a mensagem antes do bot postar de verdade.",
+    to: "/preview-ia",
+  },
+  {
+    title: "Quer WhatsApp e mais grupos?",
+    description:
+      "Com um plano você libera o WhatsApp e mais grupos. Dá pra assinar quando quiser, na tela de Planos.",
+    to: "/planos",
+  },
+];
+
 const STORAGE_PREFIX = "vendabot_onboarding_seen_";
+const TRIAL_STORAGE_PREFIX = "vendabot_onboarding_trial_seen_";
 
 export function OnboardingTour() {
   const navigate = useNavigate();
   const { data: subscription } = useMySubscription();
+  const { data: trial } = useMyTrial();
+  const isTrial = subscription?.status !== "active" && !!trial?.active;
+  const steps = isTrial ? TRIAL_STEPS : STEPS;
+  const storagePrefix = isTrial ? TRIAL_STORAGE_PREFIX : STORAGE_PREFIX;
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
@@ -85,15 +131,17 @@ export function OnboardingTour() {
     });
   }, []);
 
-  // Abre sozinho quando a assinatura está ativa e essa pessoa ainda não viu.
+  // Abre sozinho quando a assinatura está ativa (ou o teste grátis está valendo)
+  // e essa pessoa ainda não viu o tour correspondente.
   useEffect(() => {
-    if (!userId || subscription?.status !== "active") return;
-    const seen = localStorage.getItem(STORAGE_PREFIX + userId);
+    if (!userId) return;
+    if (subscription?.status !== "active" && !isTrial) return;
+    const seen = localStorage.getItem(storagePrefix + userId);
     if (!seen) {
       setStep(0);
       setOpen(true);
     }
-  }, [userId, subscription?.status]);
+  }, [userId, subscription?.status, isTrial, storagePrefix]);
 
   // Permite reabrir o tutorial a qualquer momento (ex: botão em Configurações)
   // via window.dispatchEvent(new Event("vendabot:reopen-tour"))
@@ -107,21 +155,21 @@ export function OnboardingTour() {
   }, []);
 
   function finish() {
-    if (userId) localStorage.setItem(STORAGE_PREFIX + userId, "1");
+    if (userId) localStorage.setItem(storagePrefix + userId, "1");
     setOpen(false);
   }
 
   function next() {
-    const current = STEPS[step]!;
+    const current = steps[step]!;
     if (current.to) navigate({ to: current.to });
-    if (step === STEPS.length - 1) {
+    if (step === steps.length - 1) {
       finish();
     } else {
       setStep((s) => s + 1);
     }
   }
 
-  const current = STEPS[step]!;
+  const current = steps[step]!;
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && finish()}>
@@ -132,7 +180,7 @@ export function OnboardingTour() {
         </DialogHeader>
 
         <div className="flex items-center justify-center gap-1.5 py-2">
-          {STEPS.map((_, i) => (
+          {steps.map((_, i) => (
             <span
               key={i}
               className={`h-1.5 w-1.5 rounded-full ${
@@ -147,7 +195,7 @@ export function OnboardingTour() {
             Pular tutorial
           </Button>
           <Button size="sm" onClick={next}>
-            {step === STEPS.length - 1 ? "Concluir" : "Próximo"}
+            {step === steps.length - 1 ? "Concluir" : "Próximo"}
           </Button>
         </div>
       </DialogContent>
