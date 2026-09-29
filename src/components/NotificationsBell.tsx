@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { IconBell as Bell } from "@tabler/icons-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type Notification = {
   id: string;
@@ -11,6 +13,8 @@ type Notification = {
   message: string;
   read_at: string | null;
   created_at: string;
+  action_label?: string | null;
+  action_url?: string | null;
 };
 
 function tempoRelativo(iso: string) {
@@ -33,6 +37,7 @@ export function NotificationsBell() {
   const [items, setItems] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
   const userIdRef = useRef<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
@@ -44,11 +49,11 @@ export function NotificationsBell() {
 
       supabase
         .from("notifications")
-        .select("id,title,message,read_at,created_at")
+        .select("id,title,message,read_at,created_at,action_label,action_url")
         .order("created_at", { ascending: false })
         .limit(30)
         .then(({ data: rows }) => {
-          if (rows) setItems(rows as Notification[]);
+          if (rows) setItems(rows as unknown as Notification[]);
         });
 
       channel = supabase
@@ -118,6 +123,18 @@ export function NotificationsBell() {
                 >
                   <p className="text-sm font-medium text-foreground">{n.title}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">{n.message}</p>
+                  {n.action_label && n.action_url && (
+                    <Button
+                      size="sm"
+                      className="mt-2 h-8 w-full"
+                      onClick={() => {
+                        setOpen(false);
+                        navigate({ to: n.action_url as string });
+                      }}
+                    >
+                      {n.action_label}
+                    </Button>
+                  )}
                   <p className="mt-1 text-[11px] text-muted-foreground/70">{tempoRelativo(n.created_at)}</p>
                 </div>
               ))}
