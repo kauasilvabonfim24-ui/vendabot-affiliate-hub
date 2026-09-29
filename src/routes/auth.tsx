@@ -6,9 +6,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  // /auth?teste=1 → fluxo do "Teste grátis" (cadastro com WhatsApp + consentimento)
+  validateSearch: (search: Record<string, unknown>): { teste?: boolean } => {
+    const t = search["teste"];
+    return t === "1" || t === 1 || t === true ? { teste: true } : {};
+  },
   head: () => ({
     meta: [
       { title: "Entrar — VendaBot" },
@@ -22,7 +28,10 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const { teste } = Route.useSearch();
+  const [mode, setMode] = useState<"signin" | "signup">(teste ? "signup" : "signin");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [consent, setConsent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -44,16 +53,30 @@ function AuthPage() {
         if (error) throw error;
         navigate({ to: "/painel", replace: true });
       } else {
+        const digitos = whatsapp.replace(/\D/g, "");
+        if (teste) {
+          if (digitos.length < 10 || digitos.length > 13) {
+            throw new Error("Informe um número de WhatsApp válido, com DDD.");
+          }
+          if (!consent) {
+            throw new Error("Aceite o consentimento para iniciar o teste grátis.");
+          }
+        }
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            // O teste grátis é criado no primeiro acesso logado (ver _authenticated/route.tsx),
+            // então o número e o consentimento viajam junto com a conta.
+            ...(teste ? { data: { trial_whatsapp: digitos, trial_consent: true } } : {}),
+          },
         });
         if (error) throw error;
         // Dispara pro Meta Pixel só quando o cadastro realmente deu certo
         // (não em quem apenas abre a tela ou só faz login).
         (window as any).fbq?.("track", "CompleteRegistration");
-        if (data.session) navigate({ to: "/painel", replace: true });
+        if (data.session) navigate({ to: teste ? "/conexao-telegram" : "/painel", replace: true });
         else toast.success("Conta criada! Confirme seu e-mail para entrar.");
       }
     } catch (err) {
@@ -131,8 +154,10 @@ function AuthPage() {
             <Bot className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-xl font-bold">VendaBot</h1>
-            <p className="text-xs text-muted-foreground">Automação de ofertas no WhatsApp</p>
+            <h1 className="text-xl font-bold">{teste ? "Teste grátis" : "VendaBot"}</h1>
+            <p className="text-xs text-muted-foreground">
+              {teste ? "Teste o VendaBot no Telegram" : "Automação de ofertas no WhatsApp"}
+            </p>
           </div>
         </div>
 
@@ -171,8 +196,41 @@ function AuthPage() {
               </button>
             </div>
           </div>
+          {teste && mode === "signup" && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">Seu WhatsApp</Label>
+                <Input
+                  id="whatsapp"
+                  type="tel"
+                  inputMode="tel"
+                  required
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="(31) 99999-9999"
+                />
+              </div>
+              <label className="flex items-start gap-2 text-xs text-muted-foreground">
+                <Checkbox
+                  checked={consent}
+                  onCheckedChange={(v) => setConsent(v === true)}
+                  className="mt-0.5"
+                />
+                <span>
+                  Aceito receber novidades, dicas e ofertas do VendaBot por WhatsApp e e-mail. Posso
+                  pedir para sair a qualquer momento.
+                </span>
+              </label>
+            </>
+          )}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Aguarde..." : mode === "signin" ? "Entrar" : "Criar conta"}
+            {loading
+              ? "Aguarde..."
+              : mode === "signin"
+                ? "Entrar"
+                : teste
+                  ? "Começar teste grátis"
+                  : "Criar conta"}
           </Button>
         </form>
 
