@@ -20,7 +20,7 @@ const FREE_ROUTES = ["/planos", "/painel", "/produtos", "/preview-ia"];
 
 // Teste grátis: além das rotas livres, libera SÓ o Telegram (conexão + horários).
 // WhatsApp (/conexao, /grupos) segue trancado até assinar um plano.
-const TRIAL_ROUTES = ["/conexao-telegram", "/horarios"];
+const TRIAL_ROUTES = ["/conexao-telegram", "/horarios", "/indicacoes"];
 
 type Access = "paid" | "trial" | "none";
 
