@@ -17,6 +17,7 @@ import { useReferralStats } from "@/hooks/use-referral";
 import { useMessageLogs } from "@/hooks/use-message-logs";
 import { usePushPermission } from "@/hooks/use-push-permission";
 import { useMySubscription } from "@/hooks/use-subscription";
+import { useMyTrial } from "@/hooks/use-trial";
 import { repeatLabel } from "@/lib/vendabot";
 import { Button } from "@/components/ui/button";
 
@@ -39,6 +40,7 @@ function PainelPage() {
   const referral = useReferralStats();
   const push = usePushPermission();
   const subscription = useMySubscription();
+  const trial = useMyTrial();
   const logs = useMessageLogs();
 
   const logsHoje = (logs.data ?? []).filter(
@@ -75,7 +77,9 @@ function PainelPage() {
     (!subscription.data.current_period_end ||
       new Date(subscription.data.current_period_end) > new Date());
 
-  const mostrarPrimeirosPassos = subscription.isSuccess && !ativo;
+  // Quem está no teste grátis já vê a faixa própria acima, então não mostra os "Primeiros passos" junto.
+  const mostrarPrimeirosPassos =
+    subscription.isSuccess && !ativo && !trial.isLoading && !trial.data?.active;
   const temProduto = (products.data?.length ?? 0) > 0;
 
   return (
@@ -109,6 +113,28 @@ function PainelPage() {
           </span>
         </button>
       </header>
+
+      {trial.data?.active && !ativo && (
+        <section className="flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div>
+            <p className="text-sm font-semibold">
+              Teste grátis ativo · {trial.data.daysLeft} {trial.data.daysLeft === 1 ? "dia" : "dias"}{" "}
+              {trial.data.daysLeft === 1 ? "restante" : "restantes"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Conecte seu Telegram e comece a disparar. Pra usar o WhatsApp e mais grupos, assine um plano.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button asChild size="sm">
+              <Link to="/conexao-telegram">Conectar Telegram</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/planos">Ver planos</Link>
+            </Button>
+          </div>
+        </section>
+      )}
 
       {mostrarPrimeirosPassos && (
         <section className="rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-6">
