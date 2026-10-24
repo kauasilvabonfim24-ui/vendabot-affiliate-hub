@@ -9,7 +9,7 @@ import { useRef } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProducts } from "@/hooks/use-vendabot";
-import { brl, discountPercent, platformLabel, type Product } from "@/lib/vendabot";
+import { brl, discountPercent, platformLabel, PLATFORMS, detectPlatformFromLink, type Product } from "@/lib/vendabot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -206,8 +206,13 @@ function ProdutosPage() {
             onChange={(e) => set("platform", e.target.value)}
             className="h-9 pwa:h-12! w-full rounded-md border border-input bg-background px-3 text-sm"
           >
-            <option value="shopee">Shopee</option>
-            <option value="mercadolivre">Mercado Livre</option>
+                       {PLATFORMS.map((p) => (
+              <option key={p.value} value={p.value}>
+                     <p className="text-xs text-muted-foreground">
+            Ao colar o link de afiliado, a plataforma é escolhida sozinha.
+          </p>
+              </option>
+            ))}
           </select>
         </div>
         <div className="space-y-2">
