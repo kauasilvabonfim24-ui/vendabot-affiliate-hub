@@ -251,7 +251,8 @@ function ProdutosPage() {
         </div>
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="link">Link de afiliado</Label>
-                     onChange={(e) => {
+          <Input
+            onChange={(e) => {
               const value = e.target.value;
               set("link", value);
               const detected = detectPlatformFromLink(value);
