@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
@@ -46,6 +46,45 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      agent_events: {
+        Row: {
+          action: string
+          agent: string
+          channel: string
+          created_at: string
+          group_name: string | null
+          id: string
+          product_id: string | null
+          product_name: string | null
+          product_platform: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          agent: string
+          channel?: string
+          created_at?: string
+          group_name?: string | null
+          id?: string
+          product_id?: string | null
+          product_name?: string | null
+          product_platform?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          agent?: string
+          channel?: string
+          created_at?: string
+          group_name?: string | null
+          id?: string
+          product_id?: string | null
+          product_name?: string | null
+          product_platform?: string | null
           user_id?: string
         }
         Relationships: []
@@ -185,6 +224,10 @@ export type Database = {
           group_id: string | null
           group_name: string | null
           id: string
+          platform: string
+          product_id: string | null
+          product_name: string | null
+          product_platform: string | null
           sent_at: string
           status: string
           user_id: string
@@ -194,6 +237,10 @@ export type Database = {
           group_id?: string | null
           group_name?: string | null
           id?: string
+          platform?: string
+          product_id?: string | null
+          product_name?: string | null
+          product_platform?: string | null
           sent_at?: string
           status: string
           user_id: string
@@ -203,6 +250,10 @@ export type Database = {
           group_id?: string | null
           group_name?: string | null
           id?: string
+          platform?: string
+          product_id?: string | null
+          product_name?: string | null
+          product_platform?: string | null
           sent_at?: string
           status?: string
           user_id?: string
@@ -211,6 +262,8 @@ export type Database = {
       }
       notifications: {
         Row: {
+          action_label: string | null
+          action_url: string | null
           created_at: string
           id: string
           message: string
@@ -219,6 +272,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          action_label?: string | null
+          action_url?: string | null
           created_at?: string
           id?: string
           message: string
@@ -227,6 +282,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          action_label?: string | null
+          action_url?: string | null
           created_at?: string
           id?: string
           message?: string
@@ -526,6 +583,105 @@ export type Database = {
         }
         Relationships: []
       }
+      telegram_connections: {
+        Row: {
+          bot_id: number | null
+          bot_token: string
+          bot_username: string | null
+          created_at: string
+          id: string
+          last_error: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bot_id?: number | null
+          bot_token: string
+          bot_username?: string | null
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bot_id?: number | null
+          bot_token?: string
+          bot_username?: string | null
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      telegram_groups: {
+        Row: {
+          bot_is_admin: boolean
+          chat_id: number
+          chat_title: string | null
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bot_is_admin?: boolean
+          chat_id: number
+          chat_title?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bot_is_admin?: boolean
+          chat_id?: number
+          chat_title?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trial_accounts: {
+        Row: {
+          consent_at: string | null
+          created_at: string
+          ends_at: string
+          marketing_consent: boolean
+          started_at: string
+          user_id: string
+          whatsapp_phone: string
+        }
+        Insert: {
+          consent_at?: string | null
+          created_at?: string
+          ends_at: string
+          marketing_consent?: boolean
+          started_at?: string
+          user_id: string
+          whatsapp_phone: string
+        }
+        Update: {
+          consent_at?: string | null
+          created_at?: string
+          ends_at?: string
+          marketing_consent?: boolean
+          started_at?: string
+          user_id?: string
+          whatsapp_phone?: string
+        }
+        Relationships: []
+      }
       webhook_debug_log: {
         Row: {
           created_at: string
@@ -602,7 +758,12 @@ export type Database = {
         Returns: string
       }
       has_active_subscription: { Args: { uid: string }; Returns: boolean }
+      has_trial_access: { Args: { uid: string }; Returns: boolean }
       register_referral_click: { Args: { p_code: string }; Returns: undefined }
+      start_trial: {
+        Args: { p_consent: boolean; p_whatsapp: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
