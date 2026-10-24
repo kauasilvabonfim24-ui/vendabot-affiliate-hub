@@ -18,6 +18,26 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
+// ─── Eventos dos agentes (alimentam a tela inicial do app) ──────────────────
+const PAUSA_EVENTO_MS = 800;
+const pausa = () => new Promise((r) => setTimeout(r, PAUSA_EVENTO_MS));
+
+async function emitirEvento(
+  userId: string,
+  agent: "cacador" | "redator" | "mensageiro",
+  action: "escolhendo" | "escrevendo" | "enviando" | "concluido" | "erro",
+  extra: Record<string, unknown> = {},
+) {
+  try {
+    const { error } = await supabase
+      .from("agent_events")
+      .insert({ user_id: userId, agent, action, channel: "telegram", ...extra });
+    if (error) console.error("⚠️  Falha ao gravar evento do agente:", error.message);
+  } catch (e) {
+    console.error("⚠️  Erro ao gravar evento do agente:", e);
+  }
+}
+
 // ─── Envio via API do Telegram, com retry (mesma ideia do enviarMensagem do bot.js) ─
 async function enviarTelegram(botToken: string, chatId: number, texto: string, imageUrl: string | null) {
   const tentarUmaVez = async () => {
@@ -123,7 +143,7 @@ Deno.serve(async (req) => {
     // Produtos do usuário, no mesmo formato que o agente espera
     const { data: produtosRaw } = await supabase
       .from("products")
-      .select("id, name, old_price, price, link, image_url, category")
+      .select("id, name, old_price, price, link, image_url, category, platform")
       .eq("user_id", schedule.user_id);
 
     const produtos: Produto[] = (produtosRaw ?? []).map((p) => ({
@@ -134,6 +154,7 @@ Deno.serve(async (req) => {
       link: p.link,
       imageUrl: p.image_url,
       category: p.category,
+      platform: p.platform,
     }));
 
     if (produtos.length === 0) continue;
@@ -142,12 +163,18 @@ Deno.serve(async (req) => {
     const usadosNesteCiclo = new Set<string>();
 
     for (const grupo of grupos) {
+      const nomeGrupo = grupo.chat_title ?? "";
+      const uid = schedule.user_id;
+
+      await emitirEvento(uid, "cacador", "escolhendo", { group_name: nomeGrupo });
+      await pausa();
+
       const msg = await gerarParaGrupoTelegram(
         supabase,
         produtos,
         hora,
         diaSemana,
-        grupo.chat_title ?? "",
+        nomeGrupo,
         String(grupo.chat_id),
         schedule.category,
         usadosNesteCiclo,
@@ -155,15 +182,32 @@ Deno.serve(async (req) => {
 
       if (!msg) continue;
 
+      const info = {
+        group_name: nomeGrupo,
+        product_id: msg.produtoId,
+        product_name: msg.produto,
+        product_platform: msg.plataforma,
+      };
+      await emitirEvento(uid, "cacador", "concluido", info);
+      await emitirEvento(uid, "redator", "escrevendo", info);
+      await pausa();
+      await emitirEvento(uid, "redator", "concluido", info);
+      await emitirEvento(uid, "mensageiro", "enviando", info);
+
       const envio = await enviarTelegram(connection.bot_token, grupo.chat_id, msg.mensagem, msg.imageUrl);
 
+      await emitirEvento(uid, "mensageiro", envio.ok ? "concluido" : "erro", info);
+
       await supabase.from("message_logs").insert({
-        user_id: schedule.user_id,
+        user_id: uid,
         group_id: String(grupo.chat_id),
         group_name: grupo.chat_title,
         status: envio.ok ? "enviado" : "erro",
         error_message: envio.ok ? null : envio.error,
         platform: "telegram",
+        product_id: msg.produtoId,
+        product_name: msg.produto,
+        product_platform: msg.plataforma,
       });
 
       if (envio.ok) disparos++;
