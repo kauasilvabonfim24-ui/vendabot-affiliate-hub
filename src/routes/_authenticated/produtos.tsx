@@ -206,14 +206,15 @@ function ProdutosPage() {
             onChange={(e) => set("platform", e.target.value)}
             className="h-9 pwa:h-12! w-full rounded-md border border-input bg-background px-3 text-sm"
           >
-                       {PLATFORMS.map((p) => (
+            {PLATFORMS.map((p) => (
               <option key={p.value} value={p.value}>
-                     <p className="text-xs text-muted-foreground">
-            Ao colar o link de afiliado, a plataforma é escolhida sozinha.
-          </p>
+                {p.label}
               </option>
             ))}
           </select>
+          <p className="text-xs text-muted-foreground">
+            Ao colar o link de afiliado, a plataforma é escolhida sozinha.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="category">Categoria (opcional)</Label>
