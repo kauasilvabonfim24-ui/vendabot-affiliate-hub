@@ -206,14 +206,15 @@ function ProdutosPage() {
             onChange={(e) => set("platform", e.target.value)}
             className="h-9 pwa:h-12! w-full rounded-md border border-input bg-background px-3 text-sm"
           >
-                       {PLATFORMS.map((p) => (
+            {PLATFORMS.map((p) => (
               <option key={p.value} value={p.value}>
-                     <p className="text-xs text-muted-foreground">
-            Ao colar o link de afiliado, a plataforma é escolhida sozinha.
-          </p>
+                {p.label}
               </option>
             ))}
           </select>
+          <p className="text-xs text-muted-foreground">
+            Ao colar o link de afiliado, a plataforma é escolhida sozinha.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="category">Categoria (opcional)</Label>
@@ -250,7 +251,8 @@ function ProdutosPage() {
         </div>
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="link">Link de afiliado</Label>
-                     onChange={(e) => {
+          <Input
+            onChange={(e) => {
               const value = e.target.value;
               set("link", value);
               const detected = detectPlatformFromLink(value);
@@ -260,7 +262,6 @@ function ProdutosPage() {
             type="url"
             required
             value={form.link}
-            onChange={(e) => set("link", e.target.value)}
             placeholder="https://..."
           />
         </div>

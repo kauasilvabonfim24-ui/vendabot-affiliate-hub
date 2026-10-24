@@ -26,6 +26,7 @@ export type Schedule = {
   time: string;
   repeat: string;
   group_ids: string[];
+  telegram_group_ids: string[] | null;
   category: string | null;
   created_at: string;
 };
