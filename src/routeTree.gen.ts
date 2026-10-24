@@ -18,6 +18,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as DotwellKnownAssetlinksDotjsonRouteImport } from './routes/[.]well-known.assetlinks[.]json'
 import { Route as AuthenticatedConexaoRouteImport } from './routes/_authenticated/conexao'
+import { Route as AuthenticatedConexaoTelegramRouteImport } from './routes/_authenticated/conexao-telegram'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedEnviosRouteImport } from './routes/_authenticated/envios'
 import { Route as AuthenticatedGruposRouteImport } from './routes/_authenticated/grupos'
@@ -76,6 +77,12 @@ const AuthenticatedConexaoRoute = AuthenticatedConexaoRouteImport.update({
   path: '/conexao',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConexaoTelegramRoute =
+  AuthenticatedConexaoTelegramRouteImport.update({
+    id: '/conexao-telegram',
+    path: '/conexao-telegram',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedConfiguracoesRoute =
   AuthenticatedConfiguracoesRouteImport.update({
     id: '/configuracoes',
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/conexao': typeof AuthenticatedConexaoRoute
+  '/conexao-telegram': typeof AuthenticatedConexaoTelegramRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/envios': typeof AuthenticatedEnviosRoute
   '/grupos': typeof AuthenticatedGruposRoute
@@ -170,6 +178,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/conexao': typeof AuthenticatedConexaoRoute
+  '/conexao-telegram': typeof AuthenticatedConexaoTelegramRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/envios': typeof AuthenticatedEnviosRoute
   '/grupos': typeof AuthenticatedGruposRoute
@@ -194,6 +203,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/.well-known/assetlinks.json': typeof DotwellKnownAssetlinksDotjsonRoute
   '/_authenticated/conexao': typeof AuthenticatedConexaoRoute
+  '/_authenticated/conexao-telegram': typeof AuthenticatedConexaoTelegramRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/envios': typeof AuthenticatedEnviosRoute
   '/_authenticated/grupos': typeof AuthenticatedGruposRoute
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/.well-known/assetlinks.json'
     | '/conexao'
+    | '/conexao-telegram'
     | '/configuracoes'
     | '/envios'
     | '/grupos'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/.well-known/assetlinks.json'
     | '/conexao'
+    | '/conexao-telegram'
     | '/configuracoes'
     | '/envios'
     | '/grupos'
@@ -263,6 +275,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/.well-known/assetlinks.json'
     | '/_authenticated/conexao'
+    | '/_authenticated/conexao-telegram'
     | '/_authenticated/configuracoes'
     | '/_authenticated/envios'
     | '/_authenticated/grupos'
@@ -354,6 +367,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConexaoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conexao-telegram': {
+      id: '/_authenticated/conexao-telegram'
+      path: '/conexao-telegram'
+      fullPath: '/conexao-telegram'
+      preLoaderRoute: typeof AuthenticatedConexaoTelegramRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/configuracoes': {
       id: '/_authenticated/configuracoes'
       path: '/configuracoes'
@@ -443,6 +463,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedConexaoRoute: typeof AuthenticatedConexaoRoute
+  AuthenticatedConexaoTelegramRoute: typeof AuthenticatedConexaoTelegramRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedEnviosRoute: typeof AuthenticatedEnviosRoute
   AuthenticatedGruposRoute: typeof AuthenticatedGruposRoute
@@ -458,6 +479,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConexaoRoute: AuthenticatedConexaoRoute,
+  AuthenticatedConexaoTelegramRoute: AuthenticatedConexaoTelegramRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedEnviosRoute: AuthenticatedEnviosRoute,
   AuthenticatedGruposRoute: AuthenticatedGruposRoute,
