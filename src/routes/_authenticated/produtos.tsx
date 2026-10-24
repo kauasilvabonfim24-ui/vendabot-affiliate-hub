@@ -262,7 +262,6 @@ function ProdutosPage() {
             type="url"
             required
             value={form.link}
-            onChange={(e) => set("link", e.target.value)}
             placeholder="https://..."
           />
         </div>
