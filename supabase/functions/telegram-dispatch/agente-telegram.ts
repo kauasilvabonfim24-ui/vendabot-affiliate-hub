@@ -16,7 +16,25 @@
 
 // deno-lint-ignore-file no-explicit-any
 
-export type Produto = {
+export type Produto = { // ─── Eventos dos agentes (alimentam a tela inicial do app) ──────────────────
+const PAUSA_EVENTO_MS = 800;
+const pausa = () => new Promise((r) => setTimeout(r, PAUSA_EVENTO_MS));
+
+async function emitirEvento(
+  userId: string,
+  agent: "cacador" | "redator" | "mensageiro",
+  action: "escolhendo" | "escrevendo" | "enviando" | "concluido" | "erro",
+  extra: Record<string, unknown> = {},
+) {
+  try {
+    const { error } = await supabase
+      .from("agent_events")
+      .insert({ user_id: userId, agent, action, channel: "telegram", ...extra });
+    if (error) console.error("⚠️  Falha ao gravar evento do agente:", error.message);
+  } catch (e) {
+    console.error("⚠️  Erro ao gravar evento do agente:", e);
+  }
+}
   id: string;
   name: string;
   oldPrice: number | string;
@@ -25,7 +43,7 @@ export type Produto = {
   imageUrl: string | null;
   category: string | null;
 };
-
+platform?: string | null;
 type Historico = {
   produtosRodada: Set<string>;
   copysRodada: { geral: Set<number>; motoboy: Set<number> };
@@ -84,7 +102,32 @@ const DIAS_SEMANA: Record<number, string[]> = {
 };
 
 const SEMPRE_CONVERTE = ["air fryer", "robo aspirador", "smartwatch", "fone bluetooth", "carregador", "power bank", "tenis", "perfume", "bolsa", "mochila", "kit ferramentas", "caixa de som", "impressora", "projetor"];
+// ─── PLATAFORMAS (Shopee, Mercado Livre, TikTok Shop) ───────────────────────
+type PlataformaKey = "shopee" | "mercadolivre" | "tiktokshop";
 
+const PLATAFORMAS: Record<PlataformaKey, { label: string; selos: string[] }> = {
+  shopee: {
+    label: "Shopee",
+    selos: ["🟠 Direto da Shopee", "🛒 Achado na Shopee", "🧡 Oferta da Shopee"],
+  },
+  mercadolivre: {
+    label: "Mercado Livre",
+    selos: ["🟡 Direto do Mercado Livre", "🤝 Oferta no Mercado Livre", "💛 Achado no Mercado Livre"],
+  },
+  tiktokshop: {
+    label: "TikTok Shop",
+    selos: ["🎵 Direto do TikTok Shop", "🔥 Achado no TikTok Shop", "📱 Tá no TikTok Shop"],
+  },
+};
+
+function normalizarPlataforma(valor: unknown): PlataformaKey | null {
+  const t = normalizar(valor).replace(/[^a-z]/g, "");
+  if (!t) return null;
+  .select("id, name, old_price, price, link, image_url, category, platform")
+  if (t.includes("mercadolivre") || t === "ml" || t.includes("meli")) return "mercadolivre";
+  if (t.includes("tiktok")) return "tiktokshop";
+  return null;
+}
 // ─── HELPERS (idênticos ao agente.js) ───────────────────────────────────────
 function normalizar(str: unknown): string {
   return String(str || "")
@@ -92,58 +135,88 @@ function normalizar(str: unknown): string {
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 }
+platform: p.platform,
 
 function getSaudacao(hora: number): string {
   if (hora >= 5 && hora < 12) return "BOM DIA";
   if (hora >= 12 && hora < 18) return "BOA TARDE";
   return "BOA NOITE";
 }
+    for (const grupo of grupos) {
+      const nomeGrupo = grupo.chat_title ?? "";
+      const uid = schedule.user_id;
 
-export function calcularDesconto(precoAntigo: unknown, precoAtual: unknown): number {
-  const a = parseFloat(String(precoAntigo).replace(",", "."));
-  const b = parseFloat(String(precoAtual).replace(",", "."));
-  if (!a || !b || a <= b) return 0;
-  return Math.round(((a - b) / a) * 100);
-}
+      await emitirEvento(uid, "cacador", "escolhendo", { group_name: nomeGrupo });
+      await pausa();
 
-function isMotoboy(produto: Produto): boolean {
-  const palavras = ["motoboy", "moto", "delivery", "capacete", "luva", "jaqueta", "bag delivery", "suporte celular", "capa chuva", "bota moto", "cadeado moto", "farol", "buzina", "retrovisor"];
-  const texto = normalizar((produto.category || "") + " " + (produto.name || ""));
-  return palavras.some((c) => texto.includes(normalizar(c)));
-}
+      const msg = await gerarParaGrupoTelegram(
+        supabase,
+        produtos,
+        hora,
+        diaSemana,
+        nomeGrupo,
+        String(grupo.chat_id),
+        schedule.category,
+        usadosNesteCiclo,
+      );
 
-function isGrupoMotoboy(nomeGrupo: string): boolean {
-  const palavras = ["motoboy", "moto", "delivery", "motoca", "piloto", "rider", "capacete"];
-  const texto = normalizar(nomeGrupo);
-  return palavras.some((p) => texto.includes(normalizar(p)));
-}
+      if (!msg) continue;
 
-function getCategoriasPorContexto(hora: number, diaSemana: number): string[] {
-  if (DIAS_SEMANA[diaSemana]) return DIAS_SEMANA[diaSemana];
-  for (const v of Object.values(HORARIOS)) {
-    if (hora >= v.min && hora < v.max) return v.cats;
+      const info = {
+        group_name: nomeGrupo,
+        product_id: msg.produtoId,
+        product_name: msg.produto,
+        product_platform: msg.plataforma,
+      };
+      await emitirEvento(uid, "cacador", "concluido", info);
+      await emitirEvento(uid, "redator", "escrevendo", info);
+      await pausa();
+      await emitirEvento(uid, "redator", "concluido", info);
+      await emitirEvento(uid, "mensageiro", "enviando", info);
+
+      const envio = await enviarTelegram(connection.bot_token, grupo.chat_id, msg.mensagem, msg.imageUrl);
+
+      await emitirEvento(uid, "mensageiro", envio.ok ? "concluido" : "erro", info);
+
+      await supabase.from("message_logs").insert({
+        user_id: uid,
+        group_id: String(grupo.chat_id),
+        group_name: grupo.chat_title,
+        status: envio.ok ? "enviado" : "erro",
+        error_message: envio.ok ? null : envio.error,
+        platform: "telegram",
+        product_id: msg.produtoId,
+        product_name: msg.produto,
+        product_platform: msg.plataforma,
+      });
+
+      if (envio.ok) disparos++;
+      else falhas++;
+    }
+    const chave = normalizarPlataforma(p.platform) ?? "outra";
+    const atual = porPlataforma.get(chave) ?? [];
+    atual.push(p);
+    porPlataforma.set(chave, atual);
   }
-  return SEMPRE_CONVERTE;
-}
 
-function produtoMatchCategoria(produto: Produto, categorias: string[], categoriaForcada: string | null): boolean {
-  const texto = normalizar((produto.category || "") + " " + (produto.name || ""));
-  if (categoriaForcada) return texto.includes(normalizar(categoriaForcada));
-  return categorias.some((c) => texto.includes(normalizar(c)));
-}
+  if (porPlataforma.size > 1) {
+    const usos: Record<string, number> = {};
+    usadosNesteCiclo.forEach((id) => {
+      const prod = produtosTodos.find((x) => x.id === id);
+      if (prod) {
+        const chave = normalizarPlataforma(prod.platform) ?? "outra";
+        usos[chave] = (usos[chave] ?? 0) + 1;
+      }
+    });
+    const chaves = Array.from(porPlataforma.keys());
+    const menor = Math.min(...chaves.map((c) => usos[c] ?? 0));
+    const candidatas = chaves.filter((c) => (usos[c] ?? 0) === menor);
+    const escolhida = candidatas[Math.floor(Math.random() * candidatas.length)];
+    const doGrupo = porPlataforma.get(escolhida)!;
+    return doGrupo[Math.floor(Math.random() * doGrupo.length)];
+  }
 
-// ─── ROUND-ROBIN (idêntico ao agente.js, só troca onde busca/salva o histórico) ─
-function semRepetir(lista: Produto[], hist: Historico, usadosNesteCiclo: Set<string>): Produto[] {
-  if (!lista.length) return lista;
-  const foraDoDisparo = lista.filter((p) => !usadosNesteCiclo.has(p.id));
-  const candidatos = foraDoDisparo.length ? foraDoDisparo : lista;
-
-  const semRodada = candidatos.filter((p) => !hist.produtosRodada.has(p.id));
-  if (semRodada.length) return semRodada;
-
-  candidatos.forEach((p) => hist.produtosRodada.delete(p.id));
-  const semORecente = candidatos.filter((p) => p.id !== hist.ultimoProduto);
-  return semORecente.length ? semORecente : candidatos;
+  return lista[Math.floor(Math.random() * lista.length)];
 }
 
 function escolherProduto(
@@ -158,27 +231,68 @@ function escolherProduto(
   const validos = produtos.filter((p) => p.oldPrice && p.price && p.link);
   if (!validos.length) return null;
 
+  const sortear = (lista: Produto[]) => sortearComRodizio(lista, validos, usadosNesteCiclo);
   const ehMotoboy = isGrupoMotoboy(nomeGrupo);
   const categorias = getCategoriasPorContexto(hora, diaSemana);
 
   if (ehMotoboy) {
     const motoboys = semRepetir(validos.filter((p) => isMotoboy(p)), hist, usadosNesteCiclo);
-    if (motoboys.length) return { produto: motoboys[Math.floor(Math.random() * motoboys.length)], tipo: "motoboy" };
+    if (motoboys.length) return { produto: sortear(motoboys), tipo: "motoboy" };
     const qualquer = semRepetir(validos, hist, usadosNesteCiclo);
-    if (qualquer.length) return { produto: qualquer[Math.floor(Math.random() * qualquer.length)], tipo: "motoboy" };
+    if (qualquer.length) return { produto: sortear(qualquer), tipo: "motoboy" };
   }
 
   if (categoriaForcada) {
     const porCategoria = semRepetir(validos.filter((p) => produtoMatchCategoria(p, [], categoriaForcada)), hist, usadosNesteCiclo);
-    if (porCategoria.length) return { produto: porCategoria[Math.floor(Math.random() * porCategoria.length)], tipo: "geral" };
+    if (porCategoria.length) return { produto: sortear(porCategoria), tipo: "geral" };
   }
 
   const porHorario = semRepetir(validos.filter((p) => produtoMatchCategoria(p, categorias, null)), hist, usadosNesteCiclo);
-  if (porHorario.length) return { produto: porHorario[Math.floor(Math.random() * porHorario.length)], tipo: "geral" };
+  if (porHorario.length) return { produto: sortear(porHorario), tipo: "geral" };
 
   const disponiveis = semRepetir(validos, hist, usadosNesteCiclo);
   if (!disponiveis.length) return null;
-  return { produto: disponiveis[Math.floor(Math.random() * disponiveis.length)], tipo: "geral" };
+  return { produto: sortear(disponiveis), tipo: "geral" };
+}
+  const validos = produtos.filter((p) => p.oldPrice && p.price && p.link);
+  if (!validos.length) return null;
+function gerarMensagem(produto: Produto, tipo: "geral" | "motoboy", hist: Historico, hora: number) {
+  const desconto = calcularDesconto(produto.oldPrice, produto.price);
+  const precoAtual = parseFloat(String(produto.price).replace(",", ".")).toFixed(2).replace(".", ",");
+  const precoAntigo = parseFloat(String(produto.oldPrice).replace(",", ".")).toFixed(2).replace(".", ",");
+  const descontoTag = desconto > 0 ? ` (${desconto}% OFF)` : "";
+
+  const copys = tipo === "motoboy" ? COPYS_MOTOBOY : COPYS_GERAIS;
+  const idx = escolherCopy(copys, hist, tipo);
+
+  hist.produtosRodada.add(produto.id);
+  hist.ultimoProduto = produto.id;
+
+  const template = copys[idx]
+    .replace(/{SAUDACAO}/g, getSaudacao(hora))
+    .replace(/{NOME}/g, escapeHtml(produto.name))
+    .replace(/{PRECO_ANTIGO}/g, precoAntigo)
+    .replace(/{PRECO_ATUAL}/g, precoAtual)
+    .replace(/{DESCONTO_TAG}/g, descontoTag)
+    .replace(/{LINK}/g, escapeHtml(produto.link));
+
+  const corpo = converterParaTelegramHtml(template);
+
+  // Selo da plataforma na primeira linha (só se a plataforma for conhecida)
+  const plataforma = normalizarPlataforma(produto.platform);
+  const info = plataforma ? PLATAFORMAS[plataforma] : null;
+  const selo = info ? info.selos[Math.floor(Math.random() * info.selos.length)] : null;
+  const mensagem = selo ? `${selo}\n${corpo}` : corpo;
+
+  return {
+    mensagem,
+    imageUrl: produto.imageUrl || null,
+    produto: produto.name,
+    produtoId: produto.id,
+    desconto,
+    plataforma,
+    plataformaLabel: info ? info.label : null,
+  };
 }
 
 function escolherCopy(copys: string[], hist: Historico, tipo: "geral" | "motoboy"): number {
