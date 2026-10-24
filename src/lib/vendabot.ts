@@ -40,8 +40,23 @@ export function discountPercent(oldPrice: number, price: number) {
   return Math.round(((oldPrice - price) / oldPrice) * 100);
 }
 
-export const platformLabel = (platform: string) =>
-  platform === "mercadolivre" ? "Mercado Livre" : "Shopee";
+export const PLATFORMS = [
+  { value: "shopee", label: "Shopee" },
+  { value: "mercadolivre", label: "Mercado Livre" },
+  { value: "tiktokshop", label: "TikTok Shop" },
+] as const;
+
+export const platformLabel = (platform: string | null | undefined) =>
+  PLATFORMS.find((p) => p.value === platform)?.label ?? "Shopee";
+
+// Descobre a plataforma pelo link colado (links curtos de afiliado também)
+export function detectPlatformFromLink(link: string): string | null {
+  const l = link.toLowerCase();
+  if (l.includes("shopee") || l.includes("shope.ee")) return "shopee";
+  if (l.includes("mercadolivre") || l.includes("mercadolibre") || l.includes("meli.la")) return "mercadolivre";
+  if (l.includes("tiktok")) return "tiktokshop";
+  return null;
+}
 
 export const repeatLabel = (repeat: string) =>
   repeat === "weekdays" ? "Dias úteis" : "Todos os dias";
