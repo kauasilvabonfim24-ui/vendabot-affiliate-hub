@@ -20,7 +20,7 @@ import { useMySubscription } from "@/hooks/use-subscription";
 import { useMyTrial } from "@/hooks/use-trial";
 import { repeatLabel } from "@/lib/vendabot";
 import { Button } from "@/components/ui/button";
-
+import { AgentsLive } from "@/components/AgentsLive";
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
     meta: [
@@ -158,7 +158,7 @@ function PainelPage() {
                 <div>
                   <p className="text-sm font-medium">Cadastre seu primeiro produto</p>
                   <p className="text-xs text-muted-foreground">
-                    Um link de afiliado da Shopee ou Mercado Livre, com preço e imagem.
+                   Um link de afiliado da Shopee, Mercado Livre ou TikTok Shop, com preço e imagem.
                   </p>
                 </div>
               </div>
@@ -208,7 +208,7 @@ function PainelPage() {
           </ol>
         </section>
       )}
-
+       <AgentsLive nextTime={upcoming[0]?.time ?? null} />
       <div className="grid grid-cols-2 gap-3 pwa:gap-2! sm:gap-4 lg:grid-cols-5">
         {cards.map(({ label, value, icon: Icon, to }) => (
           <Link
