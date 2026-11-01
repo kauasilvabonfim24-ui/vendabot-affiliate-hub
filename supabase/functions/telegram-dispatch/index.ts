@@ -172,7 +172,7 @@ Deno.serve(async (req) => {
     // Produtos do usuário, no mesmo formato que o agente espera
     const { data: produtosRaw } = await supabase
       .from("products")
-      .select("id, name, old_price, price, link, image_url, category, platform")
+      .select("id, name, old_price, price, link, image_url, category, platform, cta")
       .eq("user_id", schedule.user_id);
 
     const produtos: Produto[] = (produtosRaw ?? []).map((p) => ({
@@ -184,6 +184,7 @@ Deno.serve(async (req) => {
       imageUrl: p.image_url,
       category: p.category,
       platform: p.platform,
+      cta: p.cta,
     }));
 
     if (produtos.length === 0) continue;
