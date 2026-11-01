@@ -114,10 +114,39 @@ Deno.serve(async (req) => {
 
   const schedulesValidos = (schedules ?? []).filter((s) => s.repeat === "daily" || (s.repeat === "weekdays" && ehDiaUtil));
 
+  // Só dispara pra quem tem assinatura ativa OU teste grátis dentro do prazo.
+  // (conta cancelada, vencida ou com teste encerrado não dispara mais)
+  const userIds = [...new Set(schedulesValidos.map((s) => s.user_id))];
+  const autorizados = new Set<string>();
+  if (userIds.length > 0) {
+    const { data: subsAtivas } = await supabase
+      .from("subscriptions")
+      .select("user_id, current_period_end")
+      .in("user_id", userIds)
+      .eq("status", "active");
+    for (const s of subsAtivas ?? []) {
+      if (!s.current_period_end || new Date(s.current_period_end) > new Date()) {
+        autorizados.add(s.user_id);
+      }
+    }
+
+    const { data: trialsAtivos } = await supabase
+      .from("trial_accounts")
+      .select("user_id")
+      .in("user_id", userIds)
+      .gt("ends_at", new Date().toISOString());
+    for (const t of trialsAtivos ?? []) autorizados.add(t.user_id);
+  }
+
   let disparos = 0;
   let falhas = 0;
 
   for (const schedule of schedulesValidos) {
+    if (!autorizados.has(schedule.user_id)) {
+      console.log(`⏭️  Schedule ${schedule.id}: usuário sem assinatura ativa nem teste válido, pulando.`);
+      continue;
+    }
+
     // Bot conectado desse usuário
     const { data: connection } = await supabase
       .from("telegram_connections")
