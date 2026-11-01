@@ -25,6 +25,7 @@ export type Produto = {
   imageUrl: string | null;
   category: string | null;
   platform?: string | null;
+  cta?: string | null;
 };
 
 type Historico = {
@@ -36,8 +37,8 @@ type Historico = {
 
 // ─── COPYS GERAIS (20 modelos, estilos variados — idêntico ao agente.js) ────
 const COPYS_GERAIS = [
-  `🌞 *{SAUDACAO}! TEM OFERTA BOA HOJE!* 🌞\n🔥 *{NOME}* 🔥\n💰 De: ~~R$ {PRECO_ANTIGO}~~\n✅ Por apenas: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⏳ Aproveite enquanto a promoção estiver disponível.\n👉 Confira aqui:\n{LINK}`,
-  `🚨 *ACHADO DO DIA!* 🚨\n👀 Encontrei essa promoção e vim compartilhar!\n📦 *{NOME}*\n❌ De: ~~R$ {PRECO_ANTIGO}~~\n💥 Hoje por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n👉 Veja antes que o estoque acabe!\n{LINK}`,
+  `🌞 *{SAUDACAO}! TEM OFERTA BOA HOJE!* 🌞\n🔥 *{NOME}* 🔥\n💰 De: ~~R$ {PRECO_ANTIGO}~~\n✅ Por apenas: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⏳ Aproveite enquanto a promoção estiver dispo[...]
+  `🚨 *ACHADO DO DIA!* 🚨\n👀 Encontrei essa promoção e vim compartilhar!\n📦 *{NOME}*\n❌ De: ~~R$ {PRECO_ANTIGO}~~\n💥 Hoje por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n👉 Veja antes que o [...]
   `☀️ *{SAUDACAO}, PESSOAL!*\n🔥 Promoção disponível!\n📦 *{NOME}*\n💰 ~~R$ {PRECO_ANTIGO}~~\n✅ Agora por *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⚡ Vale a pena conferir.\n👉 {LINK}`,
   `🎁 *OFERTA ESPECIAL DO DIA* 🎁\n🔥 *{NOME}*\n💸 De: ~~R$ {PRECO_ANTIGO}~~\n💚 Por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n👀 Aproveite enquanto durar.\n👉 {LINK}`,
   `🚀 *PROMOÇÃO LIBERADA!*\n📦 *{NOME}*\n💰 De ~~R$ {PRECO_ANTIGO}~~\n🔥 Por apenas *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⏳ O preço pode mudar a qualquer momento.\n👉 {LINK}`,
@@ -60,15 +61,31 @@ const COPYS_GERAIS = [
 
 // ─── COPYS MOTOBOY (8 modelos — idêntico ao agente.js) ─────────────────────
 const COPYS_MOTOBOY = [
-  `🏍️ *ACHADO PARA MOTOCA!* 🏍️\n🔥 *{NOME}*\n💰 De: ~~R$ {PRECO_ANTIGO}~~\n✅ Por apenas: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⚡ Produto aprovado pelos irmãos do asfalto!\n👉 Confira:\n{LINK}`,
+  `🏍️ *ACHADO PARA MOTOCA!* 🏍️\n🔥 *{NOME}*\n💰 De: ~~R$ {PRECO_ANTIGO}~~\n✅ Por apenas: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⚡ Produto aprovado pelos irmãos do asfalto!\n👉 Conf[...]
   `🛵 *PROMOÇÃO PRA QUEM TÁ NA RODA!* 🛵\n📦 *{NOME}*\n❌ ~~R$ {PRECO_ANTIGO}~~\n💥 Agora por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n🏍️ Essencial pra quem vive de moto!\n👉 {LINK}`,
-  `🚨 *ATENÇÃO MOTOBOYS!* 🚨\n📢 Oferta imperdível chegou!\n🏍️ *{NOME}*\n💸 De: ~~R$ {PRECO_ANTIGO}~~\n💚 Por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⏳ Corre que é por tempo limitado!\n👉 {LINK}`,
+  `🚨 *ATENÇÃO MOTOBOYS!* 🚨\n📢 Oferta imperdível chegou!\n🏍️ *{NOME}*\n💸 De: ~~R$ {PRECO_ANTIGO}~~\n💚 Por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⏳ Corre que é por tempo limita[...]
   `⚡ *OFERTA RELÂMPAGO PARA MOTOCA!* ⚡\n🛵 *{NOME}*\n💰 De ~~R$ {PRECO_ANTIGO}~~\n🔥 Por *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n🏍️ Perfeito pra quem roda todo dia!\n👉 {LINK}`,
-  `🔥 *OLHA ESSE ACHADO, MOTOCA!*\n📦 *{NOME}*\n💵 ~~R$ {PRECO_ANTIGO}~~ ➜ *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n🛵 Quem é da vida não pode perder!\n⏳ Aproveite enquanto tem!\n👉 {LINK}`,
+  `🔥 *OLHA ESSE ACHADO, MOTOCA!*\n📦 *{NOME}*\n💵 ~~R$ {PRECO_ANTIGO}~~ ➜ *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n🛵 Quem é da vida não pode perder!\n⏳ Aproveite enquanto tem!\n👉 {LINK[...]
   `🪖 *EQUIPAMENTO BOM E BARATO!* 🪖\n🏍️ *{NOME}*\n❌ De: ~~R$ {PRECO_ANTIGO}~~\n✅ Hoje por: *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n⚡ Segurança e economia andam juntas!\n👉 {LINK}`,
   `❓ *Motoboy, já tá com esse aí?*\n🏍️ *{NOME}*\n💰 De ~~R$ {PRECO_ANTIGO}~~\n✅ Por *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n👉 {LINK}`,
   `🗣️ *Motoboy aqui do grupo pediu indicação — segue!*\n🏍️ *{NOME}*\n💸 ~~R$ {PRECO_ANTIGO}~~ por *R$ {PRECO_ATUAL}*{DESCONTO_TAG}\n👉 {LINK}`,
 ];
+
+// ─── COPYS PARA PRODUTO SEM PREÇO ANTIGO (sem "De", sem "% OFF", sem urgência inventada) ─
+// Usadas quando o produto não tem um preço antigo real. {CTA} vem do agente de cadastro
+// (ou um padrão), sempre uma chamada verdadeira pro link.
+const COPYS_SEM_ANTIGO = [
+  `🛍️ *{NOME}*\n✅ Por apenas *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `👀 *Achado do dia:* {NOME}\n💰 Sai por *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `🔥 *{NOME}*\n💚 Preço: *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `☀️ *{SAUDACAO}!* Olha esse achado:\n📦 *{NOME}*\n✅ *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `📦 *{NOME}*\n💸 Por *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `🛒 *Separei esse pra você:*\n📦 *{NOME}*\n💰 *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `🤔 *Tava procurando isso?*\n📦 *{NOME}*\n✅ Por *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+  `*{NOME}*\nPor *R$ {PRECO_ATUAL}*\n{CTA}\n{LINK}`,
+];
+
+const CTA_PADRAO = "👉 Toque no link e confira";
 
 // ─── CATEGORIAS POR HORÁRIO (idêntico ao agente.js) ─────────────────────────
 const HORARIOS: Record<string, { min: number; max: number; cats: string[] }> = {
@@ -84,7 +101,7 @@ const DIAS_SEMANA: Record<number, string[]> = {
   6: ["moda", "casa", "tenis", "decoracao", "brinquedo", "pet", "roupa"], // Sábado
 };
 
-const SEMPRE_CONVERTE = ["air fryer", "robo aspirador", "smartwatch", "fone bluetooth", "carregador", "power bank", "tenis", "perfume", "bolsa", "mochila", "kit ferramentas", "caixa de som", "impressora", "projetor"];
+const SEMPRE_CONVERTE = ["air fryer", "robo aspirador", "smartwatch", "fone bluetooth", "carregador", "power bank", "tenis", "perfume", "bolsa", "mochila", "kit ferramentas", "caixa de som", "impr[...]
 
 // ─── PLATAFORMAS (Shopee, Mercado Livre, TikTok Shop) ───────────────────────
 type PlataformaKey = "shopee" | "mercadolivre" | "tiktokshop";
@@ -213,7 +230,7 @@ function escolherProduto(
   categoriaForcada: string | null,
   usadosNesteCiclo: Set<string>,
 ): { produto: Produto; tipo: "geral" | "motoboy" } | null {
-  const validos = produtos.filter((p) => p.oldPrice && p.price && p.link);
+  const validos = produtos.filter((p) => p.price && p.link);
   if (!validos.length) return null;
 
   const sortear = (lista: Produto[]) => sortearComRodizio(lista, validos, usadosNesteCiclo);
@@ -273,12 +290,14 @@ function converterParaTelegramHtml(msg: string): string {
 
 // ─── GERAR MENSAGEM (idêntico ao agente.js, com escape + conversão HTML) ────
 function gerarMensagem(produto: Produto, tipo: "geral" | "motoboy", hist: Historico, hora: number) {
-  const desconto = calcularDesconto(produto.oldPrice, produto.price);
+  const temPrecoAntigo = Boolean(produto.oldPrice && String(produto.oldPrice).trim());
+  const desconto = temPrecoAntigo ? calcularDesconto(produto.oldPrice, produto.price) : 0;
   const precoAtual = parseFloat(String(produto.price).replace(",", ".")).toFixed(2).replace(".", ",");
-  const precoAntigo = parseFloat(String(produto.oldPrice).replace(",", ".")).toFixed(2).replace(".", ",");
-  const descontoTag = desconto > 0 ? ` (${desconto}% OFF)` : "";
+  const precoAntigo = temPrecoAntigo ? parseFloat(String(produto.oldPrice).replace(",", ".")).toFixed(2).replace(".", ",") : "";
+  const descontoTag = temPrecoAntigo && desconto > 0 ? ` (${desconto}% OFF)` : "";
+  const cta = escapeHtml(String(produto.cta || CTA_PADRAO).trim() || CTA_PADRAO);
 
-  const copys = tipo === "motoboy" ? COPYS_MOTOBOY : COPYS_GERAIS;
+  const copys = temPrecoAntigo ? (tipo === "motoboy" ? COPYS_MOTOBOY : COPYS_GERAIS) : COPYS_SEM_ANTIGO;
   const idx = escolherCopy(copys, hist, tipo);
 
   hist.produtosRodada.add(produto.id);
@@ -290,6 +309,7 @@ function gerarMensagem(produto: Produto, tipo: "geral" | "motoboy", hist: Histor
     .replace(/{PRECO_ANTIGO}/g, precoAntigo)
     .replace(/{PRECO_ATUAL}/g, precoAtual)
     .replace(/{DESCONTO_TAG}/g, descontoTag)
+    .replace(/{CTA}/g, cta)
     .replace(/{LINK}/g, escapeHtml(produto.link));
 
   const corpo = converterParaTelegramHtml(template);
