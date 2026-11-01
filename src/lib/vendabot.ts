@@ -8,6 +8,8 @@ export type Product = {
   link: string;
   image_url: string | null;
   category: string | null;
+  cta?: string | null;
+  source?: string | null;
   created_at: string;
 };
 
