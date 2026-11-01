@@ -114,9 +114,10 @@ Deno.serve(async (req) => {
               { onConflict: "user_id,chat_id" }
             );
 
-            if (upsertError?.message?.includes("Limite de")) {
-              await notificarLimiteAtingido(Deno.env.get("SUPABASE_URL")!, connection.user_id);
+            if (upsertError?.message?.includes("Limite do teste")) {
               await notificarLimiteTeste(supabaseAdmin, connection.user_id);
+            } else if (upsertError?.message?.includes("Limite de")) {
+              await notificarLimiteAtingido(Deno.env.get("SUPABASE_URL")!, connection.user_id);
             }
           } else {
             await supabaseAdmin
