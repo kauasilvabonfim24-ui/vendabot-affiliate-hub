@@ -21,6 +21,36 @@ async function notificarLimiteAtingido(supabaseUrl: string, userId: string) {
   }
 }
 
+// Teste grátis: quando o 2º grupo é barrado, cria uma notificação INTERNA
+// (sem OneSignal) com botão "Assinar plano" → /planos. Evita repetir dentro de 1 hora.
+// deno-lint-ignore no-explicit-any
+async function notificarLimiteTeste(supabaseAdmin: any, userId: string) {
+  try {
+    const titulo = "🔒 Teste grátis: limite de 1 grupo";
+    const desde = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { data: recente } = await supabaseAdmin
+      .from("notifications")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("title", titulo)
+      .gte("created_at", desde)
+      .limit(1);
+
+    if (recente && recente.length > 0) return;
+
+    await supabaseAdmin.from("notifications").insert({
+      user_id: userId,
+      title: titulo,
+      message:
+        "O plano gratuito só permite 1 grupo. Assine um plano pra ter 5 grupos de WhatsApp e Telegram.",
+      action_label: "Assinar plano",
+      action_url: "/planos",
+    });
+  } catch (e) {
+    console.error("Erro ao notificar limite do teste grátis:", String(e));
+  }
+}
+
 Deno.serve(async (req) => {
   try {
     const webhookSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET")!;
@@ -84,8 +114,9 @@ Deno.serve(async (req) => {
               { onConflict: "user_id,chat_id" }
             );
 
-            if (upsertError && upsertError.message?.includes("Limite de")) {
+            if (upsertError?.message?.includes("Limite de")) {
               await notificarLimiteAtingido(Deno.env.get("SUPABASE_URL")!, connection.user_id);
+              await notificarLimiteTeste(supabaseAdmin, connection.user_id);
             }
           } else {
             await supabaseAdmin
