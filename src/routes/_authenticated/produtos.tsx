@@ -21,6 +21,18 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+// Categorias padrão (o agente de cadastro escolhe sempre uma destas)
+const CATEGORIAS = [
+  "Moda feminina",
+  "Moda masculina",
+  "Calçados",
+  "Beleza e skincare",
+  "Casa e cozinha",
+  "Eletrônicos",
+  "Acessórios",
+  "Outros",
+];
+
 export const Route = createFileRoute("/_authenticated/produtos")({
   head: () => ({
     meta: [
@@ -50,6 +62,7 @@ function ProdutosPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [loteOpen, setLoteOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -221,22 +234,30 @@ function ProdutosPage() {
           <Label htmlFor="category">Categoria (opcional)</Label>
           <Input
             id="category"
+            list="categorias-padrao"
             value={form.category}
             onChange={(e) => set("category", e.target.value)}
-            placeholder="eletronicos"
+            placeholder="Moda feminina"
           />
+          <datalist id="categorias-padrao">
+            {CATEGORIAS.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="old_price">Preço antigo</Label>
+          <Label htmlFor="old_price">Preço antigo (opcional)</Label>
           <Input
             id="old_price"
             type="number"
             step="0.01"
             min="0"
-            required
             value={form.old_price}
             onChange={(e) => set("old_price", e.target.value)}
           />
+          <p className="text-xs text-muted-foreground">
+            Sem o preço antigo real, deixe em branco: o bot posta só com o preço atual.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="price">Preço atual</Label>
@@ -321,10 +342,12 @@ function ProdutosPage() {
         </div>
       </div>
 
-      <div className="rounded-lg bg-primary/10 px-4 py-3 text-center text-sm text-muted-foreground">
-        Desconto calculado:{" "}
-        <span className="font-display text-lg font-bold text-primary">{off}% OFF</span>
-      </div>
+      {off > 0 && (
+        <div className="rounded-lg bg-primary/10 px-4 py-3 text-center text-sm text-muted-foreground">
+          Desconto calculado:{" "}
+          <span className="font-display text-lg font-bold text-primary">{off}% OFF</span>
+        </div>
+      )}
 
       <Button type="submit" disabled={saving} className="w-full pwa:h-12!">
         {saving ? "Salvando..." : editingId ? "Salvar alterações" : "Adicionar produto"}
@@ -341,11 +364,28 @@ function ProdutosPage() {
             Cadastre as ofertas que o bot vai divulgar.
           </p>
         </div>
-        <Button onClick={openNew} size="sm" className="hidden pwa:flex items-center gap-1.5 rounded-full">
-          <Plus className="h-4 w-4" />
-          Novo
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => setLoteOpen(true)}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1.5 rounded-full"
+          >
+            <Sparkles className="h-4 w-4" />
+            Lote com agente
+          </Button>
+          <Button onClick={openNew} size="sm" className="hidden pwa:flex items-center gap-1.5 rounded-full">
+            <Plus className="h-4 w-4" />
+            Novo
+          </Button>
+        </div>
       </header>
+
+      <LoteAgente
+        aberto={loteOpen}
+        onFechar={() => setLoteOpen(false)}
+        onEditar={(p) => startEdit(p)}
+      />
 
       <div className="pwa:hidden rounded-xl border border-border bg-card p-6">
         <div className="mb-4 flex items-center justify-between">
@@ -411,11 +451,18 @@ function ProdutosPage() {
                     {p.category && (
                       <span className="rounded-full bg-ai/15 px-2 py-0.5 text-ai">{p.category}</span>
                     )}
-                    <span className="line-through">{brl(Number(p.old_price))}</span>
+                    {p.source === "agente" && (
+                      <span className="rounded-full bg-primary/15 px-2 py-0.5 text-primary">agente</span>
+                    )}
+                    {Number(p.old_price) > Number(p.price) && (
+                      <span className="line-through">{brl(Number(p.old_price))}</span>
+                    )}
                     <span className="font-semibold text-primary">{brl(Number(p.price))}</span>
-                    <span className="text-primary">
-                      {discountPercent(Number(p.old_price), Number(p.price))}% OFF
-                    </span>
+                    {Number(p.old_price) > Number(p.price) && (
+                      <span className="text-primary">
+                        {discountPercent(Number(p.old_price), Number(p.price))}% OFF
+                      </span>
+                    )}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-1 pwa:flex-col! pwa:gap-1.5!">
