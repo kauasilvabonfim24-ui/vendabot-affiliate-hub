@@ -3,13 +3,14 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   IconPencil as Pencil, IconTrash as Trash2, IconX as X, IconPlus as Plus,
-  IconPhoto as Photo, IconLoader2 as Loader2,
+  IconPhoto as Photo, IconLoader2 as Loader2, IconSparkles as Sparkles,
 } from "@tabler/icons-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useProducts } from "@/hooks/use-vendabot";
 import { brl, discountPercent, platformLabel, PLATFORMS, detectPlatformFromLink, type Product } from "@/lib/vendabot";
+import { LoteAgente } from "@/components/LoteAgente";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
