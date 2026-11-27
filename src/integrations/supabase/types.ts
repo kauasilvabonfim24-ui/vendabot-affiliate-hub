@@ -327,6 +327,7 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          cta: string | null
           id: string
           image_url: string | null
           link: string
@@ -334,12 +335,14 @@ export type Database = {
           old_price: number
           platform: string
           price: number
+          source: string
           updated_at: string
           user_id: string
         }
         Insert: {
           category?: string | null
           created_at?: string
+          cta?: string | null
           id?: string
           image_url?: string | null
           link: string
@@ -347,12 +350,14 @@ export type Database = {
           old_price?: number
           platform?: string
           price?: number
+          source?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           category?: string | null
           created_at?: string
+          cta?: string | null
           id?: string
           image_url?: string | null
           link?: string
@@ -360,6 +365,7 @@ export type Database = {
           old_price?: number
           platform?: string
           price?: number
+          source?: string
           updated_at?: string
           user_id?: string
         }
