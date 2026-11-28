@@ -25,6 +25,7 @@ import {
 const nav = [
   { to: "/painel", label: "Painel", icon: BarChart3 },
   { to: "/produtos", label: "Produtos", icon: Package },
+  { to: "/vender", label: "Vender produto", icon: Package },
   { to: "/horarios", label: "Horários", icon: Clock },
   { to: "/grupos", label: "Grupos", icon: Users },
   { to: "/envios", label: "Envios", icon: ListCheck },
@@ -45,6 +46,7 @@ const mainNav = [
 
 // Só usada no modo instalado (PWA): itens que ficam dentro do menu "Mais".
 const moreNav = [
+  { to: "/vender", label: "Vender produto", icon: Package },
   { to: "/envios", label: "Envios", icon: ListCheck },
   { to: "/conexao", label: "Conexão", icon: QrCode },
   { to: "/conexao-telegram", label: "Telegram", icon: TelegramIcon },

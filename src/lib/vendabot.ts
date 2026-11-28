@@ -50,6 +50,7 @@ export const PLATFORMS = [
 ] as const;
 
 export const platformLabel = (platform: string | null | undefined) =>
+  platform === "vendadireta" ? "Venda direta" :
   PLATFORMS.find((p) => p.value === platform)?.label ?? "Shopee";
 
 // Descobre a plataforma pelo link colado (links curtos de afiliado também)

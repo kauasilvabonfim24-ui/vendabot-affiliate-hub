@@ -16,7 +16,7 @@ let subscriptionCache: { userId: string; expiresAt: number } | null = null;
 // Ideia: deixar a pessoa experimentar o produto (cadastrar produto,
 // simular a mensagem de venda) antes de pedir pra pagar. Só a operação
 // de verdade (conectar WhatsApp, grupos, horários, config) fica trancada.
-const FREE_ROUTES = ["/planos", "/painel", "/produtos", "/preview-ia"];
+const FREE_ROUTES = ["/planos", "/painel", "/produtos", "/vender", "/preview-ia"];
 
 // Teste grátis: além das rotas livres, libera SÓ o Telegram (conexão + horários).
 // WhatsApp (/conexao, /grupos) segue trancado até assinar um plano.

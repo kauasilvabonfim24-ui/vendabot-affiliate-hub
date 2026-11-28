@@ -29,6 +29,7 @@ import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedPreviewIaRouteImport } from './routes/_authenticated/preview-ia'
 import { Route as AuthenticatedProdutosRouteImport } from './routes/_authenticated/produtos'
 import { Route as AuthenticatedSuporteRouteImport } from './routes/_authenticated/suporte'
+import { Route as AuthenticatedVenderRouteImport } from './routes/_authenticated/vender'
 import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
 
@@ -134,6 +135,11 @@ const AuthenticatedSuporteRoute = AuthenticatedSuporteRouteImport.update({
   path: '/suporte',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVenderRoute = AuthenticatedVenderRouteImport.update({
+  id: '/vender',
+  path: '/vender',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const RCodeRoute = RCodeRouteImport.update({
   id: '/r/$code',
   path: '/r/$code',
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
   '/suporte': typeof AuthenticatedSuporteRoute
+  '/vender': typeof AuthenticatedVenderRoute
   '/r/$code': typeof RCodeRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
 }
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/produtos': typeof AuthenticatedProdutosRoute
   '/suporte': typeof AuthenticatedSuporteRoute
+  '/vender': typeof AuthenticatedVenderRoute
   '/r/$code': typeof RCodeRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
 }
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/_authenticated/preview-ia': typeof AuthenticatedPreviewIaRoute
   '/_authenticated/produtos': typeof AuthenticatedProdutosRoute
   '/_authenticated/suporte': typeof AuthenticatedSuporteRoute
+  '/_authenticated/vender': typeof AuthenticatedVenderRoute
   '/r/$code': typeof RCodeRoute
   '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
 }
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/preview-ia'
     | '/produtos'
     | '/suporte'
+    | '/vender'
     | '/r/$code'
     | '/admin/suporte'
   fileRoutesByTo: FileRoutesByTo
@@ -262,6 +272,7 @@ export interface FileRouteTypes {
     | '/preview-ia'
     | '/produtos'
     | '/suporte'
+    | '/vender'
     | '/r/$code'
     | '/admin/suporte'
   id:
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/_authenticated/preview-ia'
     | '/_authenticated/produtos'
     | '/_authenticated/suporte'
+    | '/_authenticated/vender'
     | '/r/$code'
     | '/_authenticated/admin/suporte'
   fileRoutesById: FileRoutesById
@@ -444,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSuporteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/vender': {
+      id: '/_authenticated/vender'
+      path: '/vender'
+      fullPath: '/vender'
+      preLoaderRoute: typeof AuthenticatedVenderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/r/$code': {
       id: '/r/$code'
       path: '/r/$code'
@@ -474,6 +493,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPreviewIaRoute: typeof AuthenticatedPreviewIaRoute
   AuthenticatedProdutosRoute: typeof AuthenticatedProdutosRoute
   AuthenticatedSuporteRoute: typeof AuthenticatedSuporteRoute
+  AuthenticatedVenderRoute: typeof AuthenticatedVenderRoute
   AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
 }
 
@@ -490,6 +510,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPreviewIaRoute: AuthenticatedPreviewIaRoute,
   AuthenticatedProdutosRoute: AuthenticatedProdutosRoute,
   AuthenticatedSuporteRoute: AuthenticatedSuporteRoute,
+  AuthenticatedVenderRoute: AuthenticatedVenderRoute,
   AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
 }
 
